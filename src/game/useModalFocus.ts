@@ -17,7 +17,11 @@ export function useModalFocus(layer: ModalLayer | null) {
 
   const captureTrigger = useCallback((name: ModalLayer) => {
     const active = document.activeElement;
-    if (active instanceof HTMLElement) triggerRefs.current.set(name, active);
+    if (active instanceof HTMLElement && rootRef.current?.contains(active)) {
+      triggerRefs.current.set(name, active);
+    } else {
+      triggerRefs.current.delete(name);
+    }
   }, []);
 
   useLayoutEffect(() => {

@@ -192,7 +192,9 @@ export function MedicalTableCanvas({
   }, [eventBatch]);
 
   useEffect(() => {
-    if (playedCardMeta && playedCardMeta.nonce !== lastCardNonceRef.current) {
+    if (!playedCardMeta) {
+      cardTriggerRef.current = null;
+    } else if (playedCardMeta.nonce !== lastCardNonceRef.current) {
       lastCardNonceRef.current = playedCardMeta.nonce;
       cardTriggerRef.current = playedCardMeta;
     }

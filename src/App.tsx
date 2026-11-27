@@ -75,8 +75,13 @@ type TurnPlayback = {
 };
 
 function withDuel(run: RunState, duelState: DuelEngineState): RunState {
-  return { ...run, duelState, rngState: duelState.rngState,
-    idSequence: duelState.idSequence, playerLp: duelState.playerLp };
+  return {
+    ...run,
+    duelState,
+    rngState: duelState.rngState,
+    idSequence: duelState.idSequence,
+    playerLp: duelState.playerLp,
+  };
 }
 
 function duelCheckpoint(run: RunState): RunCheckpoint {
@@ -298,6 +303,7 @@ export default function App() {
       setInspectedCard(null);
       setDeckModalOpen(false);
       setEventBatch([]);
+      setPlayedCardMeta(null);
       setLogs([]);
       setTutorialStep(1);
       setCameraPreset('overview');
@@ -339,6 +345,7 @@ export default function App() {
     setInspectedCard(null);
     setDeckModalOpen(false);
     setEventBatch([]);
+    setPlayedCardMeta(null);
     setLogs([]);
     setTutorialStep(null);
     setCameraPreset('overview');
@@ -785,6 +792,7 @@ export default function App() {
       setSelectedAttackerLane(null);
       setIsResolvingTurn(false);
       setEventBatch([]);
+      setPlayedCardMeta(null);
       setLogs([]);
       setLastFeedback(
         `${
@@ -808,6 +816,8 @@ export default function App() {
     setIsResolvingTurn(false);
     setDeckModalOpen(false);
     setInspectedCard(null);
+    setEventBatch([]);
+    setPlayedCardMeta(null);
     setSavedRun(loadRunSnapshot());
     setGameState('TITLE_MENU');
   }, [cancelPlayback]);
