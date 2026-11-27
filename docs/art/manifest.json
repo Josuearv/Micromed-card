@@ -1,0 +1,3376 @@
+{
+  "repository": "Josuearv/Micromed-card",
+  "documentation": {
+    "branch": "docs/game-ux-art-v4",
+    "commit": "9cb59fc4dbda716077ffbb14f39358facaaf1c6f",
+    "paths": [
+      "docs/game-v4/01-art-direction.md",
+      "docs/game-v4/02-image-generation.md",
+      "docs/game-v4/03-ux-ui-specification.md",
+      "src/data/medicalCards.ts",
+      "src/data/organs.ts"
+    ]
+  },
+  "artDirection": "CV-ART-01 v1.0 — Clinical Warfare, Cinematic Bio-Tactical",
+  "candidateMasterAssetId": "macrofago-alveolar-v1",
+  "comparison": {
+    "path": "docs/art/cv-art-01-hoja-comparativa-v1.png",
+    "tileWidthsPx": [
+      480,
+      96,
+      160
+    ],
+    "order": [
+      "macrofago-alveolar-v1",
+      "e-candida-v1",
+      "diagnostico-pcr-v1",
+      "barrera-mucociliar-v1",
+      "higado-v1",
+      "arena-clinica-tactica-v1"
+    ]
+  },
+  "assets": [
+    {
+      "assetId": "macrofago-alveolar-v1",
+      "catalogId": "macrofago-alveolar",
+      "name": "Macrófago Alveolar",
+      "category": "immune unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "Create exactly ONE clean artwork for CÓDIGO VITAL, written CV-ART-01 v1.0 art direction, Cinematic Bio-Tactical. Landscape exact 4:3 image canvas target, ideally 1600×1200. Subject Macrófago Alveolar, catalog ID macrofago-alveolar, INM-01; these are metadata only, render absolutely no text. Immune Unit. Premium stylized photorealistic 3D PBR biomedical game illustration. Single complete dominant alveolar macrophage, three-quarter macro view, centered, surrounded by at least 12% clear border on every side, subject spans roughly 70% of the frame, silhouette readable at 96px. Large irregular amoeboid cell body with broad organic pseudopods and ruffled membrane, a single subtly visible eccentric indented oval nucleus, small selectively visible intracellular vesicles. Restrained action of phagocytosis: two short pseudopods forming one shallow cup as they close around a single tiny muted particle nestling against the membrane, the particle visually subordinate. Semi-translucent organic membrane in muted warm gray with natural subsurface scattering, selective fine grain at focal plane, restrained teal immunology accent localized on a few membrane folds. Soft cool upper-left key, neutral fill, subtle rim, moderate contrast, crisp silhouette and focus, dark graphite-blue alveolar microenvironment with subtle atmospheric depth and virtually no competing elements. Artistic videogame abstraction. Clean illustration only: no frame, captions, typography, numbers, logos, watermark, UI, collage, cartoon, anime, toy plastic, excessive neon, glossy chrome, excess blur, clutter, gore, false anatomy or recognizable franchise artwork.",
+      "negativePrompt": "no frame, captions, typography, numbers, logos, watermark, UI, collage, cartoon, anime, toy plastic, excessive neon, glossy chrome, excess blur, clutter, gore, false anatomy or recognizable franchise artwork.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3"
+      },
+      "referenceIds": [],
+      "toolOutputFilename": "exec-7965822c-6935-4396-af4c-d851dca74bea.png",
+      "sourcePath": "art-source/macrofago-alveolar-v1.png",
+      "outputPath": "public/assets/cards/macrofago-alveolar.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2083238
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "955319e3075e76f5de6d6246409ff30817a2dcbd661b6093b4a0688d0c4ab30c"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "externalInputs": [],
+        "approval": "Pendiente de revisión del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Candidata a referencia maestra de estilo. Los pseudópodos superiores e inferiores dejan menos margen que el previsto.",
+      "webp": {
+        "path": "public/assets/cards/macrofago-alveolar.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 41468,
+        "quality": 86,
+        "sha256": "496e23c1807f6a51c766e0465cfbe0d79bb51ec6bab76116a0595aefd83c508b"
+      },
+      "catalogCode": "INM-01",
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Unidad",
+      "medicalClass": "Inmunologia"
+    },
+    {
+      "assetId": "e-candida-v1",
+      "catalogId": "e-candida",
+      "name": "Candida Invasiva",
+      "category": "pathogen",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical.\nCreate a single premium scientific videogame illustration, stylized photorealistic 3D PBR biomedical visualization, scientifically recognizable silhouette, selective microscopic surface detail, restrained cinematic lighting, cool soft key light from upper left, neutral fill, subtle rim light, dark graphite-blue laboratory or microenvironment background, realistic organic membrane or satin titanium material, moderate contrast, crisp focal subject, subtle atmospheric depth.\nSingle dominant subject, three-quarter perspective, centered within a 10–15% safe margin, approximately 65–75% frame occupancy, composition readable as a small card thumbnail. Use the supplied Macrófago Alveolar r1 image as the candidate master style reference: match its upper-left cool key, neutral fill, restrained rim, selective microtexture, muted color grading, soft light transmission through thin material where appropriate, and subtle graphite-blue depth. Transfer its visual language only, not its shape, clinical identity, close crop, or teal accent. Artistic game abstraction, not clinical diagnostic imagery. Names and IDs below are metadata only.\nSUBJECT: Candida Invasiva (e-candida)\nCATEGORY: pathogen\nIDENTITY: One small connected yeast colony, compact warm ivory ovoid yeast cells, unequivocal small oval buds connected by narrow necks, plus two short chains of elongated pseudohyphal compartments visibly constricted at junctions. Subtle organic cell-wall grain and thin translucent edges. The connected colony is one readable silhouette.\nACTION: A chain extends toward a faint tissue plane in the dark background, suggesting invasion as a static game motif.\nACCENT: Muted coral confined to the rim of a few cell walls; ivory and gray remain dominant.\nCOMPOSITION: Landscape exact 4:3; scientific macro three-quarter camera. Leave at least 12% blank top and bottom outside every bud and filament tip. Do not add spikes, tentacles, bacterial flagella, gore or surrounding competing cells.\nOUTPUT: clean illustration only, no card frame, no labels, no typography, no numbers, no logos, no watermark, no UI, no collage.\nAVOID: cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork.",
+      "negativePrompt": "cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3"
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1"
+      ],
+      "toolOutputFilename": "exec-f92c2eed-bd51-471b-a8ef-8f5a49e37824.png",
+      "sourcePath": "art-source/e-candida-v1.png",
+      "outputPath": "public/assets/cards/e-candida.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1997233
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "65722c4831b2a7d2f51fcc8c2da792a9db64a2ee43e1502fd14de94a32689096"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisión del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Se distinguen las yemas y las cadenas con uniones estrechas. El contacto con tejido se representa como abstracción de juego.",
+      "webp": {
+        "path": "public/assets/cards/e-candida.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 34594,
+        "quality": 86,
+        "sha256": "cb0c184170e5fe1f8190727351736eb658d3aac13fe8d34a7d733320649776bd"
+      },
+      "catalogCode": "FUN-01",
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Unidad",
+      "medicalClass": "Patogeno"
+    },
+    {
+      "assetId": "diagnostico-pcr-v1",
+      "catalogId": "diagnostico-pcr",
+      "name": "Panel Diagnóstico PCR",
+      "category": "diagnosis",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical.\nCreate a single premium scientific videogame illustration, stylized photorealistic 3D PBR biomedical visualization, scientifically recognizable silhouette, selective microscopic surface detail, restrained cinematic lighting, cool soft key light from upper left, neutral fill, subtle rim light, dark graphite-blue laboratory or microenvironment background, realistic organic membrane or satin titanium material, moderate contrast, crisp focal subject, subtle atmospheric depth.\nSingle dominant subject, three-quarter perspective, centered within a 10–15% safe margin, approximately 65–75% frame occupancy, composition readable as a small card thumbnail. Use the supplied Macrófago Alveolar r1 image as the candidate master style reference: match its upper-left cool key, neutral fill, restrained rim, selective microtexture, muted color grading, soft light transmission through thin material where appropriate, and subtle graphite-blue depth. Transfer its visual language only, not its shape, clinical identity, close crop, or teal accent. Artistic game abstraction, not clinical diagnostic imagery. Names and IDs below are metadata only.\nSUBJECT: Panel Diagnóstico PCR (diagnostico-pcr)\nCATEGORY: diagnosis\nIDENTITY: One compact graphite and satin brushed titanium benchtop sample amplification module with a recessed thermal chamber, translucent colorless capped sample tubes visible through a thick optical inspection window, realistic material seams and brushed micrograin. Visually integrated as one device.\nACTION: One faint cyan optical read in the sample chamber suggests detection.\nACCENT: Cool restrained cyan only inside the chamber; graphite, titanium and glass remain dominant.\nCOMPOSITION: Landscape exact 4:3; centered three-quarter instrument macro, full case in frame with at least 12% clear margin. No display surface, controls with symbols, holography, graphs, labels or floating DNA.\nOUTPUT: clean illustration only, no card frame, no labels, no typography, no numbers, no logos, no watermark, no UI, no collage.\nAVOID: cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork.",
+      "negativePrompt": "cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3"
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1"
+      ],
+      "toolOutputFilename": "exec-6b9c881c-b219-4532-954e-7b2e8b83c6c6.png",
+      "sourcePath": "art-source/diagnostico-pcr-v1.png",
+      "outputPath": "public/assets/cards/diagnostico-pcr.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2160895
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "671b899252294e8f001cd24ff7b83b06345b7b7a356c5324b1e3a27631d313a9"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisión del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Se distinguen el módulo y la cámara. El cian tiene más presencia que el reflejo tenue solicitado; margen vertical ajustado.",
+      "webp": {
+        "path": "public/assets/cards/diagnostico-pcr.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 40452,
+        "quality": 86,
+        "sha256": "4b5f250e1c4bac5065bbfff20c772f803b425c7283241430b9e263f2aac81161"
+      },
+      "catalogCode": "DX-01",
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Diagnostico",
+      "medicalClass": "Diagnostico"
+    },
+    {
+      "assetId": "barrera-mucociliar-v1",
+      "catalogId": "barrera-mucociliar",
+      "name": "Barrera Mucociliar",
+      "category": "trap",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical.\nCreate a single premium scientific videogame illustration, stylized photorealistic 3D PBR biomedical visualization, scientifically recognizable silhouette, selective microscopic surface detail, restrained cinematic lighting, cool soft key light from upper left, neutral fill, subtle rim light, dark graphite-blue laboratory or microenvironment background, realistic organic membrane or satin titanium material, moderate contrast, crisp focal subject, subtle atmospheric depth.\nSingle dominant subject, three-quarter perspective, centered within a 10–15% safe margin, approximately 65–75% frame occupancy, composition readable as a small card thumbnail. Use the supplied Macrófago Alveolar r1 image as the candidate master style reference: match its upper-left cool key, neutral fill, restrained rim, selective microtexture, muted color grading, soft light transmission through thin material where appropriate, and subtle graphite-blue depth. Transfer its visual language only, not its shape, clinical identity, close crop, or teal accent. Artistic game abstraction, not clinical diagnostic imagery. Names and IDs below are metadata only.\nSUBJECT: Barrera Mucociliar (barrera-mucociliar)\nCATEGORY: trap\nIDENTITY: One coherent tissue cross-section of respiratory epithelium, an upper row of packed tall epithelial cells with nuclei at varied heights and sparse goblet cells, fine dense apical cilia and a thin continuous semitranslucent mucus sheet just above the tips. Membrane scattering and cell microtextures like the reference. Rounded organically cut side edges.\nACTION: Cilia sweep in a shared direction beneath mucus, carrying one barely visible inert mote caught in the surface film.\nACCENT: Muted violet localized to a little reflected light in the mucus film; cells retain subdued warm tissue tones.\nCOMPOSITION: Landscape exact 4:3; three-quarter microscopic cross-section, prioritize the cilia crest and the full tissue fragment with around 12% blank border. No force field, extra tissue slabs, arrows, microscopic diagram or labels.\nOUTPUT: clean illustration only, no card frame, no labels, no typography, no numbers, no logos, no watermark, no UI, no collage.\nAVOID: cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork.",
+      "negativePrompt": "cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3"
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1"
+      ],
+      "toolOutputFilename": "exec-fadc5cc0-96c2-45a4-80de-e21d7c6efcd9.png",
+      "sourcePath": "art-source/barrera-mucociliar-v1.png",
+      "outputPath": "public/assets/cards/barrera-mucociliar.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2320080
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "e6fbe446637ea361e24392be87fff7e66cd154c2550823e01d0dba888a195bf8"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisión del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "La silueta y el corte se leen en miniatura. Los cilios y el acento violeta se aprecian mejor en vista grande; margen lateral estrecho.",
+      "webp": {
+        "path": "public/assets/cards/barrera-mucociliar.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 59392,
+        "quality": 86,
+        "sha256": "ac2b8068ce4c27c6f0d2f82ca89b9004796a9b318c59054bac1d6e875efe0002"
+      },
+      "catalogCode": "TRP-01",
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Trampa",
+      "medicalClass": "Inmunologia"
+    },
+    {
+      "assetId": "higado-v1",
+      "catalogId": "higado",
+      "name": "Hígado · Lóbulo Hepático",
+      "category": "organ",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical.\nCreate a single premium scientific videogame illustration, stylized photorealistic 3D PBR biomedical visualization, scientifically recognizable silhouette, selective microscopic surface detail, restrained cinematic lighting, cool soft key light from upper left, neutral fill, subtle rim light, dark graphite-blue laboratory or microenvironment background, realistic organic membrane or satin titanium material, moderate contrast, crisp focal subject, subtle atmospheric depth.\nSingle dominant subject, three-quarter perspective, centered within a 10–15% safe margin, approximately 65–75% frame occupancy, composition readable as a small card thumbnail. Use the supplied Macrófago Alveolar r1 image as the candidate master style reference: match its upper-left cool key, neutral fill, restrained rim, selective microtexture, muted color grading, soft light transmission through thin material where appropriate, and subtle graphite-blue depth. Transfer its visual language only, not its shape, clinical identity, close crop, or teal accent. Artistic game abstraction, not clinical diagnostic imagery. Names and IDs below are metadata only.\nSUBJECT: Hígado · Lóbulo Hepático (higado)\nCATEGORY: organ\nIDENTITY: Single isolated intact adult human liver in anterior three-quarter view with slight superior visibility: convincing broad larger anatomical right lobe, smaller tapered left lobe, smooth continuous diaphragmatic surface with the falciform landmark faintly visible, natural deep reddish-brown parenchymal color, low sheen, subtle thin capsular light transmission. Anatomically recognizable silhouette.\nACTION: An isolated anatomy reference showing lobe asymmetry in one clear view.\nACCENT: Natural muted hepatic colors with a whisper of amber in the peripheral reflected light, as in the organ profile.\nCOMPOSITION: Square exact 1:1, anatomical three-quarter isolated view, fully inside safe area, broad axis about 70% of canvas width. No cutaway, exposed vessels, severed pieces, gore, jelly-like opacity or other organs.\nOUTPUT: clean illustration only, no card frame, no labels, no typography, no numbers, no logos, no watermark, no UI, no collage.\nAVOID: cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork.",
+      "negativePrompt": "cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "1:1"
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1"
+      ],
+      "toolOutputFilename": "exec-812337f8-4d67-41c9-8b7d-282656d7aed9.png",
+      "sourcePath": "art-source/higado-v1.png",
+      "outputPath": "public/assets/organs/higado.webp",
+      "size": {
+        "widthPx": 1254,
+        "heightPx": 1254,
+        "bytes": 2022996
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "a3b24cc0ad66c29378cbc10d1c07290800ad36182688579ef07c2ebb638ce737"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisión del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Silueta y asimetría lobular legibles. El margen lateral es inferior al objetivo; validar anatomía y textura capsular.",
+      "webp": {
+        "path": "public/assets/organs/higado.webp",
+        "widthPx": 768,
+        "heightPx": 768,
+        "bytes": 45794,
+        "quality": 86,
+        "sha256": "e18ca734da9920094366035af4bbce889bcae96f915c0c3cf25649252a9a3d31"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER"
+    },
+    {
+      "assetId": "arena-clinica-tactica-v1",
+      "catalogId": null,
+      "name": "Arena clínica táctica",
+      "category": "environment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical.\nCreate a single premium scientific videogame illustration, stylized photorealistic 3D PBR biomedical visualization, scientifically recognizable silhouette, selective microscopic surface detail, restrained cinematic lighting, cool soft key light from upper left, neutral fill, subtle rim light, dark graphite-blue laboratory or microenvironment background, realistic organic membrane or satin titanium material, moderate contrast, crisp focal subject, subtle atmospheric depth.\nSingle dominant subject, three-quarter perspective, centered within a 10–15% safe margin, approximately 65–75% frame occupancy, composition readable as a small card thumbnail. Use the supplied Macrófago Alveolar r1 image as the candidate master style reference: match its upper-left cool key, neutral fill, restrained rim, selective microtexture, muted color grading, soft light transmission through thin material where appropriate, and subtle graphite-blue depth. Transfer its visual language only, not its shape, clinical identity, close crop, or teal accent. Artistic game abstraction, not clinical diagnostic imagery. Names and IDs below are metadata only.\nSUBJECT: Arena clínica táctica (arena-clinica-tactica)\nCATEGORY: environment\nIDENTITY: One research-lab tactical table in graphite and satin brushed titanium. Exactly three parallel physical lanes of equal width formed by shallow continuous flush rails, distinct and plainly countable with uninterrupted surfaces. A dedicated clear specimen dock beyond the lanes and off their axis; a small dark unlit peripheral monitor and minimal lab instruments at the far margin. Thick optical glass only on the dock, subtle material micrograin. Muted blue-gray shadows.\nACTION: Show an unoccupied station ready for a biological encounter.\nACCENT: Graphite and satin titanium with small desaturated cool reflections, no neon.\nCOMPOSITION: Panoramic exact 16:9, elevated tactical three-quarter viewpoint from near end, moderate perspective. All three lanes readable at once. Reserve generous quiet edge margins as negative space. No UI, lane markings, glyphs, projected objects or gameplay pieces.\nOUTPUT: clean illustration only, no card frame, no labels, no typography, no numbers, no logos, no watermark, no UI, no collage.\nAVOID: cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork.",
+      "negativePrompt": "cartoon, anime, toy plastic, excessive neon, glossy chrome, generic stock photography, excessive blur, clutter, gore, false anatomy, multiple unrelated subjects, text, signature, logos, copied franchise artwork",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "16:9"
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1"
+      ],
+      "toolOutputFilename": "exec-39fd01bd-db6e-42e1-a2be-0030fa84482c.png",
+      "sourcePath": "art-source/arena-clinica-tactica-v1.png",
+      "outputPath": "public/assets/environments/arena-clinica-tactica-v1.webp",
+      "size": {
+        "widthPx": 1672,
+        "heightPx": 941,
+        "bytes": 2091604
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "ee8537075642204f418f6ab6649ac633c5077e99334b4ff1a8fef7cfd39539e2"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisión del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Tres carriles visibles con muelle y monitor periférico. La mesa rebasa el margen inferior e izquierdo; revisar el aire para HUD en validación. La proporción del PNG es aproximadamente 16:9.",
+      "webp": {
+        "path": "public/assets/environments/arena-clinica-tactica-v1.webp",
+        "widthPx": 1279,
+        "heightPx": 720,
+        "bytes": 65918,
+        "quality": 86,
+        "sha256": "89cb9504e0ef154c3cd8d3b7cee931e528b970c72c37c0f92276c0f6fad5101d"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER"
+    },
+    {
+      "assetId": "linfocito-cd8-v1",
+      "catalogId": "linfocito-cd8",
+      "catalogCode": "INM-03",
+      "name": "Linfocito T Citotóxico",
+      "category": "unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical. One premium cinematic scientific 3D PBR videogame illustration. The first input is an approved-pilot comparison sheet showing Macrófago Alveolar, Candida Invasiva, Panel Diagnóstico PCR, Barrera Mucociliar, Hígado and Arena V1. Additional inputs are full-resolution examples from that sheet. The sheet provides style guidance only, output one single standalone image. Use their shared materials and grading as visual precedent: cool soft upper-left key, neutral fill, subtle semantic rim, soft light transmission through thin biological material, selective microtexture, satin brushed titanium for equipment, graphite-blue atmospheric depth. Invent a fresh understated background for this subject, without reusing the references' wispy corner motifs. Controlled midtone separation; one unmistakable silhouette readable at 96 and 160 pixels. Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art. Subject names and IDs are metadata only.\nSUBJECT: Linfocito T Citotóxico (linfocito-cd8, INM-03).\nCATEGORY: unit.\nCOMPOSITION: Exact 4:3 canvas. Center a single subject in a three-quarter view; keep all extremities within the middle 72% of the full image width AND height. 14% minimum clear margin measured to the outermost detail, prioritize silhouette and moderate contrast over magnification.\nIDENTITY AND ACTION: A single compact almost spherical cytotoxic CD8 T cell, uneven fine microvilli and modest surface folds, no macrophage pseudopods, large round eccentric nucleus through an understated organic membrane, narrow surrounding cytoplasm with a few dense lytic granules polarized toward one contact side. One action: readiness, suggested only by that compact cluster of granules. Do not add a target or extracellular effects. Muted blue-green ally rim localized to the right, natural mildly warm translucent gray cell colors. Deep slate-blue background with gentle wide gradient and a barely visible plane of tissue far in the distance.",
+      "negativePrompt": "Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-v1.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/e-candida-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1"
+      ],
+      "toolOutputFilename": "exec-91e76747-753c-4147-a2f9-411a8b43ddd0.png",
+      "sourcePath": "art-source/linfocito-cd8-v1.png",
+      "outputPath": "public/assets/cards/linfocito-cd8.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1898631
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "ca4c7a60bfa5208bda0c701a7ad87c2c5353f2afd0fa02769d45860dacd094e8"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisi?n del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Revisar silueta compacta y polarización de los gránulos al comparar con el macrófago.",
+      "webp": {
+        "path": "public/assets/cards/linfocito-cd8.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 28718,
+        "quality": 86,
+        "sha256": "c80de2e8c327c638601ead112b66504611d1107afbf331a855d110522f3ea5da"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Unidad",
+      "medicalClass": "Inmunologia"
+    },
+    {
+      "assetId": "anticuerpo-igg-v1",
+      "catalogId": "anticuerpo-igg",
+      "catalogCode": "INM-02",
+      "name": "Anticuerpo IgG Específico",
+      "category": "unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical. One premium cinematic scientific 3D PBR videogame illustration. The first input is an approved-pilot comparison sheet showing Macrófago Alveolar, Candida Invasiva, Panel Diagnóstico PCR, Barrera Mucociliar, Hígado and Arena V1. Additional inputs are full-resolution examples from that sheet. The sheet provides style guidance only, output one single standalone image. Use their shared materials and grading as visual precedent: cool soft upper-left key, neutral fill, subtle semantic rim, soft light transmission through thin biological material, selective microtexture, satin brushed titanium for equipment, graphite-blue atmospheric depth. Invent a fresh understated background for this subject, without reusing the references' wispy corner motifs. Controlled midtone separation; one unmistakable silhouette readable at 96 and 160 pixels. Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art. Subject names and IDs are metadata only.\nSUBJECT: Anticuerpo IgG Específico (anticuerpo-igg, INM-02).\nCATEGORY: unit.\nCOMPOSITION: Exact 4:3 canvas. Center a single subject in a three-quarter view; keep all extremities within the middle 72% of the full image width AND height. 14% minimum clear margin measured to the outermost detail, prioritize silhouette and moderate contrast over magnification.\nIDENTITY AND ACTION: A single iconic Y-shaped human IgG protein at stylized molecular surface scale, two equivalent paired Fab arms and one Fc stem below an articulated narrow hinge. Show two coordinated heavy-chain and two light-chain contours as connected textured protein domains, not beads, tentacles or a metallic Y. Both arm tips readable in three quarters with distinct empty space between them. One tip tilted slightly toward the viewer to imply binding readiness, no target. Subdued teal edging and a charcoal-blue clean defocused molecular microenvironment.",
+      "negativePrompt": "Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-v1.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/e-candida-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1"
+      ],
+      "toolOutputFilename": "exec-8edf0d6a-c093-4185-89a8-f23cc080dc99.png",
+      "sourcePath": "art-source/anticuerpo-igg-v1.png",
+      "outputPath": "public/assets/cards/anticuerpo-igg.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1827215
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "4bd784bd2aa701120e2ece37895a0f53391d7a6257992e250ad57113c1f5e3ec"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisi?n del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "La separación de los brazos y la bisagra sostienen la lectura del motivo en Y. El espacio por arriba y por abajo es menor que el objetivo de 14 %.",
+      "webp": {
+        "path": "public/assets/cards/anticuerpo-igg.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 30216,
+        "quality": 86,
+        "sha256": "5b7a728e21f75b7c02804dd257810da800427301d329f3016e6cfaeee35d4042"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Unidad",
+      "medicalClass": "Inmunologia"
+    },
+    {
+      "assetId": "e-rino-v1",
+      "catalogId": "e-rino",
+      "catalogCode": "VIR-01",
+      "name": "Rinovirus Mutante",
+      "category": "pathogen",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical. One premium cinematic scientific 3D PBR videogame illustration. The first input is an approved-pilot comparison sheet showing Macrófago Alveolar, Candida Invasiva, Panel Diagnóstico PCR, Barrera Mucociliar, Hígado and Arena V1. Additional inputs are full-resolution examples from that sheet. The sheet provides style guidance only, output one single standalone image. Use their shared materials and grading as visual precedent: cool soft upper-left key, neutral fill, subtle semantic rim, soft light transmission through thin biological material, selective microtexture, satin brushed titanium for equipment, graphite-blue atmospheric depth. Invent a fresh understated background for this subject, without reusing the references' wispy corner motifs. Controlled midtone separation; one unmistakable silhouette readable at 96 and 160 pixels. Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art. Subject names and IDs are metadata only.\nSUBJECT: Rinovirus Mutante (e-rino, VIR-01).\nCATEGORY: pathogen.\nCOMPOSITION: Exact 4:3 canvas. Center a single subject in a three-quarter view; keep all extremities within the middle 72% of the full image width AND height. 14% minimum clear margin measured to the outermost detail, prioritize silhouette and moderate contrast over magnification.\nIDENTITY AND ACTION: One intact compact non-enveloped rhinovirus capsid viewed obliquely with a readable pseudo-icosahedral outline and close tessellation of rounded protein capsomeres. Restrained shallow canyons rather than huge pits, no envelope, projecting spikes, antennae, transparent cutaway or exposed RNA. The catalog word Mutante is a game designation; do not introduce new physical traits or causal mechanisms. Hostile muted coral on selected rear-facing facets only over a pale slate organic-protein body. Deep graphite gradient and softly diffuse gray-blue air, no swirls.",
+      "negativePrompt": "Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-v1.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/e-candida-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1"
+      ],
+      "toolOutputFilename": "exec-a8882d53-094c-46cc-be17-dd171ec674b0.png",
+      "sourcePath": "art-source/e-rino-v1.png",
+      "outputPath": "public/assets/cards/e-rino.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2045107
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "9a35fbb31921c66ff97950788bc7e78e0b51e6b0ada1fe49be43dd76804e1f27"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisi?n del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Rim coral posterior diferenciado del brillo azul de la luz principal. Cápside representada como abstracción visual.",
+      "webp": {
+        "path": "public/assets/cards/e-rino.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 33270,
+        "quality": 86,
+        "sha256": "b32cffc9e5b50acaa53994ccc8934453c8d03165d3b1c44188197ec13d4f8dda"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Unidad",
+      "medicalClass": "Patogeno"
+    },
+    {
+      "assetId": "e-staph-v1",
+      "catalogId": "e-staph",
+      "catalogCode": "BAC-01",
+      "name": "Estafilococo Dorado",
+      "category": "pathogen",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical. One premium cinematic scientific 3D PBR videogame illustration. The first input is an approved-pilot comparison sheet showing Macrófago Alveolar, Candida Invasiva, Panel Diagnóstico PCR, Barrera Mucociliar, Hígado and Arena V1. Additional inputs are full-resolution examples from that sheet. The sheet provides style guidance only, output one single standalone image. Use their shared materials and grading as visual precedent: cool soft upper-left key, neutral fill, subtle semantic rim, soft light transmission through thin biological material, selective microtexture, satin brushed titanium for equipment, graphite-blue atmospheric depth. Invent a fresh understated background for this subject, without reusing the references' wispy corner motifs. Controlled midtone separation; one unmistakable silhouette readable at 96 and 160 pixels. Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art. Subject names and IDs are metadata only.\nSUBJECT: Estafilococo Dorado (e-staph, BAC-01).\nCATEGORY: pathogen.\nCOMPOSITION: Exact 4:3 canvas. Center a single subject in a three-quarter view; keep all extremities within the middle 72% of the full image width AND height. 14% minimum clear margin measured to the outermost detail, prioritize silhouette and moderate contrast over magnification.\nIDENTITY AND ACTION: One irregular tight grape-like cluster of clearly spherical golden-straw Staphylococcus aureus cocci, lightly granular organic walls, mostly opaque cores and subtly translucent thin edges, a faint patch of transparent connected extracellular matrix in a few interstices as a protective-biofilm game motif. No stems, buds, yeasty necks, bacilli, filaments, or literal grapes. Warm ivory-gold bodies and discreet coral antagonist rim on the rear. Cool charcoal-blue background with soft suggestion of a distant fluid plane.",
+      "negativePrompt": "Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-v1.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/e-candida-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1"
+      ],
+      "toolOutputFilename": "exec-d080a049-e695-446f-97a4-9c2a150fc248.png",
+      "sourcePath": "art-source/e-staph-v1.png",
+      "outputPath": "public/assets/cards/e-staph.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1986859
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "6ad0cd44232d59bb4cd260800b6b07d1d60f671de20bb609b186beccb1ad717c"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisi?n del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Racimo de cocos con acento coral. El biofilm es un motivo semitransparente de juego. Se conserva un plano de fluido similar al de algunos pilotos del primer lote.",
+      "webp": {
+        "path": "public/assets/cards/e-staph.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 36464,
+        "quality": 86,
+        "sha256": "6555e9dfa159fe3d4b7a974551afe06e30881613d4fd4cc08a4b2233eb20962c"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Unidad",
+      "medicalClass": "Patogeno"
+    },
+    {
+      "assetId": "meropenem-iv-v1",
+      "catalogId": "meropenem-iv",
+      "catalogCode": "FAR-02",
+      "name": "Meropenem Carbapenémico",
+      "category": "treatment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical. One premium cinematic scientific 3D PBR videogame illustration. The first input is an approved-pilot comparison sheet showing Macrófago Alveolar, Candida Invasiva, Panel Diagnóstico PCR, Barrera Mucociliar, Hígado and Arena V1. Additional inputs are full-resolution examples from that sheet. The sheet provides style guidance only, output one single standalone image. Use their shared materials and grading as visual precedent: cool soft upper-left key, neutral fill, subtle semantic rim, soft light transmission through thin biological material, selective microtexture, satin brushed titanium for equipment, graphite-blue atmospheric depth. Invent a fresh understated background for this subject, without reusing the references' wispy corner motifs. Controlled midtone separation; one unmistakable silhouette readable at 96 and 160 pixels. Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art. Subject names and IDs are metadata only.\nSUBJECT: Meropenem Carbapenémico (meropenem-iv, FAR-02).\nCATEGORY: treatment.\nCOMPOSITION: Exact 4:3 canvas. Center a single subject in a three-quarter view; keep all extremities within the middle 72% of the full image width AND height. 14% minimum clear margin measured to the outermost detail, prioritize silhouette and moderate contrast over magnification.\nIDENTITY AND ACTION: One compact sealed sterile pharmaceutical glass vial with thick glass and restrained satin titanium-aluminum crimp over a stopper, neutral off-white powder visible in the base, no labels and no markings. A faint abstract molecular interaction motif limited to a reflection through the vial, no exact chemical diagram, no letters or floating ornaments. Blue pharmacology accent confined to the side-lit glass base. Soft dark graphite-blue lab stage and gentle shallow depth.",
+      "negativePrompt": "Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-v1.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/e-candida-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1"
+      ],
+      "toolOutputFilename": "exec-42773a75-4da2-4c9b-a704-4016ff261884.png",
+      "sourcePath": "art-source/meropenem-iv-v1.png",
+      "outputPath": "public/assets/cards/meropenem-iv.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1829575
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "40ffd6638e9fe2c17b28cc7267352a9841afcddec5db79f34e8e420aeafd9dc1"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisi?n del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Identidad de catálogo asignada al vial, cuya composición es una abstracción de tratamiento.",
+      "webp": {
+        "path": "public/assets/cards/meropenem-iv.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 21936,
+        "quality": 86,
+        "sha256": "83ae03d561c9c51e8cb6a53a9cbcfdd92633c7c7c202cbccf8e5c48013cc7f69"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Tratamiento",
+      "medicalClass": "Farmacologia"
+    },
+    {
+      "assetId": "desfibrilador-qx-v1",
+      "catalogId": "desfibrilador-qx",
+      "catalogCode": "CIR-01",
+      "name": "Unidad Desfibriladora",
+      "category": "surgical unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical. One premium cinematic scientific 3D PBR videogame illustration. The first input is an approved-pilot comparison sheet showing Macrófago Alveolar, Candida Invasiva, Panel Diagnóstico PCR, Barrera Mucociliar, Hígado and Arena V1. Additional inputs are full-resolution examples from that sheet. The sheet provides style guidance only, output one single standalone image. Use their shared materials and grading as visual precedent: cool soft upper-left key, neutral fill, subtle semantic rim, soft light transmission through thin biological material, selective microtexture, satin brushed titanium for equipment, graphite-blue atmospheric depth. Invent a fresh understated background for this subject, without reusing the references' wispy corner motifs. Controlled midtone separation; one unmistakable silhouette readable at 96 and 160 pixels. Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art. Subject names and IDs are metadata only.\nSUBJECT: Unidad Desfibriladora (desfibrilador-qx, CIR-01).\nCATEGORY: surgical unit.\nCOMPOSITION: Exact 4:3 canvas. Center a single subject in a three-quarter view; keep all extremities within the middle 72% of the full image width AND height. 14% minimum clear margin measured to the outermost detail, prioritize silhouette and moderate contrast over magnification.\nIDENTITY AND ACTION: One compact medical defibrillator, graphite enclosure and satin brushed titanium, with two unmistakable insulated hand paddles in integrated docks, broad rounded conductive contact faces, short neat cable runs into the same case. Everything is one shape with a readable outline. Show a tiny reflected amber status glow as a surgical class accent, no arcs, no patient, no operator, no screen surface, no buttons with glyphs. Cool softly lit matte studio bench with graphite depth distinct from PCR background.",
+      "negativePrompt": "Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-v1.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/e-candida-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1"
+      ],
+      "toolOutputFilename": "exec-19d34d71-1d36-4ca6-bcc3-cc3fc68dab7e.png",
+      "sourcePath": "art-source/desfibrilador-qx-v1.png",
+      "outputPath": "public/assets/cards/desfibrilador-qx.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2069004
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "b18e42d7efbeaea30042979d6c8a470ba3a29cf6b97f14ff3111a677fdae0b83"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisi?n del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Los electrodos son el rasgo distintivo frente al módulo PCR del primer lote.",
+      "webp": {
+        "path": "public/assets/cards/desfibrilador-qx.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 30386,
+        "quality": 86,
+        "sha256": "f0207c8ce704c67670e0edd1813764f9139787e94811e94f8bac024247f1e6be"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER",
+      "catalogKind": "Unidad",
+      "medicalClass": "Cirugia"
+    },
+    {
+      "assetId": "corazon-v1",
+      "catalogId": "corazon",
+      "catalogCode": null,
+      "name": "Corazón · Miocardio Ventricular",
+      "category": "organ",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical. One premium cinematic scientific 3D PBR videogame illustration. The first input is an approved-pilot comparison sheet showing Macrófago Alveolar, Candida Invasiva, Panel Diagnóstico PCR, Barrera Mucociliar, Hígado and Arena V1. Additional inputs are full-resolution examples from that sheet. The sheet provides style guidance only, output one single standalone image. Use their shared materials and grading as visual precedent: cool soft upper-left key, neutral fill, subtle semantic rim, soft light transmission through thin biological material, selective microtexture, satin brushed titanium for equipment, graphite-blue atmospheric depth. Invent a fresh understated background for this subject, without reusing the references' wispy corner motifs. Controlled midtone separation; one unmistakable silhouette readable at 96 and 160 pixels. Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art. Subject names and IDs are metadata only.\nSUBJECT: Corazón · Miocardio Ventricular (corazon).\nCATEGORY: organ.\nCOMPOSITION: Exact 1:1 canvas. Center a single subject in a three-quarter view; keep all extremities within the middle 72% of the full image width AND height. 14% minimum clear margin measured to the outermost detail, prioritize silhouette and moderate contrast over magnification.\nIDENTITY AND ACTION: One intact adult human heart in anterior three-quarter view, apex formed by the left ventricle angled down toward the subject's left, broad base, right ventricle anterior, left ventricle larger and forming the anatomical left border, recognizable aortic arch with its branches and separate pulmonary trunk relationship, restrained anterior coronary course along anatomical surface. Natural muted reddish-brown myocardium and local subdued red profile rim; thin moist epicardial softness, no glasslike transparency. No cutaway, exposed blood, excessive vessel stumps or extra organs. Quiet blue-graphite organ stage, deep soft tonal falloff.",
+      "negativePrompt": "Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "1:1",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-v1.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/e-candida-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1"
+      ],
+      "toolOutputFilename": "exec-9c8a806b-b6b3-42d1-accb-419cc10417aa.png",
+      "sourcePath": "art-source/corazon-v1.png",
+      "outputPath": "public/assets/organs/corazon.webp",
+      "size": {
+        "widthPx": 1254,
+        "heightPx": 1254,
+        "bytes": 2040242
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "a3d10330ba786e824305d19f2b743b0e51ccc9e66a74738a3dd5739d3039928a"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisi?n del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Revisión anatómica especializada pendiente. Margen superior corto en el arco aórtico, sin cortes en el original.",
+      "webp": {
+        "path": "public/assets/organs/corazon.webp",
+        "widthPx": 768,
+        "heightPx": 768,
+        "bytes": 47322,
+        "quality": 86,
+        "sha256": "70ea3eb379baa4ee9dc88df917af7c8603ef1cb3ddedc332d77ea0457f7ee7e4"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER"
+    },
+    {
+      "assetId": "arena-clinica-tactica-v2",
+      "catalogId": null,
+      "catalogCode": null,
+      "name": "Arena clínica táctica V2",
+      "category": "environment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 2,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare, Cinematic Bio-Tactical. One premium cinematic scientific 3D PBR videogame illustration. The first input is an approved-pilot comparison sheet showing Macrófago Alveolar, Candida Invasiva, Panel Diagnóstico PCR, Barrera Mucociliar, Hígado and Arena V1. Additional inputs are full-resolution examples from that sheet. The sheet provides style guidance only, output one single standalone image. Use their shared materials and grading as visual precedent: cool soft upper-left key, neutral fill, subtle semantic rim, soft light transmission through thin biological material, selective microtexture, satin brushed titanium for equipment, graphite-blue atmospheric depth. Invent a fresh understated background for this subject, without reusing the references' wispy corner motifs. Controlled midtone separation; one unmistakable silhouette readable at 96 and 160 pixels. Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art. Subject names and IDs are metadata only.\nSUBJECT: Arena clínica táctica V2 (arena-clinica-tactica).\nCATEGORY: environment.\nCOMPOSITION: Landscape 16:9.\nIDENTITY AND ACTION: One single unoccupied rectangular research-grade tactical table, viewed from high tactical three-quarter almost top-down (about 55 degrees down), full table framed, foreground aligned with camera, grounded in sparse dark laboratory. Hard layout constraint: the central board is a simple exactly THREE columns by TWO rows array of SIX large physical rectangular shallow inlays. Each of exactly three front-to-back columns pairs one front ally inlay and one back enemy inlay, aligned across a plain crosswise center gap. Front row muted teal edge, back row muted coral edge. Exactly TWO additional much smaller rectangular violet-accent trap recesses sit side by side on the near table lip OUTSIDE the six large inlays. Exactly ONE circular low glass-and-titanium specimen dock sits to the RIGHT of the board beyond all the columns and rows, reserved for the organ and kept empty. There are no other rectangles, docks, trays, lanes, subdivisions or recesses on the surface. Keep the entire silhouette of the table and all zones visible at once with generous negative space on all sides. Mechanical build from beveled boxes, flat inserts, thin edge strips and stacked cylinders only, appropriate for Three.js. Satin titanium, graphite composite, thickness visible in glass. Cool upper-left soft key and quiet graphite-blue lab haze. All markings forbidden; color is limited to tiny edge accents.",
+      "negativePrompt": "Art-only: no text, letters, numbers, markings, UI, statistics, logos, watermark, card, collage or frame. Avoid cartoon, toy plastic, mirror chrome, excessive neon, generic stock imagery, excessive blur, visual clutter, gore, false anatomy, franchise art.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "16:9",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-v1.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/higado-v1.png",
+          "art-source/arena-clinica-tactica-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1"
+      ],
+      "toolOutputFilename": "exec-9c8b270d-1909-462e-9c9e-c56f824d773c.png",
+      "sourcePath": "art-source/arena-clinica-tactica-v2.png",
+      "outputPath": "public/assets/environments/arena-clinica-tactica.webp",
+      "size": {
+        "widthPx": 1672,
+        "heightPx": 941,
+        "bytes": 1914344
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "51cccecf635d6893b739044b93e19295a221ba0e3146341002b6bf4106d11b6b"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revisi?n del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "notes": "Seis posiciones en dos filas de tres, dos alojamientos para trampas y muelle independiente al lado derecho. Chasis completo visible, margen lateral estrecho.",
+      "webp": {
+        "path": "public/assets/environments/arena-clinica-tactica.webp",
+        "widthPx": 1279,
+        "heightPx": 720,
+        "bytes": 47790,
+        "quality": 86,
+        "sha256": "95326ac029f330d445faca0e97b5d2142bfa209525d4c2993b38cc982d3654d5"
+      },
+      "referenceStatus": "PROVISIONAL_MASTER"
+    },
+    {
+      "assetId": "celula-madre-v1",
+      "catalogId": "celula-madre",
+      "catalogCode": "INM-04",
+      "name": "Célula Madre Tisular",
+      "category": "unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-01",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Célula Madre Tisular (celula-madre) is metadata only. Category unit. Accent: inmunología teal, limited to a narrow localized rim or reflection. One compact rounded progenitor cell with smooth delicate semitranslucent membrane, proportionally large single round nucleus, fine surface granularity and faint undifferentiated cytoplasm; gentle poised division implied by orientation only, no second cell. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/linfocito-cd8-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-b492320a-1e23-4fca-b488-b682443dceef.png",
+      "sourcePath": "art-source/celula-madre-v1.png",
+      "outputPath": "art-source/celula-madre-v1.png",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1917084
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "36576df11ecc3e7cc042115a20e2d808cc7e5140715883b77ba2eabe7b6ed922"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "SUPERSEDED",
+      "notes": "Membrana oval lisa y nucleo tenue para distinguir el contorno del linfocito CD8 a 96 px.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Inmunologia"
+    },
+    {
+      "assetId": "fagocito-gigante-v1",
+      "catalogId": "fagocito-gigante",
+      "catalogCode": "INM-06",
+      "name": "Macrófago Activado IFN",
+      "category": "unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-01",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Macrófago Activado IFN (fagocito-gigante) is metadata only. Category unit. Accent: inmunología teal, limited to a narrow localized rim or reflection. One bulky flattened activated macrophage with broad short lamellipodia and rough ruffling, eccentric indented nucleus, dense small vesicles and polarized asymmetric spreading outline. It is distinct from the long narrow pseudopods of the original macrophage, retaining biological continuity. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/linfocito-cd8-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-9768f484-10ff-4ef7-b639-30d4894386bf.png",
+      "sourcePath": "art-source/fagocito-gigante-v1.png",
+      "outputPath": "public/assets/cards/fagocito-gigante.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2245829
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "79f3db1602b7b52079033c39e4cc3da71588485e1e33c5143a3832140e217c1c"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Inmunologia",
+      "webp": {
+        "path": "public/assets/cards/fagocito-gigante.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 55342,
+        "quality": 86,
+        "sha256": "dd01f4a785125aee363cb6bceaaad09bf9769ed7a43b6d0199dfe3aea0e622a7"
+      }
+    },
+    {
+      "assetId": "neutrofilo-pmn-v1",
+      "catalogId": "neutrofilo-pmn",
+      "catalogCode": "INM-07",
+      "name": "Neutrófilo PMN (NETs)",
+      "category": "unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-01",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Neutrófilo PMN (NETs) (neutrofilo-pmn) is metadata only. Category unit. Accent: inmunología teal, limited to a narrow localized rim or reflection. One round granulocyte with a characteristic 3–5 lobed nucleus linked by thin bridges and restrained fine cytoplasmic granules; one short localized wispy filament bundle at one edge as conceptual NET motif, keep the cell dominant. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/linfocito-cd8-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-5b4381a8-2d73-43a9-b8da-da98393e2696.png",
+      "sourcePath": "art-source/neutrofilo-pmn-v1.png",
+      "outputPath": "public/assets/cards/neutrofilo-pmn.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2057677
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "b5e5b7332a5257629d8b91a89d69cea2a34acc6ab879f861f055a676e3be365e"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Inmunologia",
+      "webp": {
+        "path": "public/assets/cards/neutrofilo-pmn.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 41772,
+        "quality": 86,
+        "sha256": "6268e8b23fa246d4ae4400a18472390f2ab7a333773b608da450e5e06dad7439"
+      }
+    },
+    {
+      "assetId": "celula-nk-v1",
+      "catalogId": "celula-nk",
+      "catalogCode": "INM-08",
+      "name": "Célula Natural Killer",
+      "category": "unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-01",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Célula Natural Killer (celula-nk) is metadata only. Category unit. Accent: inmunología teal, limited to a narrow localized rim or reflection. One large granular lymphocyte, compact bean-shaped eccentric single nucleus, thicker visible cytoplasm and a pronounced localized cluster of coarse granules to distinguish it from the approved CD8 cell. Subtle sparse surface folds. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/linfocito-cd8-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-eaafaea0-87c1-47cb-b899-f5966484f072.png",
+      "sourcePath": "art-source/celula-nk-v1.png",
+      "outputPath": "public/assets/cards/celula-nk.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1987684
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "53ab9b0d3c2e97e9e6bbb9cf69575d6d7e935e4fe8d421bf61b08d4b3561d1ed"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Los gránulos densos polarizados ayudan a distinguirla del linfocito CD8 en vista ampliada.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Inmunologia",
+      "webp": {
+        "path": "public/assets/cards/celula-nk.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 36636,
+        "quality": 86,
+        "sha256": "c521ae9f9079042d44131601cfd7b4490ab50eeb898d9f6d9113fe29c995aa5d"
+      }
+    },
+    {
+      "assetId": "plaqueta-hemostatica-v1",
+      "catalogId": "plaqueta-hemostatica",
+      "catalogCode": "CIR-04",
+      "name": "Plaqueta Activada",
+      "category": "unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-02",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Plaqueta Activada (plaqueta-hemostatica) is metadata only. Category unit. Accent: inmunología teal, limited to a narrow localized rim or reflection. One activated small anucleate platelet with a flattened discoid core, fine central granule cluster and several short asymmetric pointed filopodia, no nucleus, single unmistakable silhouette. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/linfocito-cd8-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-3c4c7d4a-3bfc-4f00-b4a2-fd293d74ce4f.png",
+      "sourcePath": "art-source/plaqueta-hemostatica-v1.png",
+      "outputPath": "public/assets/cards/plaqueta-hemostatica.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1892464
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "373a0a031d18a981d7ea12c1751cd37b6176a0d0a4eb3ec8c6f259aff110f0c6"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Cirugia",
+      "webp": {
+        "path": "public/assets/cards/plaqueta-hemostatica.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 31492,
+        "quality": 86,
+        "sha256": "1cce4f69f231903845542e362760916f3decb8b407aa7b5ec94013091f201327"
+      }
+    },
+    {
+      "assetId": "igm-neutralizante-v1",
+      "catalogId": "igm-neutralizante",
+      "catalogCode": "TRP-02",
+      "name": "Complejo IgM Neutralizante",
+      "category": "trap",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-02",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Complejo IgM Neutralizante (igm-neutralizante) is metadata only. Category unit. Accent: inmunología teal, limited to a narrow localized rim or reflection. One molecular-surface IgM pentamer in oblique view: five Y-shaped immunoglobulin subunits forming an open roughly star-shaped arrangement, central Fc contacts and small asymmetric connector, distinct from the individual IgG, natural organic protein domain texture. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/linfocito-cd8-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-e46ffdec-0b0c-4bed-92ef-c97b3f7e9b56.png",
+      "sourcePath": "art-source/igm-neutralizante-v1.png",
+      "outputPath": "public/assets/cards/igm-neutralizante.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1985060
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "0d00fc6c906827e8f2e67113c1c53a6aa9d24085a2dbc9184300d86a1af57bb3"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Trampa",
+      "medicalClass": "Diagnostico",
+      "artPromptCategory": "unit",
+      "webp": {
+        "path": "public/assets/cards/igm-neutralizante.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 40428,
+        "quality": 86,
+        "sha256": "e2dcdb763b1cee6f4d2b41ba0cf1ee8c675ac1d47b476c3d0df2d18ab31fc943"
+      }
+    },
+    {
+      "assetId": "cirujano-vascular-v1",
+      "catalogId": "cirujano-vascular",
+      "catalogCode": "CIR-03",
+      "name": "Cirujano Endovascular",
+      "category": "surgical unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-02",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Cirujano Endovascular (cirujano-vascular) is metadata only. Category surgical unit. Accent: ámbar apagado, limited to a narrow localized rim or reflection. One endovascular catheter intervention cartridge with a thin curved catheter and atraumatic tip, integrated into a compact satin-titanium guide assembly. Contained silhouette, free of hands or patient. Small amber reflection. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/desfibrilador-qx-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/arena-clinica-tactica-v2.png",
+          "art-source/meropenem-iv-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-56521387-89b0-49fe-b45e-6edd70b760ff.png",
+      "sourcePath": "art-source/cirujano-vascular-v1.png",
+      "outputPath": "public/assets/cards/cirujano-vascular.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2095153
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "05300b93096a91951046f759cbc1e3a14c0b8cc0e2851aa5602331ddd77b8e3c"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Cirugia",
+      "webp": {
+        "path": "public/assets/cards/cirujano-vascular.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 36440,
+        "quality": 86,
+        "sha256": "4c80db115828b5daa12dad896ff2b7253d2c019121a53d695f555664f4cf1fa8"
+      }
+    },
+    {
+      "assetId": "hemostasia-urgencia-v1",
+      "catalogId": "hemostasia-urgencia",
+      "catalogCode": "TRP-04",
+      "name": "Sutura y Hemostasia",
+      "category": "trap",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-02",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Sutura y Hemostasia (hemostasia-urgencia) is metadata only. Category treatment. Accent: ámbar tenue, limited to a narrow localized rim or reflection. One precise surgical motif of a short gently curved metallic needle and existing thin thread drawing together one intact clean seam on a small stylized tissue surface. No blood or open wound. Keep instruments and tissue visually one focal group. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-8fa7f6eb-9605-4382-b5ef-fe3882db8c28.png",
+      "sourcePath": "art-source/hemostasia-urgencia-v1.png",
+      "outputPath": "art-source/hemostasia-urgencia-v1.png",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2037702
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "9987257e2d4f662d6ce67693a1be0588e2b2c055d71d750caf9068982c91bc5c"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "SUPERSEDED",
+      "notes": "Rev 1 recortaba el instrumental. Rev 2 conserva la aguja y los bordes del tejido.",
+      "catalogKind": "Trampa",
+      "medicalClass": "Cirugia",
+      "artPromptCategory": "treatment"
+    },
+    {
+      "assetId": "oseltamivir-v1",
+      "catalogId": "oseltamivir",
+      "catalogCode": "FAR-01",
+      "name": "Inhibidor Neuraminidasa",
+      "category": "treatment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-03",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Inhibidor Neuraminidasa (oseltamivir) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. One abstract molecular-surface protein assembly with a small distinctly subdued bound ligand tucked into a shallow pocket, as stylized recognition of neuraminidase inhibition. No chemical formula, structural claims, virions, kit or workflow. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-64b19880-5582-48d2-af7d-6096732582e8.png",
+      "sourcePath": "art-source/oseltamivir-v1.png",
+      "outputPath": "public/assets/cards/oseltamivir.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2022185
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "83291df1c3f73f11e26e3219434621c06ac19e8f6f902ab294fe70de5aa803a4"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Tratamiento",
+      "medicalClass": "Farmacologia",
+      "webp": {
+        "path": "public/assets/cards/oseltamivir.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 39370,
+        "quality": 86,
+        "sha256": "5c1d6dce08286a681a737f996ebb2984d4352f7458ebddee23f15324d958ab51"
+      }
+    },
+    {
+      "assetId": "alteplasa-tpa-v1",
+      "catalogId": "alteplasa-tpa",
+      "catalogCode": "CIR-02",
+      "name": "Alteplasa Fibrinolítico",
+      "category": "treatment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-03",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Alteplasa Fibrinolítico (alteplasa-tpa) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. One bounded semitranslucent fibrin-mesh fragment, with a localized edge thinning and a few interrupted fibers to evoke fibrinolysis, a single cohesive scene. No blood pool, diagnostic markings or diagrams. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-671abaea-c84e-4c5e-84c1-8c73ca84e3ea.png",
+      "sourcePath": "art-source/alteplasa-tpa-v1.png",
+      "outputPath": "art-source/alteplasa-tpa-v1.png",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2048473
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "3242bfff6a83f5264f3450a503da97e162926555d1a3ee105d9eb0eb92264c1f"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "SUPERSEDED",
+      "notes": "Rev 1 incluía un vial visualmente parecido al de Meropenem. Rev 2 centra la red de fibrina.",
+      "catalogKind": "Tratamiento",
+      "medicalClass": "Cirugia"
+    },
+    {
+      "assetId": "adrenalina-bolo-v1",
+      "catalogId": "adrenalina-bolo",
+      "catalogCode": "FAR-03",
+      "name": "Adrenalina IV en Bolo",
+      "category": "treatment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-03",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Adrenalina IV en Bolo (adrenalina-bolo) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. One slender sealed clear glass ampoule with scored-looking but unmarked constricted neck and thin curved liquid meniscus at base, faint blue contained optical impulse in the liquid as game abstraction. No syringe, labels or marks. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-d6a9cd7f-0ea6-4b87-bba8-1bed625bd6b4.png",
+      "sourcePath": "art-source/adrenalina-bolo-v1.png",
+      "outputPath": "public/assets/cards/adrenalina-bolo.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1692815
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "1cfd09cac741e42aac5fd94dd0a6bf923bb5b0e125ca2fb34652d59670b7e23d"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Tratamiento",
+      "medicalClass": "Farmacologia",
+      "webp": {
+        "path": "public/assets/cards/adrenalina-bolo.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 14482,
+        "quality": 86,
+        "sha256": "8080b0a4fa6bae3ce798b74614341147a1db4fb765e27f66778cbe1a18c270a7"
+      }
+    },
+    {
+      "assetId": "sueroterapia-ringer-v1",
+      "catalogId": "sueroterapia-ringer",
+      "catalogCode": "FAR-04",
+      "name": "Sueroterapia Ringer IV",
+      "category": "treatment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-03",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Sueroterapia Ringer IV (sueroterapia-ringer) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. One flexible unmarked sterile clear infusion pouch with soft folds, clear liquid meniscus and short integrated port, no marking or people. Subtle transmission through the translucent film and deep blue reflections. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-1ad23e5e-9047-4a6d-9d99-f5773b14ed34.png",
+      "sourcePath": "art-source/sueroterapia-ringer-v1.png",
+      "outputPath": "public/assets/cards/sueroterapia-ringer.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1752559
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "37d4703f577963d60f1cbbd7e9928a8e0f167ec64e5fbf5f83b71ce3f34fa3a1"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Tratamiento",
+      "medicalClass": "Farmacologia",
+      "webp": {
+        "path": "public/assets/cards/sueroterapia-ringer.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 20714,
+        "quality": 86,
+        "sha256": "25f851adb60c7538970ec060d00f778fb7828b2d77c32a198997849a48ef8b37"
+      }
+    },
+    {
+      "assetId": "vacuna-arnm-v1",
+      "catalogId": "vacuna-arnm",
+      "catalogCode": "INM-05",
+      "name": "Inmunización Activa",
+      "category": "diagnosis",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-04",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Inmunización Activa (vacuna-arnm) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. One abstract lipid nanoparticle, compact soft irregular spherical shell with selective material translucency and a vague short winding organic strand beneath its surface, emblematic only, no literal sequence or labeled cutaway. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-e617ffe6-7f0b-41b3-9634-9db7bd9ca0bc.png",
+      "sourcePath": "art-source/vacuna-arnm-v1.png",
+      "outputPath": "public/assets/cards/vacuna-arnm.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1910177
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "948c3f0f556a86b03836c231a85376c4e796d1325bba9c0213d4144b8c35d36a"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "A 96 px se parece a una célula. El generador bloqueó el intento de una segunda revisión. Se conserva la candidata v1 pendiente de evaluación anatómica.",
+      "catalogKind": "Diagnostico",
+      "medicalClass": "Inmunologia",
+      "artPromptCategory": "treatment",
+      "webp": {
+        "path": "public/assets/cards/vacuna-arnm.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 32886,
+        "quality": 86,
+        "sha256": "ced85d4b025b5071c3ff1171e9cf7d26a6a66293671cd96f2e254c3a05a5d1fd"
+      }
+    },
+    {
+      "assetId": "contramedida-citoquina-v1",
+      "catalogId": "contramedida-citoquina",
+      "catalogCode": "TRP-03",
+      "name": "Antagonista IL-6",
+      "category": "trap",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-04",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Antagonista IL-6 (contramedida-citoquina) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. One abstract protein-surface complex of a small cytokine form nestled under a larger antagonistic binding form with a clearly visible interface. Sculpted organic domains, restrained blue peripheral separation; no formula or mechanistic diagram. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-5ee9715e-1206-4c4a-91cb-ab7042fc011a.png",
+      "sourcePath": "art-source/contramedida-citoquina-v1.png",
+      "outputPath": "public/assets/cards/contramedida-citoquina.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2043678
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "a71bf704542f1378c8be4807af74a35ec6a203a49b66d9b7bef4c63d870a6bc1"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Trampa",
+      "medicalClass": "Farmacologia",
+      "artPromptCategory": "treatment",
+      "webp": {
+        "path": "public/assets/cards/contramedida-citoquina.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 39240,
+        "quality": 86,
+        "sha256": "699b49aa236a7e21ea61575f017e3fb62f1bb92fddd91bfd022f02d74c8ec924"
+      }
+    },
+    {
+      "assetId": "antifungico-anfo-v1",
+      "catalogId": "antifungico-anfo",
+      "catalogCode": "FAR-05",
+      "name": "Anfotericina Liposomal",
+      "category": "treatment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-04",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Anfotericina Liposomal (antifungico-anfo) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. Single dominant translucent lipid vesicle touching a small secondary curved fungal membrane plane at one point, interpretive liposomal treatment motif. Lipid surface texture, no graphic channels or instructional mechanism. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-74cf72be-3de9-46c1-9b97-2774cfa626e3.png",
+      "sourcePath": "art-source/antifungico-anfo-v1.png",
+      "outputPath": "public/assets/cards/antifungico-anfo.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2157695
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "a3b5cebda8c217d47923683bf6ce1154ab7d8fe12aefb29059df5cae7a6c2e05"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Tratamiento",
+      "medicalClass": "Farmacologia",
+      "webp": {
+        "path": "public/assets/cards/antifungico-anfo.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 49488,
+        "quality": 86,
+        "sha256": "b34b31c3a46a26b37c8accda5f0ddfd05ddbcdd093e6f5276dd43b10812df610"
+      }
+    },
+    {
+      "assetId": "corticosteroide-iv-v1",
+      "catalogId": "corticosteroide-iv",
+      "catalogCode": "FAR-06",
+      "name": "Dexametasona IV",
+      "category": "treatment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-04",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Dexametasona IV (corticosteroide-iv) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. One slim sealed clear cylindrical clinical vial with thick base, low volume of crystal-clear liquid, narrow satin-metal crimp, and no marks. Cool pale-blue side reflection. Different proportions and liquid appearance from the powder-based meropenem pilot. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-29b6b21c-ff3a-45e0-a5b8-2599f40eb370.png",
+      "sourcePath": "art-source/corticosteroide-iv-v1.png",
+      "outputPath": "public/assets/cards/corticosteroide-iv.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1774234
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "6c17da5935c7f438aafc0fd9bdae10392d6291f8198c4cafa5fe85bed00e70f6"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Tratamiento",
+      "medicalClass": "Farmacologia",
+      "webp": {
+        "path": "public/assets/cards/corticosteroide-iv.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 18780,
+        "quality": 86,
+        "sha256": "796b657449a043aacd8a8bea59a4174809898df7925ca064d472c51a464bde3e"
+      }
+    },
+    {
+      "assetId": "hemocultivo-rapido-v1",
+      "catalogId": "hemocultivo-rapido",
+      "catalogCode": "DX-02",
+      "name": "Hemocultivo Automatizado",
+      "category": "diagnosis",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-05",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Hemocultivo Automatizado (hemocultivo-rapido) is metadata only. Category diagnosis. Accent: cian tenue, limited to a narrow localized rim or reflection. One unmarked glass culture bottle with a muted dark burgundy sample and a thick glass body, seated in one compact satin titanium optical detection cradle. One faint cold cyan reflection confined to sensor. No readout, numbers or tubing. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/desfibrilador-qx-v1.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/arena-clinica-tactica-v2.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-67ecd901-2577-423c-95cf-dd5ce0693359.png",
+      "sourcePath": "art-source/hemocultivo-rapido-v1.png",
+      "outputPath": "public/assets/cards/hemocultivo-rapido.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1941291
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "cd915c83ee1409e6cc0f21ac2121d4090072028cf5251472001e9cb37eb68bd8"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Diagnostico",
+      "medicalClass": "Diagnostico",
+      "webp": {
+        "path": "public/assets/cards/hemocultivo-rapido.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 24428,
+        "quality": 86,
+        "sha256": "229606f863fde28747bd9533bee2fda5b44c300a4e6a91e59baf999ad7c68839"
+      }
+    },
+    {
+      "assetId": "interferon-alfa-v1",
+      "catalogId": "interferon-alfa",
+      "catalogCode": "FAR-07",
+      "name": "Interferón Pegilado",
+      "category": "treatment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-05",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Interferón Pegilado (interferon-alfa) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. One small asymmetric bundle of surface-rendered helical protein domains and one subdued flexible polymer tail, coherent compact silhouette. Stylized pegylated-protein motif with no chemistry diagram, notation or particles elsewhere. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-b60084c7-b1cb-4280-9182-1957aad031fa.png",
+      "sourcePath": "art-source/interferon-alfa-v1.png",
+      "outputPath": "public/assets/cards/interferon-alfa.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1920042
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "4e4175d066f5f262ee2eb76cbcd842848d5c72b472e0445efb6d0a9e6f3f3854"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Tratamiento",
+      "medicalClass": "Inmunologia",
+      "webp": {
+        "path": "public/assets/cards/interferon-alfa.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 30164,
+        "quality": 86,
+        "sha256": "eb286e2c7adde2db13cd44ab2b1881170c4c1ea9a645e1962249751114270f71"
+      }
+    },
+    {
+      "assetId": "terapia-hiperinmune-v1",
+      "catalogId": "terapia-hiperinmune",
+      "catalogCode": "DX-03",
+      "name": "Suero Hiperinmune",
+      "category": "diagnosis",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-05",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Suero Hiperinmune (terapia-hiperinmune) is metadata only. Category treatment. Accent: azul farmacología, limited to a narrow localized rim or reflection. One squat thick clear glass serum vial containing softly amber translucent liquid, controlled through-glass refraction faintly suggesting several Y-shaped reflections within. No text. Distinct from the colorless and powder references. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/diagnostico-pcr-v1.png",
+          "art-source/anticuerpo-igg-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-1759dfe4-f8e1-4fce-ab2e-1bee661b10d9.png",
+      "sourcePath": "art-source/terapia-hiperinmune-v1.png",
+      "outputPath": "public/assets/cards/terapia-hiperinmune.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1832102
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "9e508f8ae0ba6e9089acc71dabaaaf6d3fd93f9944ec9bf73a67f7715b89591f"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Diagnostico",
+      "medicalClass": "Inmunologia",
+      "artPromptCategory": "treatment",
+      "webp": {
+        "path": "public/assets/cards/terapia-hiperinmune.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 25230,
+        "quality": 86,
+        "sha256": "7f20729bfa8534e011910c24623c1d89ae1798aafc6888eabd4cc1b96b858261"
+      }
+    },
+    {
+      "assetId": "e-adeno-v1",
+      "catalogId": "e-adeno",
+      "catalogCode": "VIR-02",
+      "name": "Adenovirus Respiratorio",
+      "category": "pathogen",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-05",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Adenovirus Respiratorio (e-adeno) is metadata only. Category pathogen. Accent: coral posterior tenue, limited to a narrow localized rim or reflection. One non-enveloped adenovirus with a clearly defined icosahedral faceted shell and thin short sparse vertex fibers ending in tiny knobs, clearly distinct from the spineless compact rhinovirus. Neutral pale protein body, soft contrast. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/e-candida-v1.png",
+          "art-source/e-rino-v1.png",
+          "art-source/e-staph-v1.png",
+          "art-source/macrofago-alveolar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-a2308cd2-4f83-4e4a-b205-3a94091ad451.png",
+      "sourcePath": "art-source/e-adeno-v1.png",
+      "outputPath": "public/assets/cards/e-adeno.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1895287
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "352ebb938715d589f1c1fef01c2fac044bb00a517348c3156bacfc571bc7d078"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Patogeno",
+      "webp": {
+        "path": "public/assets/cards/e-adeno.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 31422,
+        "quality": 86,
+        "sha256": "c417657fc5e0d9f96e6ddd52765cec2f9c3f29060cccee852932d0d0a09846ae"
+      }
+    },
+    {
+      "assetId": "e-sarm-v1",
+      "catalogId": "e-sarm",
+      "catalogCode": "BAC-02",
+      "name": "Estafilococo SARM Crítico",
+      "category": "pathogen",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-06",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Estafilococo SARM Crítico (e-sarm) is metadata only. Category pathogen. Accent: coral posterior tenue, limited to a narrow localized rim or reflection. One visually compact cluster of smooth spherical staphylococcal cocci, same species morphology as approved Estafilococo Dorado. Vary view, packing and shading only. Resistances have no visual marker in this artwork. No bacilli, symbols or unusual features. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/e-candida-v1.png",
+          "art-source/e-rino-v1.png",
+          "art-source/e-staph-v1.png",
+          "art-source/macrofago-alveolar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-b3c173c7-296e-4def-bbd7-cbc80c20963f.png",
+      "sourcePath": "art-source/e-sarm-v1.png",
+      "outputPath": "art-source/e-sarm-v1.png",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1965651
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "9393eed2e0689ba140677079698d78f2f33f8fa254ccd6a0e79355bf3339663c"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "SUPERSEDED",
+      "notes": "Racimo diagonal menos compacto para diferenciarlo del Estafilococo Dorado. Comparte la morfologia de cocos; la resistencia se indica fuera del arte.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Patogeno"
+    },
+    {
+      "assetId": "e-trombo-v1",
+      "catalogId": "e-trombo",
+      "catalogCode": "VAS-01",
+      "name": "Trombo Coronario",
+      "category": "pathogen",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-06",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Trombo Coronario (e-trombo) is metadata only. Category pathogen. Accent: coral posterior tenue, limited to a narrow localized rim or reflection. One anchored elongated clot fragment contiguous with a quiet curved vessel-wall plane. Intact compact woven fibrin with trapped muted red biconcave erythrocytes, sober micro environment, no gore. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/e-candida-v1.png",
+          "art-source/e-rino-v1.png",
+          "art-source/e-staph-v1.png",
+          "art-source/macrofago-alveolar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-fc89b651-f8ed-4d4f-ba38-fd222bca2a78.png",
+      "sourcePath": "art-source/e-trombo-v1.png",
+      "outputPath": "public/assets/cards/e-trombo.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2236885
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "34f92d435034cfc2522dab908c85ad45d986d269c0c48a13354d7931ef8e6e44"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Patogeno",
+      "webp": {
+        "path": "public/assets/cards/e-trombo.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 52108,
+        "quality": 86,
+        "sha256": "3ad38d39fba18d9f743b68c5412083f62b5c1bb7662e5f09e27c61808d6cb103"
+      }
+    },
+    {
+      "assetId": "e-pseudo-v1",
+      "catalogId": "e-pseudo",
+      "catalogCode": "BAC-03",
+      "name": "Pseudomonas Alveolar",
+      "category": "pathogen",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-06",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Pseudomonas Alveolar (e-pseudo) is metadata only. Category pathogen. Accent: coral posterior tenue, limited to a narrow localized rim or reflection. One representative Pseudomonas rod, gently rounded rod ends, one fine short visible polar flagellum kept inside the safe area, subtle grain on a neutral gray-green cell envelope. Clear distinction from cocci, no mechanism or culture imagery. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/e-candida-v1.png",
+          "art-source/e-rino-v1.png",
+          "art-source/e-staph-v1.png",
+          "art-source/macrofago-alveolar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-11389580-944b-4c19-ad03-c7b589c6e194.png",
+      "sourcePath": "art-source/e-pseudo-v1.png",
+      "outputPath": "public/assets/cards/e-pseudo.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1894358
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "aa6a3d74f54b3466dd16e1718e573b3c7b58aecfed2120c86bdfa1a3c33a7f07"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Patogeno",
+      "webp": {
+        "path": "public/assets/cards/e-pseudo.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 27648,
+        "quality": 86,
+        "sha256": "d87e3ffecf59176bcd6be7aa951c60e1a702c00c1ea56c774675dd704c3f93c2"
+      }
+    },
+    {
+      "assetId": "e-embolo-v1",
+      "catalogId": "e-embolo",
+      "catalogCode": "VAS-02",
+      "name": "Émbolo Trombótico",
+      "category": "pathogen",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-06",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 4:3 canvas. Émbolo Trombótico (e-embolo) is metadata only. Category pathogen. Accent: coral posterior tenue, limited to a narrow localized rim or reflection. One free-floating tapered thrombotic fragment, isolated against soft slate depth, fibrous fibrin with embedded few dull red biconcave blood cells. No anchoring or gore. Distinguish it from the anchored elongated coronary clot. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/e-candida-v1.png",
+          "art-source/e-rino-v1.png",
+          "art-source/e-staph-v1.png",
+          "art-source/macrofago-alveolar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-813685ff-23dd-4ac7-a78f-d82849ab8427.png",
+      "sourcePath": "art-source/e-embolo-v1.png",
+      "outputPath": "public/assets/cards/e-embolo.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2009920
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "de36fe48d8bfd139e54f8b98c2348d146869f8b75d37952ba77546699877f14d"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Patogeno",
+      "webp": {
+        "path": "public/assets/cards/e-embolo.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 36652,
+        "quality": 86,
+        "sha256": "927e2357c29d9a41247f34e272d9f9703e42efbb6f35290f893dd6ee9fd4a893"
+      }
+    },
+    {
+      "assetId": "pulmon-v1",
+      "catalogId": "pulmon",
+      "catalogCode": null,
+      "name": "Pulmón · Parénquima Alveolar",
+      "category": "organ",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-07",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 1:1 canvas. Pulmón · Parénquima Alveolar (pulmon) is metadata only. Category organ. Accent: azul tenue, limited to a narrow localized rim or reflection. One intact paired set of adult human lungs with short trachea and main bronchial branching between them. Right three and left two lobes subtly marked; left cardiac notch. Muted natural dusty warm-pink tissue, wet satin pleural surface, no cutaway. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "1:1",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/higado-v1.png",
+          "art-source/corazon-v1.png",
+          "art-source/barrera-mucociliar-v1.png",
+          "art-source/macrofago-alveolar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-a69809d2-7fd8-49ed-a818-31001599da39.png",
+      "sourcePath": "art-source/pulmon-v1.png",
+      "outputPath": "public/assets/organs/pulmon.webp",
+      "size": {
+        "widthPx": 1254,
+        "heightPx": 1254,
+        "bytes": 2088704
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "3e8a3582f48cf76459595e820fa1732ea52f471497f7334a4811a08e4f4bb26e"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Se reconocen el árbol proximal y la asimetría de los lóbulos. Comprobar anatomía y margen de la tráquea.",
+      "webp": {
+        "path": "public/assets/organs/pulmon.webp",
+        "widthPx": 768,
+        "heightPx": 768,
+        "bytes": 54694,
+        "quality": 86,
+        "sha256": "db5410509926e280a7cca8cd0cfccd017c09116df93066f373a47de2915b2db3"
+      }
+    },
+    {
+      "assetId": "cerebro-v1",
+      "catalogId": "cerebro",
+      "catalogCode": null,
+      "name": "Cerebro · Corteza y Sinapsis",
+      "category": "organ",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-07",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 1:1 canvas. Cerebro · Corteza y Sinapsis (cerebro) is metadata only. Category organ. Accent: violeta tenue, limited to a narrow localized rim or reflection. One intact adult human brain in lateral three-quarter view, convincing hemisphere outline with differentiated cortical gyri and sulci, posterior inferior cerebellum and short brainstem. Natural pale gray pink, no glass effect or schematic connections. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "1:1",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/higado-v1.png",
+          "art-source/corazon-v1.png",
+          "art-source/barrera-mucociliar-v1.png",
+          "art-source/macrofago-alveolar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-035f035b-d216-4969-8f22-54a589135c57.png",
+      "sourcePath": "art-source/cerebro-v1.png",
+      "outputPath": "public/assets/organs/cerebro.webp",
+      "size": {
+        "widthPx": 1254,
+        "heightPx": 1254,
+        "bytes": 2065110
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "62f10d80d093a1219945b8fe903dbaa9b1359b94fe84195f7f87de7d5a11c8dc"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Revision anatomica y aprobacion individual pendientes.",
+      "webp": {
+        "path": "public/assets/organs/cerebro.webp",
+        "widthPx": 768,
+        "heightPx": 768,
+        "bytes": 50538,
+        "quality": 86,
+        "sha256": "c0ba9fa81b5d562ee853f870424b1a69b8f9fc260cf736dc3cf94cf0d9d850d0"
+      }
+    },
+    {
+      "assetId": "epitelio-v1",
+      "catalogId": "epitelio",
+      "catalogCode": null,
+      "name": "Tejido Epitelial · Barrera Mucosa",
+      "category": "organ",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 1,
+      "generationBatch": "catalogo-07",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare, Cinematic Bio-Tactical. Create one clean premium scientific videogame artwork. Input 1 is the approved style sheet of fourteen existing artworks; the next four are original detail references. Transfer their restrained photorealistic 3D PBR rendering, soft upper-left cool key, neutral fill, semitranslucent organic surfaces where biologically appropriate, satin titanium for instruments, selective microtexture, controlled contrast and graphite-blue atmospheric depth. Use a quiet background with slight tonal variation and fresh texture. Outline should read at 96 and 160 px. Centered complete subject, three-quarter perspective, maintain 13–15% clear safety border to outermost feature, requested exact 1:1 canvas. Tejido Epitelial · Barrera Mucosa (epitelio) is metadata only. Category organ. Accent: esmeralda tenue, limited to a narrow localized rim or reflection. One intact rounded cross-section fragment of nonkeratinized stratified squamous mucosal epithelium, lower basal layer of smaller densely packed cells, progressive flattening toward a moist continuous surface and thin underlying connective support. No respiratory cilia, anatomically distinct from Barrera Mucociliar. Output a single full-canvas illustration only. No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePrompt": "No typography, letters, numbers, UI, card frame, symbols, brand, watermark, gore, fake anatomy, noise, collage, neon, hero lens flare, cartoon or glossy plastic.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "1:1",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/higado-v1.png",
+          "art-source/corazon-v1.png",
+          "art-source/barrera-mucociliar-v1.png",
+          "art-source/macrofago-alveolar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ],
+      "toolOutputFilename": "exec-9cb866dd-bbab-458b-915f-514aa1abd507.png",
+      "sourcePath": "art-source/epitelio-v1.png",
+      "outputPath": "public/assets/organs/epitelio.webp",
+      "size": {
+        "widthPx": 1254,
+        "heightPx": 1254,
+        "bytes": 2113360
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "0a3c8fb9f5f337d6793573ebd685a2371dfc33ea2ba6c6deaee9af7043b4bfa3"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Corte estratificado y sin cilios para diferenciarlo de la Barrera Mucociliar.",
+      "webp": {
+        "path": "public/assets/organs/epitelio.webp",
+        "widthPx": 768,
+        "heightPx": 768,
+        "bytes": 60846,
+        "quality": 86,
+        "sha256": "f91ae612d5e5edded7cded3deec7f64ad30d3477a99e8353bbd49c51c4c7e557"
+      }
+    },
+    {
+      "assetId": "alteplasa-tpa-v2",
+      "catalogId": "alteplasa-tpa",
+      "catalogCode": "CIR-02",
+      "name": "Alteplasa Fibrinolítico",
+      "category": "treatment",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 2,
+      "generationBatch": "catalogo-08",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare / Cinematic Bio-Tactical. First input is the sheet of 14 approved provisional style references. Second input is this subject's first generated attempt, supplied only to clarify the corrections. Remaining images add full-size style detail. Produce precisely one new clean scientific videogame artwork, landscape exact 4:3. PBR macro, cool soft upper-left key, neutral fill, narrow muted semantic rim, selective microdetail, quiet dark graphite-blue background. Complete compact isolated subject with all details inside the middle 72% of width and height. No text, labels, numeric data, marks, UI, frame, borders, panel composition, gore, clinical instructions or exaggerated lighting. IDs and names below are metadata only.\nAlteplasa Fibrinolítico (alteplasa-tpa). A single isolated small tangled plug of translucent ivory-pearl fibrin fibers suspended in blue-black darkness. The central core remains knotted, and one edge unravels into a few broken gossamer strands to suggest fibrinolysis. Keep every strand inside the margin. Cool blue pharmacology rim. This image is entirely molecular-scale organic material. Remove the vial and all other instruments from the first attempt: no glass, container, cylinders, powder, labels, secondary object, or human tissue.",
+      "negativePrompt": "No text, labels, numeric data, marks, UI, frame, borders, panel composition, gore, clinical instructions or exaggerated lighting. Subject-specific exclusions are in the exact prompt.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/alteplasa-tpa-v1.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/barrera-mucociliar-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2",
+        "alteplasa-tpa-v1"
+      ],
+      "toolOutputFilename": "exec-7149d953-06fc-4f8c-a606-4df5ee9ed0a1.png",
+      "sourcePath": "art-source/alteplasa-tpa-v2.png",
+      "outputPath": "public/assets/cards/alteplasa-tpa.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2186810
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "2819961e7688e5264f8c020f1733bc2badd25417474d35e72ba4b594148bc23f"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Rev 1 incluía un vial visualmente parecido al de Meropenem. Rev 2 centra la red de fibrina.",
+      "catalogKind": "Tratamiento",
+      "medicalClass": "Cirugia",
+      "webp": {
+        "path": "public/assets/cards/alteplasa-tpa.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 53698,
+        "quality": 86,
+        "sha256": "8cc325d1ae351e960dc0728a681836287d53fb9f31a8a461eb8fd9e7b217b0d1"
+      }
+    },
+    {
+      "assetId": "hemostasia-urgencia-v2",
+      "catalogId": "hemostasia-urgencia",
+      "catalogCode": "TRP-04",
+      "name": "Sutura y Hemostasia",
+      "category": "trap",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 2,
+      "generationBatch": "catalogo-08",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare / Cinematic Bio-Tactical. First input is the sheet of 14 approved provisional style references. Second input is this subject's first generated attempt, supplied only to clarify the corrections. Remaining images add full-size style detail. Produce precisely one new clean scientific videogame artwork, landscape exact 4:3. PBR macro, cool soft upper-left key, neutral fill, narrow muted semantic rim, selective microdetail, quiet dark graphite-blue background. Complete compact isolated subject with all details inside the middle 72% of width and height. No text, labels, numeric data, marks, UI, frame, borders, panel composition, gore, clinical instructions or exaggerated lighting. IDs and names below are metadata only.\nSutura y Hemostasia (hemostasia-urgencia). One quiet compact anatomical-tissue fragment, a smooth closed seam held together by a few small neat stitches and one fully visible gently curved small suture needle resting along the near side, with thread held close. Remove forceps and other tools from the first attempt. Keep the needle, stitches, loose thread and whole tissue inside the safe margin. No hands, open wound, blood, large tool, or object entering the frame. Small warm amber surgical secondary reflection against a cool slate stage.",
+      "negativePrompt": "No text, labels, numeric data, marks, UI, frame, borders, panel composition, gore, clinical instructions or exaggerated lighting. Subject-specific exclusions are in the exact prompt.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/hemostasia-urgencia-v1.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/barrera-mucociliar-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2",
+        "hemostasia-urgencia-v1"
+      ],
+      "toolOutputFilename": "exec-c1a32c04-b645-4b7a-89ab-89bd79a79e84.png",
+      "sourcePath": "art-source/hemostasia-urgencia-v2.png",
+      "outputPath": "public/assets/cards/hemostasia-urgencia.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 2025082
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "e16f67a42f626976ea55f54e4016de7c5d9faec07a8ff4efc6badbee909892a6"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Rev 1 recortaba el instrumental. Rev 2 conserva la aguja y los bordes del tejido.",
+      "catalogKind": "Trampa",
+      "medicalClass": "Cirugia",
+      "artPromptCategory": "treatment",
+      "webp": {
+        "path": "public/assets/cards/hemostasia-urgencia.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 33838,
+        "quality": 86,
+        "sha256": "693f7f2b173dc52112f00f7d67200b403c7b586ced2011b6108253718fc5d5ec"
+      }
+    },
+    {
+      "assetId": "e-sarm-v2",
+      "catalogId": "e-sarm",
+      "catalogCode": "BAC-02",
+      "name": "Estafilococo SARM Crítico",
+      "category": "pathogen",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 2,
+      "generationBatch": "catalogo-09",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare / Cinematic Bio-Tactical. One standalone 4:3 premium scientific 3D PBR game artwork. First input is the 14-pilot style sheet, second input is the first attempt that needs differentiation, next three inputs establish surface style only. Cool upper-left soft key, neutral fill, narrow subdued semantic rim, selective microtexture and subtle graphite-blue atmosphere. One centered subject, all edges inside the middle 72% of width and height. Estafilococo SARM Crítico (e-sarm) is metadata only. Show one NEW close-up of a loosely packed, distinctly elongated asymmetrical cluster of small spherical staphylococcal cocci. Shape like a narrow diagonal bunch tapering to the upper-right, with a fuller lower-left lobe and a few gaps between perfectly spherical cocos. Side three-quarter view at a different rotation, smaller, more numerous round individual cocci than the tight near-circular golden group in the rejected attempt. Naturally beige-muted amber cells, slight coral rim, no mutation appearance or visible resistance marker. The approved Estafilococo Dorado is the same species: use it for the surface treatment only; the entirely new packing and elongated outer contour should differentiate the illustrations at 96 px. No typography, labels, numeric data, UI, logo, watermark, card frame, gore, toy plastic, noisy particles, or fluorescence.",
+      "negativePrompt": "No typography, labels, numeric data, UI, logo, watermark, card frame, gore, toy plastic, noisy particles, or fluorescence.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/e-sarm-v1.png",
+          "art-source/e-staph-v1.png",
+          "art-source/e-candida-v1.png",
+          "art-source/e-rino-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2",
+        "e-sarm-v1"
+      ],
+      "toolOutputFilename": "exec-ed14ab62-15d8-45b6-baec-c1c84b90d614.png",
+      "sourcePath": "art-source/e-sarm-v2.png",
+      "outputPath": "public/assets/cards/e-sarm.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1807074
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "49a57be3e07a125e910fa49322d439e597935ac7fb678f70530a548db3d13b9a"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Racimo diagonal menos compacto para diferenciarlo del Estafilococo Dorado. Comparte la morfologia de cocos; la resistencia se indica fuera del arte.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Patogeno",
+      "webp": {
+        "path": "public/assets/cards/e-sarm.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 25606,
+        "quality": 86,
+        "sha256": "aaa073475c5c2d7de5ee23a47bfd37caeef623c929def63eb673176f0cba6ae0"
+      }
+    },
+    {
+      "assetId": "celula-madre-v2",
+      "catalogId": "celula-madre",
+      "catalogCode": "INM-04",
+      "name": "Célula Madre Tisular",
+      "category": "unit",
+      "artDirectionVersion": "CV-ART-01 v1.0",
+      "revision": 2,
+      "generationBatch": "catalogo-09",
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0, Clinical Warfare / Cinematic Bio-Tactical. One standalone 4:3 premium scientific 3D PBR game artwork. First input is the 14-pilot style sheet, second input is the first attempt that needs differentiation, next three inputs establish surface style only. Cool upper-left soft key, neutral fill, narrow subdued semantic rim, selective microtexture and subtle graphite-blue atmosphere. One centered subject, all edges inside the middle 72% of width and height. Célula Madre Tisular (celula-madre) is metadata only. Show one NEW compact smoothly oval early progenitor with continuous subtly folded semi-translucent pale cell membrane and one big round softly visible nucleus. Require a smooth quiet continuous edge with at most three shallow lobes, broad oval tilted three-quarter silhouette, far less textural contrast inside than a mature lymphocyte. No hair, stubs, spikes, microvilli, high-contrast granule clusters or actin filaments. Cool pale pearl-slate render and restrained teal edge. The rounded CD8 reference is style only. The first attempt looked nearly identical to CD8; this different silhouette must be clear at 96 px. No typography, labels, numeric data, UI, logo, watermark, card frame, gore, toy plastic, noisy particles, or fluorescence.",
+      "negativePrompt": "No typography, labels, numeric data, UI, logo, watermark, card frame, gore, toy plastic, noisy particles, or fluorescence.",
+      "negativePromptMode": "inline",
+      "provider": "OpenAI",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "modelVersion": null,
+      "seed": null,
+      "parameters": {
+        "transparentBackground": false,
+        "requestedAspectRatio": "4:3",
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/celula-madre-v1.png",
+          "art-source/linfocito-cd8-v1.png",
+          "art-source/macrofago-alveolar-v1.png",
+          "art-source/barrera-mucociliar-v1.png"
+        ]
+      },
+      "referenceIds": [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1",
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1",
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1",
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2",
+        "celula-madre-v1"
+      ],
+      "toolOutputFilename": "exec-f6d6d933-ffa6-4a91-aa12-a94cc8c44eee.png",
+      "sourcePath": "art-source/celula-madre-v2.png",
+      "outputPath": "public/assets/cards/celula-madre.webp",
+      "size": {
+        "widthPx": 1448,
+        "heightPx": 1086,
+        "bytes": 1736349
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": "ace973856e7dcfba1a7d28a5bbdc534f52ab94e9c34ad6395e912ad21256f264"
+      },
+      "rights": {
+        "provenance": "Imagen generada con OpenAI",
+        "approval": "Pendiente de revision del proyecto"
+      },
+      "qaStatus": "QA",
+      "reviewer": null,
+      "reviewDisposition": "CANDIDATE",
+      "notes": "Membrana oval lisa y nucleo tenue para distinguir el contorno del linfocito CD8 a 96 px.",
+      "catalogKind": "Unidad",
+      "medicalClass": "Inmunologia",
+      "webp": {
+        "path": "public/assets/cards/celula-madre.webp",
+        "widthPx": 768,
+        "heightPx": 576,
+        "bytes": 17110,
+        "quality": 86,
+        "sha256": "d78a5cc4f2bf005f89c08c91565c924e2299ba66fb5c8a69f7a8a13537854aa6"
+      }
+    }
+  ],
+  "notes": [
+    "El proveedor no expuso el identificador ni la versión del modelo ni la semilla. Las proporciones se solicitaron en el prompt.",
+    "Los PNG individuales son copias íntegras de las salidas del generador. La hoja comparativa es un derivado de revisión con escalado sin recorte.",
+    "Pendiente de aprobación humana y, para los recursos biológicos, revisión de anatomía por un especialista.",
+    "Para el lote 2, las seis im?genes aprobadas se adjuntaron juntas mediante la primera hoja comparativa. Cada solicitud incluy? adem?s cuatro PNG originales como referencia complementaria, respetando el l?mite de cinco entradas."
+  ],
+  "directionApproval": {
+    "status": "PROVISIONAL",
+    "date": "2026-11-27",
+    "scope": "Direccion artistica general de los dos lotes piloto como referencias visuales.",
+    "assetIds": [
+      "macrofago-alveolar-v1",
+      "e-candida-v1",
+      "diagnostico-pcr-v1",
+      "barrera-mucociliar-v1",
+      "higado-v1",
+      "arena-clinica-tactica-v1",
+      "linfocito-cd8-v1",
+      "anticuerpo-igg-v1",
+      "e-rino-v1",
+      "e-staph-v1",
+      "meropenem-iv-v1",
+      "desfibrilador-qx-v1",
+      "corazon-v1",
+      "arena-clinica-tactica-v2"
+    ]
+  },
+  "combinedComparison": {
+    "path": "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+    "rows": [
+      [
+        "macrofago-alveolar-v1",
+        "e-candida-v1",
+        "diagnostico-pcr-v1"
+      ],
+      [
+        "barrera-mucociliar-v1",
+        "higado-v1",
+        "arena-clinica-tactica-v1"
+      ],
+      [
+        "linfocito-cd8-v1",
+        "anticuerpo-igg-v1",
+        "e-rino-v1",
+        "e-staph-v1"
+      ],
+      [
+        "meropenem-iv-v1",
+        "desfibrilador-qx-v1",
+        "corazon-v1",
+        "arena-clinica-tactica-v2"
+      ]
+    ],
+    "mainTileMaxPx": [
+      384,
+      330
+    ],
+    "thumbnailWidthsPx": [
+      96,
+      160
+    ]
+  },
+  "arenaV2Geometry": "docs/art/arena-clinica-tactica-v2-threejs.md",
+  "reviewGroups": {
+    "players": [
+      "macrofago-alveolar-v1",
+      "anticuerpo-igg-v1",
+      "linfocito-cd8-v1",
+      "celula-madre-v2",
+      "desfibrilador-qx-v1",
+      "diagnostico-pcr-v1",
+      "oseltamivir-v1",
+      "meropenem-iv-v1",
+      "alteplasa-tpa-v2",
+      "adrenalina-bolo-v1",
+      "sueroterapia-ringer-v1",
+      "vacuna-arnm-v1",
+      "cirujano-vascular-v1",
+      "fagocito-gigante-v1",
+      "barrera-mucociliar-v1",
+      "igm-neutralizante-v1",
+      "contramedida-citoquina-v1",
+      "hemostasia-urgencia-v2",
+      "neutrofilo-pmn-v1",
+      "celula-nk-v1",
+      "plaqueta-hemostatica-v1",
+      "antifungico-anfo-v1",
+      "corticosteroide-iv-v1",
+      "hemocultivo-rapido-v1",
+      "interferon-alfa-v1",
+      "terapia-hiperinmune-v1"
+    ],
+    "pathogens": [
+      "e-rino-v1",
+      "e-adeno-v1",
+      "e-staph-v1",
+      "e-sarm-v2",
+      "e-trombo-v1",
+      "e-pseudo-v1",
+      "e-candida-v1",
+      "e-embolo-v1"
+    ],
+    "organs": [
+      "corazon-v1",
+      "pulmon-v1",
+      "higado-v1",
+      "cerebro-v1",
+      "epitelio-v1",
+      "arena-clinica-tactica-v1",
+      "arena-clinica-tactica-v2"
+    ]
+  },
+  "catalogReview": {
+    "coverage": {
+      "players": 26,
+      "pathogens": 8,
+      "organs": 5
+    },
+    "newCatalogIds": 27,
+    "generatedOriginals": 31,
+    "unchangedOriginals": 14,
+    "status": "QA",
+    "cardPrototype": "docs/art/review/index.html"
+  },
+  "generationAttempts": [
+    {
+      "catalogId": "vacuna-arnm",
+      "revision": 2,
+      "prompt": "CÓDIGO VITAL — CV-ART-01 v1.0. Clinical Warfare / Cinematic Bio-Tactical. First input is the sheet of 14 approved provisional style references. Second input is this subject's first generated attempt, supplied only to clarify the corrections. Remaining images add full-size style detail. Produce precisely one new clean scientific videogame artwork, landscape exact 4:3. PBR macro, cool soft upper-left key, neutral fill, narrow muted semantic rim, selective microdetail, quiet dark graphite-blue background. Complete compact isolated subject with all details inside the middle 72% of width and height. No text, labels, numeric data, marks, UI, frame, borders, panel composition, gore, clinical instructions or exaggerated lighting. IDs and names below are metadata only.\nInmunización Activa (vacuna-arnm). A single compact lipid nanoparticle at molecular scale, far smaller and visually simpler than a cell. One thin non-circular organic lipid shell and a modest semitranslucent cutaway wedge, revealing ONLY one short softly curved undulating strand inside. Compact natural cream-blue and pearl motif. No nucleus, organelles, large purple sphere, ribosomes, membrane protrusions, microvilli, protein coating, virus, exact sequence, instructional details or notation. Restrained blue pharmacology rim gives the lipid shell a small dimensional edge.",
+      "parameters": {
+        "requestedAspectRatio": "4:3",
+        "transparentBackground": false,
+        "referencePaths": [
+          "docs/art/cv-art-01-hoja-comparativa-lotes-1-2.png",
+          "art-source/vacuna-arnm-v1.png",
+          "art-source/meropenem-iv-v1.png",
+          "art-source/barrera-mucociliar-v1.png",
+          "art-source/desfibrilador-qx-v1.png"
+        ]
+      },
+      "tool": "image_gen.imagegen",
+      "provider": "OpenAI",
+      "status": "MODERATION_BLOCKED",
+      "outputPath": null
+    }
+  ],
+  "catalogComparisons": {
+    "players": {
+      "path": "docs/art/qa-players-96-160.webp",
+      "assetIds": [
+        "macrofago-alveolar-v1",
+        "anticuerpo-igg-v1",
+        "linfocito-cd8-v1",
+        "celula-madre-v2",
+        "desfibrilador-qx-v1",
+        "diagnostico-pcr-v1",
+        "oseltamivir-v1",
+        "meropenem-iv-v1",
+        "alteplasa-tpa-v2",
+        "adrenalina-bolo-v1",
+        "sueroterapia-ringer-v1",
+        "vacuna-arnm-v1",
+        "cirujano-vascular-v1",
+        "fagocito-gigante-v1",
+        "barrera-mucociliar-v1",
+        "igm-neutralizante-v1",
+        "contramedida-citoquina-v1",
+        "hemostasia-urgencia-v2",
+        "neutrofilo-pmn-v1",
+        "celula-nk-v1",
+        "plaqueta-hemostatica-v1",
+        "antifungico-anfo-v1",
+        "corticosteroide-iv-v1",
+        "hemocultivo-rapido-v1",
+        "interferon-alfa-v1",
+        "terapia-hiperinmune-v1"
+      ]
+    },
+    "pathogens": {
+      "path": "docs/art/qa-pathogens-96-160.webp",
+      "assetIds": [
+        "e-rino-v1",
+        "e-adeno-v1",
+        "e-staph-v1",
+        "e-sarm-v2",
+        "e-trombo-v1",
+        "e-pseudo-v1",
+        "e-candida-v1",
+        "e-embolo-v1"
+      ]
+    },
+    "organs": {
+      "path": "docs/art/qa-organs-96-160.webp",
+      "assetIds": [
+        "corazon-v1",
+        "pulmon-v1",
+        "higado-v1",
+        "cerebro-v1",
+        "epitelio-v1",
+        "arena-clinica-tactica-v1",
+        "arena-clinica-tactica-v2"
+      ]
+    }
+  }
+}

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Código Vital · Diseños de cartas</title>
+    <link rel="stylesheet" href="./review.css">
+    <script type="module" src="./review.ts"></script>
+  </head>
+  <body>
+    <main class="review">
+      <header class="review-header">
+        <p class="project">Código Vital<span>CV-ART-01 v1.0</span></p>
+        <h1>Diseños de cartas</h1>
+        <p>Tres propuestas con las mismas seis cartas del catálogo.</p>
+      </header>
+      <section class="controls" aria-label="Configuración de la vista">
+        <fieldset class="views">
+          <legend>Tamaño de carta</legend>
+          <label><input type="radio" name="view" value="hand" checked><span>Mano</span></label>
+          <label><input type="radio" name="view" value="reward"><span>Recompensa</span></label>
+          <label><input type="radio" name="view" value="inspect"><span>Inspector</span></label>
+          <label><input type="radio" name="view" value="collection"><span>Colección</span></label>
+        </fieldset>
+        <label class="state-select">Estado de prueba
+          <select id="state">
+            <option value="normal">Normal</option>
+            <option value="selected">Seleccionada</option>
+            <option value="target">Objetivo requerido</option>
+            <option value="locked">No jugable</option>
+            <option value="synergy">Sinergia activa</option>
+            <option value="drawn">Recién robada</option>
+            <option value="resolving">Resolviendo</option>
+          </select>
+        </label>
+      </section>
+      <p class="instructions">Selecciona una carta para consultar su regla y sus detalles.</p>
+      <div id="proposals"></div>
+    </main>
+    <dialog id="inspector" aria-labelledby="inspect-title">
+      <div class="dialog-bar">
+        <h2 id="inspect-title">Inspector de carta</h2>
+        <form method="dialog"><button type="submit" autofocus>Cerrar</button></form>
+      </div>
+      <div id="inspect-content" class="inspect-content"></div>
+    </dialog>
+  </body>
+</html>
