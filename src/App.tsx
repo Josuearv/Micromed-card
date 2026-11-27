@@ -12,13 +12,12 @@ import { TitleScreen } from './components/TitleScreen';
 import { ALL_PLAYER_CARDS_MAP, RIVAL_DUELISTS } from './data/medicalCards';
 import { ORGAN_PROFILES } from './data/organs';
 import {
-  buildEndTurnSteps,
   canEndTurn,
   canPlayCard,
-  CombatStep,
   DuelEngineState,
   getPendingAttackers,
   resolveActivateSkill,
+  resolveEndTurn,
   resolveManualAttack,
   resolveMoveUnit,
   resolvePlayCard,
@@ -30,11 +29,10 @@ import {
   transitionRunOnVictory,
 } from './engine/runEngine';
 import {
-  clearRunSnapshot,
   loadBestGuardRecord,
   loadPreferences,
   loadRunSnapshot,
-  RunSavePayload,
+  RunCheckpoint,
   savePreferences,
   saveRunSnapshot,
   updateBestGuardRecord,
@@ -50,7 +48,6 @@ import {
   GameMode,
   GameState,
   MedicalClass,
-  RivalDuelist,
   RunPreferences,
   SpeedMode,
 } from './types/game';
@@ -61,6 +58,35 @@ const SPEED_DELAY_MS: Record<SpeedMode, number> = {
   reduced: 60,
 };
 
+type TurnPlayback = {
+  frames: NonNullable<ReturnType<typeof resolveEndTurn>>['frames'];
+  cursor: number;
+  checkpoint: RunCheckpoint;
+};
+
+function withDuel(run: RunState, duelState: DuelEngineState): RunState {
+  return { ...run, duelState, rngState: duelState.rngState,
+    idSequence: duelState.idSequence, playerLp: duelState.playerLp };
+}
+
+function duelCheckpoint(run: RunState): RunCheckpoint {
+  if (run.duelState.rivalLp <= 0) {
+    const outcome = transitionRunOnVictory(run);
+    return {
+      run: outcome.nextRun,
+      inRoundSummary: !outcome.isCampaignComplete,
+      recoveredLp: outcome.recoveredLp,
+      terminal: outcome.isCampaignComplete ? 'VICTORY' : undefined,
+    };
+  }
+  return {
+    run,
+    inRoundSummary: false,
+    recoveredLp: 0,
+    terminal: run.duelState.playerLp <= 0 ? 'GAME_OVER' : undefined,
+  };
+}
+
 export default function App() {
   const [prefs, setPrefs] = useState<RunPreferences>(() => {
     const loaded = loadPreferences();
@@ -70,9 +96,8 @@ export default function App() {
   const [bestGuardLevel, setBestGuardLevel] = useState<number>(() =>
     loadBestGuardRecord(),
   );
-  const [savedRun, setSavedRun] = useState<RunSavePayload | null>(() =>
-    loadRunSnapshot().snapshot ?? null,
-  );
+  const [savedRun, setSavedRun] = useState(loadRunSnapshot);
+  const [pendingSave, setPendingSave] = useState<{ checkpoint: RunCheckpoint; recordOnly?: boolean } | null>(null);
 
   const [gameState, setGameState] = useState<GameState>('TITLE_MENU');
   const [runState, setRunState] = useState<RunState>(() =>
@@ -103,13 +128,9 @@ export default function App() {
     name: string;
   } | null>(null);
 
-  const timersRef = useRef<number[]>([]);
+  const timerRef = useRef<number | null>(null);
   const playbackGenRef = useRef(0);
-  const pausedStepRef = useRef<{
-    steps: CombatStep[];
-    cursor: number;
-    rival: RivalDuelist;
-  } | null>(null);
+  const playbackRef = useRef<TurnPlayback | null>(null);
   const metaNonceRef = useRef(1);
   const slotAnchorRefs = useRef<SlotAnchorDomRefs>({
     player: [null, null, null],
@@ -125,33 +146,37 @@ export default function App() {
     setRunState(next);
   }, []);
 
+  const persistCheckpoint = useCallback((checkpoint: RunCheckpoint, recordOnly = false) => {
+    const { run, inRoundSummary, recoveredLp, terminal } = checkpoint;
+    const best = run.mode === 'endless' ? run.duelsWon : 0;
+    if (best) setBestGuardLevel((old) => Math.max(old, best));
+    if (!recordOnly && !saveRunSnapshot(run, inRoundSummary, recoveredLp, terminal).ok) {
+      setPendingSave({ checkpoint });
+      return;
+    }
+    setSavedRun(loadRunSnapshot());
+    const record = best ? updateBestGuardRecord(best) : null;
+    setPendingSave(record && !record.ok ? { checkpoint, recordOnly: true } : null);
+  }, []);
+
   const updateDuelState = useCallback(
     (
       nextDuel: DuelEngineState,
-      extra?: Partial<Pick<RunState, 'cardsPlayedCount' | 'turnsElapsed'>>,
-      persist = true,
+      extra?: Pick<RunState, 'cardsPlayedCount'>,
     ) => {
-      const updated: RunState = {
-        ...runRef.current,
-        ...extra,
-        duelState: nextDuel,
-        rngState: nextDuel.rngState,
-        idSequence: nextDuel.idSequence,
-        playerLp: nextDuel.playerLp,
-      };
-      runRef.current = updated;
-      setRunState(updated);
-      if (persist && nextDuel.playerLp > 0 && nextDuel.rivalLp > 0) {
-        saveRunSnapshot(updated, false, 0);
+      const updated = withDuel({ ...runRef.current, ...extra }, nextDuel);
+      syncRun(updated);
+      if (nextDuel.playerLp > 0 && nextDuel.rivalLp > 0) {
+        persistCheckpoint(duelCheckpoint(updated));
       }
       return updated;
     },
-    [],
+    [persistCheckpoint, syncRun],
   );
 
   const clearTimers = useCallback(() => {
-    timersRef.current.forEach((id) => window.clearTimeout(id));
-    timersRef.current = [];
+    if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+    timerRef.current = null;
   }, []);
 
   const cancelPlayback = useCallback(() => {
@@ -203,60 +228,30 @@ export default function App() {
     [],
   );
 
-  const handleVictoryOrDefeat = useCallback(
-    (latestRun: RunState): boolean => {
-      const d = latestRun.duelState;
-      if (d.rivalLp <= 0) {
-        cancelPlayback();
-        pausedStepRef.current = null;
-        setIsResolvingTurn(false);
-        soundEngine.playCaseStabilized();
+  const showCheckpoint = useCallback((checkpoint: RunCheckpoint) => {
+    syncRun(checkpoint.run);
+    setRecoveredLp(checkpoint.recoveredLp);
+    setGameState(checkpoint.terminal ?? (checkpoint.inRoundSummary ? 'ROUND_SUMMARY' : 'PLAYING'));
+  }, [syncRun]);
 
-        const outcome = transitionRunOnVictory(latestRun);
-        syncRun(outcome.nextRun);
-        setRecoveredLp(outcome.recoveredLp);
+  const showDuelOutcome = useCallback((checkpoint: RunCheckpoint) => {
+    if (checkpoint.terminal === 'GAME_OVER') soundEngine.playInvalidAction();
+    else soundEngine.playCaseStabilized();
+    showCheckpoint(checkpoint);
+  }, [showCheckpoint]);
 
-        if (latestRun.mode === 'endless') {
-          const updatedBest = updateBestGuardRecord(latestRun.guardLevel);
-          setBestGuardLevel(updatedBest);
-        }
-
-        if (outcome.isCampaignComplete) {
-          clearRunSnapshot();
-          setSavedRun(null);
-          setGameState('VICTORY');
-        } else {
-          saveRunSnapshot(outcome.nextRun, true, outcome.recoveredLp);
-          setSavedRun(loadRunSnapshot().snapshot ?? null);
-          setGameState('ROUND_SUMMARY');
-        }
-        return true;
-      }
-
-      if (d.playerLp <= 0) {
-        cancelPlayback();
-        pausedStepRef.current = null;
-        setIsResolvingTurn(false);
-        soundEngine.playInvalidAction();
-        if (latestRun.mode === 'endless' && latestRun.duelsWon > 0) {
-          const updatedBest = updateBestGuardRecord(latestRun.duelsWon);
-          setBestGuardLevel(updatedBest);
-        }
-        clearRunSnapshot();
-        setSavedRun(null);
-        setGameState('GAME_OVER');
-        return true;
-      }
-
-      return false;
-    },
-    [cancelPlayback, syncRun],
-  );
+  const handleVictoryOrDefeat = useCallback((latestRun: RunState) => {
+    if (latestRun.duelState.rivalLp > 0 && latestRun.duelState.playerLp > 0) return false;
+    const checkpoint = duelCheckpoint(latestRun);
+    persistCheckpoint(checkpoint);
+    showDuelOutcome(checkpoint);
+    return true;
+  }, [persistCheckpoint, showDuelOutcome]);
 
   const startMode = useCallback(
     (mode: GameMode) => {
       cancelPlayback();
-      pausedStepRef.current = null;
+      playbackRef.current = null;
       const seed = (Date.now() ^ Math.floor(Math.random() * 0xffffffff)) >>> 0;
       const fresh = startNewRun(mode, seed || 1);
       syncRun(fresh);
@@ -276,21 +271,21 @@ export default function App() {
           mode === 'endless' ? `Guardia 1 · ` : 'Duelo 1/3 · '
         }${fresh.rival.name} en ${ORGAN_PROFILES[fresh.rival.organId].shortName}.`,
       );
-      saveRunSnapshot(fresh, false, 0);
-      setSavedRun(loadRunSnapshot().snapshot ?? null);
+      persistCheckpoint(duelCheckpoint(fresh));
       soundEngine.playStartShift();
       setGameState('PLAYING');
     },
-    [cancelPlayback, syncRun],
+    [cancelPlayback, persistCheckpoint, syncRun],
   );
 
   const handleResumeSavedRun = useCallback(() => {
-    const { snapshot: snap } = loadRunSnapshot();
+    const loaded = loadRunSnapshot();
+    setSavedRun(loaded);
+    const snap = pendingSave?.checkpoint ?? loaded.snapshot;
     if (!snap) return;
     cancelPlayback();
-    pausedStepRef.current = null;
-    syncRun(snap.run);
-    setRecoveredLp(snap.recoveredLp);
+    playbackRef.current = null;
+    showCheckpoint(snap);
     setSelectedCardUid(null);
     setMovingFromLane(null);
     setSelectedAttackerLane(null);
@@ -305,8 +300,12 @@ export default function App() {
       `Guardia reanudada: ${snap.run.rival.name} · ${ORGAN_PROFILES[snap.run.rival.organId].shortName}.`,
     );
     soundEngine.playStartShift();
-    setGameState(snap.inRoundSummary ? 'ROUND_SUMMARY' : 'PLAYING');
-  }, [cancelPlayback, syncRun]);
+    if (!pendingSave && snap.run.mode === 'endless' && snap.run.duelsWon > 0) {
+      persistCheckpoint(snap, true);
+      // Keep the recovery notice until a fresh checkpoint is written.
+      setSavedRun(loaded);
+    }
+  }, [cancelPlayback, pendingSave, persistCheckpoint, showCheckpoint]);
 
   const selectedCard = useMemo(
     () => engineState.hand.find((c) => c.uid === selectedCardUid) ?? null,
@@ -615,74 +614,56 @@ export default function App() {
     }
   }, []);
 
-  const runPlaybackFrom = useCallback(
-    (steps: CombatStep[], startCursor: number, rival: RivalDuelist) => {
-      cancelPlayback();
-      const myGen = playbackGenRef.current;
-      let cursor = startCursor;
-      setIsResolvingTurn(true);
+  const runPlayback = useCallback((playback: TurnPlayback) => {
+    cancelPlayback();
+    const generation = playbackGenRef.current;
+    const stepDelay = prefs.reducedMotion || prefs.speedMode === 'reduced'
+      ? 40
+      : SPEED_DELAY_MS[prefs.speedMode];
 
-      const stepDelay =
-        prefs.reducedMotion || prefs.speedMode === 'reduced'
-          ? 40
-          : SPEED_DELAY_MS[prefs.speedMode];
-
-      const runNextStep = () => {
-        if (playbackGenRef.current !== myGen) return;
-
-        if (cursor >= steps.length) {
-          pausedStepRef.current = null;
-          setIsResolvingTurn(false);
-          const finishedRun = updateDuelState(runRef.current.duelState, {
-            turnsElapsed: runRef.current.turnsElapsed + 1,
-          });
-          setLastFeedback(
-            `Turno ${finishedRun.duelState.turn}: ${finishedRun.duelState.energy} PA disponibles.`,
-          );
-          return;
+    const runNextStep = () => {
+      if (playbackGenRef.current !== generation) return;
+      if (playback.cursor >= playback.frames.length) {
+        timerRef.current = null;
+        playbackRef.current = null;
+        setIsResolvingTurn(false);
+        const { checkpoint } = playback;
+        if (checkpoint.terminal || checkpoint.inRoundSummary) {
+          showDuelOutcome(checkpoint);
+        } else {
+          showCheckpoint(checkpoint);
+          const duel = checkpoint.run.duelState;
+          setLastFeedback(`Turno ${duel.turn}: ${duel.energy} PA disponibles.`);
         }
+        return;
+      }
 
-        const step = steps[cursor++];
-        pausedStepRef.current = { steps, cursor, rival };
+      const { nextState, events } = playback.frames[playback.cursor++];
+      // Intermediate frames only drive the board and effects.
+      setRunState(withDuel(runRef.current, nextState));
+      appendEventsToFeed(events, nextState.turn);
+      timerRef.current = window.setTimeout(runNextStep, events.length ? stepDelay : 30);
+    };
 
-        const { nextState, events } = step.execute(runRef.current.duelState);
-        const updatedRun = updateDuelState(nextState);
-
-        if (events.length > 0) {
-          appendEventsToFeed(events, nextState.turn);
-        }
-
-        if (handleVictoryOrDefeat(updatedRun)) {
-          return;
-        }
-
-        const delay = events.length > 0 ? stepDelay : 30;
-        const tid = window.setTimeout(runNextStep, delay);
-        timersRef.current.push(tid);
-      };
-
-      runNextStep();
-    },
-    [
-      cancelPlayback,
-      prefs.reducedMotion,
-      prefs.speedMode,
-      updateDuelState,
-      appendEventsToFeed,
-      handleVictoryOrDefeat,
-    ],
-  );
+    runNextStep();
+  }, [cancelPlayback, prefs.reducedMotion, prefs.speedMode, appendEventsToFeed, showCheckpoint, showDuelOutcome]);
 
   const executeEndTurnSequence = useCallback(() => {
+    if (playbackRef.current) return;
+    const run = runRef.current;
+    const resolution = resolveEndTurn(run.duelState, run.rival);
+    if (!resolution) return;
+    const checkpoint = duelCheckpoint(withDuel({ ...run, turnsElapsed: run.turnsElapsed + 1 }, resolution.nextState));
+    const playback = { frames: resolution.frames, cursor: 0, checkpoint };
+    playbackRef.current = playback;
+    persistCheckpoint(checkpoint);
+    setIsResolvingTurn(true);
     setSelectedCardUid(null);
     setMovingFromLane(null);
     setSelectedAttackerLane(null);
     if (tutorialStep !== null) setTutorialStep(null);
-
-    const rival = runRef.current.rival;
-    const steps = buildEndTurnSteps(rival);
-    runPlaybackFrom(steps, 0, rival);
-  }, [tutorialStep, runPlaybackFrom]);
+    runPlayback(playback);
+  }, [tutorialStep, persistCheckpoint, runPlayback]);
 
   const handlePhaseAction = useCallback(() => {
     const duel = runRef.current.duelState;
@@ -734,16 +715,14 @@ export default function App() {
   const handleResume = useCallback(() => {
     if (gameState !== 'PAUSED') return;
     setGameState('PLAYING');
-    if (pausedStepRef.current) {
-      const { steps, cursor, rival } = pausedStepRef.current;
-      runPlaybackFrom(steps, cursor, rival);
-    }
-  }, [gameState, runPlaybackFrom]);
+    if (playbackRef.current) runPlayback(playbackRef.current);
+  }, [gameState, runPlayback]);
 
   const proceedToNextGuard = useCallback(
     (chosenReward: DuelCard | null) => {
+      if (!runRef.current.rewardChoices.length) return;
       cancelPlayback();
-      pausedStepRef.current = null;
+      playbackRef.current = null;
       const nextRun = advanceToNextGuard(runRef.current, chosenReward);
       syncRun(nextRun);
       setRecoveredLp(0);
@@ -762,21 +741,20 @@ export default function App() {
           ORGAN_PROFILES[nextRun.rival.organId].shortName
         }.`,
       );
-      saveRunSnapshot(nextRun, false, 0);
-      setSavedRun(loadRunSnapshot().snapshot ?? null);
+      persistCheckpoint(duelCheckpoint(nextRun));
       soundEngine.playStartShift();
       setGameState('PLAYING');
     },
-    [cancelPlayback, syncRun],
+    [cancelPlayback, persistCheckpoint, syncRun],
   );
 
   const handleReturnToMenu = useCallback(() => {
     cancelPlayback();
-    pausedStepRef.current = null;
+    playbackRef.current = null;
     setIsResolvingTurn(false);
     setDeckModalOpen(false);
     setInspectedCard(null);
-    setSavedRun(loadRunSnapshot().snapshot ?? null);
+    setSavedRun(loadRunSnapshot());
     setGameState('TITLE_MENU');
   }, [cancelPlayback]);
 
@@ -963,7 +941,7 @@ export default function App() {
 
       {gameState === 'TITLE_MENU' && (
         <TitleScreen
-          savedRun={savedRun}
+          savedRun={savedRun.snapshot ?? null}
           bestGuardLevel={bestGuardLevel}
           prefs={prefs}
           onStartMode={startMode}

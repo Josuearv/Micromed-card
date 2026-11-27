@@ -22,6 +22,8 @@ export type RunLoadResult =
   | { status: 'primary' | 'backup'; snapshot: RunSavePayload }
   | { status: 'empty' | 'blocked' | 'unrecoverable'; snapshot?: never };
 
+export type RunCheckpoint = Pick<RunSavePayload, 'run' | 'inRoundSummary' | 'recoveredLp' | 'terminal'>;
+
 type WriteResult = { ok: true } | { ok: false; reason: 'blocked' | 'invalid' | 'backup' | 'primary' };
 
 const DEFAULT_PREFS: RunPreferences = {
@@ -80,13 +82,10 @@ export function loadBestGuardRecord(): number {
   return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
 }
 
-export function updateBestGuardRecord(guardLevel: number): number {
+export function updateBestGuardRecord(guardLevel: number) {
   const prev = loadBestGuardRecord();
-  const next = Math.max(prev, guardLevel);
-  if (next > prev) {
-    safeSetItem(RECORD_KEY, String(next));
-  }
-  return next;
+  const value = Math.max(prev, guardLevel);
+  return { value, ok: value === prev || safeSetItem(RECORD_KEY, String(value)) };
 }
 
 type JsonObject = Record<string, unknown>;

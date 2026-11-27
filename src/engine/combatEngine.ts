@@ -1769,6 +1769,19 @@ export interface CombatStep {
   };
 }
 
+export function resolveEndTurn(state: DuelEngineState, rival: RivalDuelist) {
+  if (state.phase === 'TURNO_RIVAL' || isDuelTerminal(state) || !canEndTurn(state).allowed) return null;
+  const frames = [];
+  let current = state;
+  for (const step of buildEndTurnSteps(rival)) {
+    const frame = step.execute(current);
+    frames.push(frame);
+    current = frame.nextState;
+    if (isDuelTerminal(current)) break;
+  }
+  return { frames, nextState: current };
+}
+
 /**
  * Pasos deterministas de cierre de combate, presión por carriles, trampas reactivas
  * y ejecución de intención rival (A03, A06, A08, A10).
