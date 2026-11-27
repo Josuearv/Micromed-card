@@ -1,9 +1,9 @@
 import { X } from 'lucide-react';
-import { useEffect } from 'react';
 import { DuelCard, TrapTrigger } from '../types/game';
 
 interface CardInspectorModalProps {
   card: DuelCard | null;
+  active: boolean;
   onClose: () => void;
 }
 
@@ -14,27 +14,18 @@ const TRAP_TRIGGER_LABEL: Record<TrapTrigger, string> = {
   beforeAllyDamage: 'Cuando un efecto de brote daña a tus unidades',
 };
 
-export function CardInspectorModal({ card, onClose }: CardInspectorModalProps) {
-  useEffect(() => {
-    if (!card) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [card, onClose]);
-
+export function CardInspectorModal({ card, active, onClose }: CardInspectorModalProps) {
   if (!card) return null;
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#050a10]/84"
       role="dialog"
-      aria-modal="true"
+      aria-modal={active || undefined}
       aria-label={`Ficha médica de ${card.name}`}
+      data-session-dialog="inspector"
+      tabIndex={-1}
+      inert={!active}
       onClick={onClose}
     >
       <div

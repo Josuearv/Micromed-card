@@ -10,6 +10,7 @@ import { CardVisual } from './CardVisual';
 
 interface EndModalsProps {
   gameState: GameState;
+  active: boolean;
   runMode: GameMode;
   guardLevel: number;
   bestGuardLevel: number;
@@ -32,6 +33,7 @@ interface EndModalsProps {
 
 export function EndModals({
   gameState,
+  active,
   runMode,
   guardLevel,
   bestGuardLevel,
@@ -59,7 +61,11 @@ export function EndModals({
     <div
       className="fixed inset-0 z-30 flex items-center justify-center p-4 md:p-6 bg-[#050a10]/84 overflow-y-auto"
       role="dialog"
-      aria-modal="true"
+      aria-modal={active || undefined}
+      aria-label={gameState === 'PAUSED' ? 'Duelo en Pausa' : 'Resultado de guardia'}
+      data-session-dialog="end"
+      tabIndex={-1}
+      inert={!active}
     >
       {gameState === 'PAUSED' && (
         <div className="w-full max-w-md rounded-2xl bg-[#0c1724] border border-slate-800 p-7 shadow-2xl">

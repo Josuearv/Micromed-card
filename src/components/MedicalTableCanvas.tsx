@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useRef } from 'react';
+import { MutableRefObject, useEffect, useLayoutEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
@@ -43,6 +43,7 @@ interface MedicalTableCanvasProps {
   eventBatch: CombatEvent[];
   playedCardMeta: { nonce: number; medicalClass: MedicalClass; name: string } | null;
   reducedMotion?: boolean;
+  suspended?: boolean;
   slotAnchorRefs: MutableRefObject<SlotAnchorDomRefs>;
   onClickPlayerSlot: (lane: number) => void;
   onClickEnemySlot: (lane: number) => void;
@@ -103,6 +104,7 @@ export function MedicalTableCanvas({
   eventBatch,
   playedCardMeta,
   reducedMotion = false,
+  suspended = false,
   slotAnchorRefs,
   onClickPlayerSlot,
   onClickEnemySlot,
@@ -114,6 +116,7 @@ export function MedicalTableCanvas({
   const telemetryRef = useRef<DuelTelemetry>(telemetry);
   const presetRef = useRef<CameraPreset>(cameraPreset);
   const reducedMotionRef = useRef<boolean>(reducedMotion);
+  const suspendedRef = useRef(suspended);
   const userOrbitingRef = useRef(false);
   const transitionActiveRef = useRef(false);
 
@@ -146,6 +149,10 @@ export function MedicalTableCanvas({
     reducedMotionRef.current = reducedMotion;
   }, [reducedMotion]);
 
+  useLayoutEffect(() => {
+    suspendedRef.current = suspended;
+  }, [suspended]);
+
   useEffect(() => {
     if (presetRef.current !== cameraPreset) {
       presetRef.current = cameraPreset;
@@ -169,6 +176,10 @@ export function MedicalTableCanvas({
   ]);
 
   useEffect(() => {
+    if (!eventBatch.length) {
+      eventQueueRef.current = [];
+      lastEventNonceRef.current = 0;
+    }
     for (const evt of eventBatch) {
       if (evt.nonce > lastEventNonceRef.current) {
         lastEventNonceRef.current = evt.nonce;
@@ -645,12 +656,17 @@ export function MedicalTableCanvas({
     };
     document.addEventListener('visibilitychange', onVisibilityChange);
 
+    let elapsed = 0;
     function tick() {
       if (disposed || document.hidden) return;
 
       const rawDt = clock.getDelta();
+      if (suspendedRef.current) {
+        scheduleNext(tick);
+        return;
+      }
       const dt = Math.min(rawDt, 0.05);
-      const elapsed = clock.elapsedTime;
+      elapsed += rawDt;
       const tel = telemetryRef.current;
 
       // 0. Hot-swap Central Organ 3D Rig when organId changes across Endless Guard levels

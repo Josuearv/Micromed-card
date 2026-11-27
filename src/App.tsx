@@ -37,6 +37,7 @@ import {
   saveRunSnapshot,
   updateBestGuardRecord,
 } from './game/persistence';
+import { ModalLayer, useModalFocus } from './game/useModalFocus';
 import {
   BoardUnit,
   CameraPreset,
@@ -120,6 +121,9 @@ export default function App() {
   const [logs, setLogs] = useState<CombatLogEntry[]>([]);
   const [tutorialStep, setTutorialStep] = useState<number | null>(1);
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>('overview');
+  const topModal: ModalLayer | null = inspectedCard ? 'inspector' : deckModalOpen ? 'deck'
+    : gameState !== 'PLAYING' && gameState !== 'TITLE_MENU' ? 'end' : null;
+  const { rootRef, captureTrigger, handleTab } = useModalFocus(topModal);
 
   const [eventBatch, setEventBatch] = useState<CombatEvent[]>([]);
   const [playedCardMeta, setPlayedCardMeta] = useState<{
@@ -183,6 +187,18 @@ export default function App() {
     playbackGenRef.current += 1;
     clearTimers();
   }, [clearTimers]);
+
+  const openDeck = useCallback(() => {
+    captureTrigger('deck');
+    cancelPlayback();
+    setDeckModalOpen(true);
+  }, [captureTrigger, cancelPlayback]);
+
+  const inspectCard = useCallback((card: DuelCard) => {
+    captureTrigger('inspector');
+    cancelPlayback();
+    setInspectedCard(card);
+  }, [captureTrigger, cancelPlayback]);
 
   useEffect(() => {
     return () => {
@@ -605,14 +621,14 @@ export default function App() {
 
   const handleInspectUnit = useCallback((unit: BoardUnit) => {
     if (unit.sourceCard) {
-      setInspectedCard(unit.sourceCard);
+      inspectCard(unit.sourceCard);
       return;
     }
     const template = ALL_PLAYER_CARDS_MAP[unit.cardId];
     if (template) {
-      setInspectedCard(template);
+      inspectCard(template);
     }
-  }, []);
+  }, [inspectCard]);
 
   const runPlayback = useCallback((playback: TurnPlayback) => {
     cancelPlayback();
@@ -708,15 +724,21 @@ export default function App() {
 
   const handlePause = useCallback(() => {
     if (gameState !== 'PLAYING') return;
+    captureTrigger('end');
     cancelPlayback();
     setGameState('PAUSED');
-  }, [gameState, cancelPlayback]);
+  }, [gameState, captureTrigger, cancelPlayback]);
 
   const handleResume = useCallback(() => {
     if (gameState !== 'PAUSED') return;
     setGameState('PLAYING');
-    if (playbackRef.current) runPlayback(playbackRef.current);
-  }, [gameState, runPlayback]);
+  }, [gameState]);
+
+  useEffect(() => {
+    if (gameState === 'PLAYING' && !topModal && playbackRef.current && timerRef.current === null) {
+      runPlayback(playbackRef.current);
+    }
+  }, [gameState, topModal, runPlayback]);
 
   const proceedToNextGuard = useCallback(
     (chosenReward: DuelCard | null) => {
@@ -788,8 +810,18 @@ export default function App() {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (topModal) {
+        if (e.key === 'Tab') handleTab(e, topModal);
+        if (e.key === 'Escape' && !e.repeat) {
+          e.preventDefault();
+          if (topModal === 'inspector') setInspectedCard(null);
+          else if (topModal === 'deck') setDeckModalOpen(false);
+          else if (gameState === 'PAUSED') handleResume();
+          else handleReturnToMenu();
+        }
+        return;
+      }
       if (e.repeat) return;
-      if (inspectedCard || deckModalOpen) return;
 
       const target = e.target;
       const isInteractiveTarget =
@@ -813,7 +845,6 @@ export default function App() {
           return;
         }
         if (gameState === 'PLAYING') handlePause();
-        else if (gameState === 'PAUSED') handleResume();
         return;
       }
 
@@ -849,14 +880,15 @@ export default function App() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [
-    inspectedCard,
-    deckModalOpen,
+    topModal,
+    handleTab,
     gameState,
     startMode,
     selectedCardUid,
     movingFromLane,
     handlePause,
     handleResume,
+    handleReturnToMenu,
     handleToggleMute,
     cycleCameraPreset,
     handlePhaseAction,
@@ -906,7 +938,8 @@ export default function App() {
   ]);
 
   return (
-    <main className="relative w-screen h-[100dvh] overflow-hidden bg-[#081018]">
+    <main ref={rootRef} className="relative w-screen h-[100dvh] overflow-hidden bg-[#081018]">
+      <div inert={topModal !== null} data-session-background tabIndex={-1}>
       {!prefs.tactical2D && (
         <MedicalTableCanvas
           telemetry={liveTelemetry}
@@ -914,6 +947,7 @@ export default function App() {
           eventBatch={eventBatch}
           playedCardMeta={playedCardMeta}
           reducedMotion={prefs.reducedMotion || prefs.speedMode === 'reduced'}
+          suspended={topModal !== null}
           slotAnchorRefs={slotAnchorRefs}
           onClickPlayerSlot={handleSelectPlayerLane}
           onClickEnemySlot={handleSelectEnemyLane}
@@ -928,7 +962,7 @@ export default function App() {
           }}
           onClickDeck={() => {
             soundEngine.playCardHover();
-            setDeckModalOpen(true);
+            openDeck();
           }}
           onWebGLUnavailable={() => {
             updatePrefs((p) => ({ ...p, tactical2D: true }));
@@ -976,9 +1010,9 @@ export default function App() {
           speedMode={prefs.speedMode}
           slotAnchorRefs={slotAnchorRefs}
           onCardClick={handleCardClick}
-          onInspectCard={(card) => setInspectedCard(card)}
+          onInspectCard={inspectCard}
           onInspectUnit={handleInspectUnit}
-          onOpenDeck={() => setDeckModalOpen(true)}
+          onOpenDeck={openDeck}
           onCancelSelection={() => {
             setSelectedCardUid(null);
             setMovingFromLane(null);
@@ -997,9 +1031,11 @@ export default function App() {
           onPause={handlePause}
         />
       )}
+      </div>
 
       <EndModals
         gameState={gameState}
+        active={topModal === 'end'}
         runMode={runState.mode}
         guardLevel={runState.guardLevel}
         bestGuardLevel={bestGuardLevel}
@@ -1012,24 +1048,26 @@ export default function App() {
         cardsPlayedCount={runState.cardsPlayedCount}
         turnsElapsed={runState.turnsElapsed}
         onResume={handleResume}
-        onOpenDeck={() => setDeckModalOpen(true)}
+        onOpenDeck={openDeck}
         onPickReward={(card) => proceedToNextGuard(card)}
         onSkipReward={() => proceedToNextGuard(null)}
-        onInspectCard={(card) => setInspectedCard(card)}
+        onInspectCard={inspectCard}
         onRestart={() => startMode(runState.mode)}
         onReturnToMenu={handleReturnToMenu}
       />
 
       <DeckModal
         open={deckModalOpen}
+        active={topModal === 'deck'}
         masterDeck={runState.masterDeck}
         duelState={engineState}
-        onInspectCard={(card) => setInspectedCard(card)}
+        onInspectCard={inspectCard}
         onClose={() => setDeckModalOpen(false)}
       />
 
       <CardInspectorModal
         card={inspectedCard}
+        active={topModal === 'inspector'}
         onClose={() => setInspectedCard(null)}
       />
     </main>

@@ -1,10 +1,11 @@
 import { HelpCircle, Layers, X } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DuelEngineState } from '../engine/combatEngine';
 import { CardInstance, CardKind, DuelCard } from '../types/game';
 
 interface DeckModalProps {
   open: boolean;
+  active: boolean;
   masterDeck: CardInstance[];
   duelState: DuelEngineState | null;
   onInspectCard: (card: DuelCard) => void;
@@ -23,6 +24,7 @@ const KIND_BADGE: Record<CardKind, string> = {
 
 export function DeckModal({
   open,
+  active,
   masterDeck,
   duelState,
   onInspectCard,
@@ -30,18 +32,6 @@ export function DeckModal({
 }: DeckModalProps) {
   const [tab, setTab] = useState<DeckTab>('master');
   const [kindFilter, setKindFilter] = useState<KindFilter>('Todas');
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
 
   const groupedMaster = useMemo(() => {
     const map = new Map<string, { card: CardInstance; count: number }>();
@@ -77,8 +67,11 @@ export function DeckModal({
     <div
       className="fixed inset-0 z-40 flex items-center justify-center p-4 md:p-6 bg-[#050a10]/84"
       role="dialog"
-      aria-modal="true"
+      aria-modal={active || undefined}
       aria-label="Visor de mazo y pilas clínicas"
+      data-session-dialog="deck"
+      tabIndex={-1}
+      inert={!active}
       onClick={onClose}
     >
       <div

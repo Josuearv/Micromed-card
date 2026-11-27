@@ -43,7 +43,8 @@ async function scenario(name, body, options = {}) {
   context.setDefaultTimeout(5000);
   const errors = [];
   context.on('page', (page) => page.on('pageerror', (error) => errors.push(error.message)));
-  await context.addInitScript(({ fixture, backupFixture, deny, three, main, backup }) => {
+  await context.addInitScript(({ fixture, backupFixture, deny, three, main, backup, appOrigin }) => {
+    if (location.origin !== appOrigin) return;
     if (!localStorage.getItem('qa-initialized')) {
       if (fixture) localStorage.setItem(main, typeof fixture === 'string' ? fixture : JSON.stringify(fixture));
       if (backupFixture) localStorage.setItem(backup, JSON.stringify(backupFixture));
@@ -62,7 +63,7 @@ async function scenario(name, body, options = {}) {
     };
     Date.now = () => 12345;
     Math.random = () => 0;
-  }, { main, backup, ...options });
+  }, { main, backup, appOrigin: new URL(origin).origin, ...options });
   const open = async () => {
     const page = await context.newPage();
     await page.goto(origin, { waitUntil: 'domcontentloaded' });
