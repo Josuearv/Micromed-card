@@ -1,0 +1,83 @@
+import { X } from 'lucide-react';
+import { DuelCard } from '../types/game';
+
+interface CardInspectorModalProps {
+  card: DuelCard | null;
+  onClose: () => void;
+}
+
+export function CardInspectorModal({ card, onClose }: CardInspectorModalProps) {
+  if (!card) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-40 flex items-center justify-center p-6 bg-[#050a10]/82"
+      role="dialog"
+      aria-modal="true"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-2xl bg-[#0c1724] border border-slate-700 p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <p className="text-xs font-mono-tabular text-sky-400 mb-1">
+              {card.code} · {card.kind} · {card.medicalClass}
+            </p>
+            <h2 className="font-display text-xl font-bold text-slate-100">
+              {card.name}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar ficha médica"
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+          >
+            <X className="w-4 h-4" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="space-y-3 text-xs leading-relaxed">
+          <div className="rounded-lg bg-[#08111a] border border-slate-800 p-3">
+            <div className="font-semibold text-amber-300 mb-1">
+              Función Estratégica en Juego
+            </div>
+            <p className="text-slate-200">{card.shortRule}</p>
+            {card.kind === 'Unidad' && (
+              <p className="font-mono-tabular text-slate-400 mt-1.5">
+                Coste {card.cost} PA · ATK {card.atk} · PS {card.maxHp} · Habilidad: {card.abilityLabel}
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-lg bg-[#08111a] border border-slate-800 p-3">
+            <div className="font-semibold text-emerald-400 mb-1">
+              Fundamento Médico Real
+            </div>
+            <p className="text-slate-300">{card.medicalBasis}</p>
+          </div>
+
+          <div className="rounded-lg bg-[#08111a] border border-slate-800 p-3">
+            <div className="font-semibold text-sky-400 mb-1">
+              Simplificación de Diseño
+            </div>
+            <p className="text-slate-300">{card.gameSimplification}</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="rounded-lg bg-[#08111a] border border-slate-800 p-3">
+              <div className="font-semibold text-cyan-300 mb-1">Sinergias</div>
+              <p className="text-slate-300">{card.synergies}</p>
+            </div>
+            <div className="rounded-lg bg-[#08111a] border border-slate-800 p-3">
+              <div className="font-semibold text-rose-400 mb-1">Contraefectos</div>
+              <p className="text-slate-300">{card.counterEffects}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

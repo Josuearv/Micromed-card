@@ -1,0 +1,6 @@
+{
+  "name": "Código Vital — Juego de Cartas Clínico",
+  "description": "Juego táctico de cartas médicas en 3D. Diagnostica patologías, administra fármacos y estabiliza pacientes críticos en guardia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
