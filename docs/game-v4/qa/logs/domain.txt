@@ -1,0 +1,10 @@
+{"id":"UX-006","command":"PLAY_CARD","phase":"TURNO_RIVAL","validator":"INVALID_PHASE","resolverAccepted":true,"events":1,"energy":[4,1],"rng":[-127870049,-127870049],"sequence":[16,18]}
+{"id":"UX-006","command":"MOVE_UNIT","phase":"TURNO_RIVAL","validator":"INVALID_PHASE","resolverAccepted":true,"events":1,"energy":[1,1],"rng":[-127870049,-127870049],"sequence":[18,19]}
+{"id":"UX-006","command":"ATTACK","phase":"TURNO_RIVAL","validator":"INVALID_PHASE","resolverAccepted":true,"events":1,"energy":[1,1],"rng":[-127870049,-127870049],"sequence":[18,19]}
+{"id":"UX-006","command":"ACTIVATE_SKILL","phase":"TURNO_RIVAL","validator":"INVALID_PHASE","resolverAccepted":true,"events":1,"energy":[2,1],"rng":[-127870049,-127870049],"sequence":[18,19]}
+{"id":"PLAYBACK_BASELINE","index":0,"phase":"TURNO_RIVAL","turn":1,"events":0,"lp":[4000,3000],"rng":-127870049}
+{"id":"PLAYBACK_BASELINE","index":1,"phase":"TURNO_RIVAL","turn":1,"events":0,"lp":[4000,3000],"rng":-127870049}
+{"id":"PLAYBACK_BASELINE","index":2,"phase":"TURNO_RIVAL","turn":1,"events":1,"lp":[3150,3000],"rng":-127870049}
+{"id":"PLAYBACK_BASELINE","index":3,"phase":"TURNO_RIVAL","turn":1,"events":0,"lp":[3150,3000],"rng":-127870049}
+{"id":"PLAYBACK_BASELINE","index":4,"phase":"PREPARACION","turn":2,"events":1,"lp":[3150,3000],"rng":1703695764}
+{"seed":12345,"unit":"desfibrilador-qx","rewards":["vacuna-arnm","cirujano-vascular","antifungico-anfo"],"organs":[["cerebro",1],["epitelio",4],["higado",6],["corazon",7],["pulmon",12]]}

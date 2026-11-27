@@ -1,0 +1,77 @@
+{"chrome":"158.0.8127.37","origin":"http://127.0.0.1:4170","rendering":"SwiftShader"}
+{"id":"SCREENSHOT","name":"01-menu-modos-ajustes","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"02-preparacion-2d-tutorial","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"03-preparacion-seleccion","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"04-combate","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"05-historial","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"06-pausa","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"07-mazo","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"08-inspector-sobre-mazo","viewport":{"width":1366,"height":768}}
+{"id":"UX-004","dialogsBefore":3,"dialogsAfter":2,"focus":{"label":"Inspeccionar Macrófago Alveolar","topDialog":"Visor de mazo y pilas clínicas"},"inspectorRemains":true,"deckRemains":false}
+{"id":"SCREENSHOT","name":"09-menu-continuar","viewport":{"width":1366,"height":768}}
+{"id":"UX-003","before":"classic","after":"endless","trigger":"Enter del menú","priorBytesInBackup":true}
+{"id":"SCREENSHOT","name":"10-guardia-infinita","viewport":{"width":1366,"height":768}}
+{"id":"UX-003","trigger":"clic en modo clásico","after":"classic","intermediateConfirmation":false}
+{"id":"UX-003","trigger":"Reiniciar Guardia","turnBeforeRestart":2,"turnAfterRestart":1}
+{"id":"SCREENSHOT","name":"11-turno-rival","viewport":{"width":1366,"height":768}}
+{"id":"UX-001","index":0,"phase":"TURNO_RIVAL","turn":1,"turnsElapsed":0,"playerLp":4000,"rivalLp":3000,"rng":-127870049,"frozenCTA":true}
+{"id":"SCREENSHOT","name":"12-turno-rival-bloqueado-tras-recarga","viewport":{"width":1366,"height":768}}
+{"id":"UX-001","index":1,"phase":"TURNO_RIVAL","turn":1,"turnsElapsed":0,"playerLp":4000,"rivalLp":3000,"rng":-127870049,"frozenCTA":true}
+{"id":"UX-001","index":2,"phase":"TURNO_RIVAL","turn":1,"turnsElapsed":0,"playerLp":3150,"rivalLp":3000,"rng":-127870049,"frozenCTA":true}
+{"id":"UX-001","index":3,"phase":"TURNO_RIVAL","turn":1,"turnsElapsed":0,"playerLp":3150,"rivalLp":3000,"rng":-127870049,"frozenCTA":true}
+{"id":"UX-001","index":4,"phase":"PREPARACION","turn":2,"turnsElapsed":0,"playerLp":3150,"rivalLp":3000,"rng":1703695764,"frozenCTA":false}
+{"id":"UX-001","index":5,"phase":"PREPARACION","turn":2,"turnsElapsed":1,"playerLp":3150,"rivalLp":3000,"rng":1703695764,"frozenCTA":false}
+{"id":"SCREENSHOT","name":"13-rival-mazo","viewport":{"width":1366,"height":768}}
+{"id":"UX-002","modal":"mazo","turnBefore":1,"turnAfter":2,"lp":[4000,3150]}
+{"id":"SCREENSHOT","name":"13-rival-inspector","viewport":{"width":1366,"height":768}}
+{"id":"UX-002","modal":"inspector","turnBefore":1,"turnAfter":2,"lp":[4000,3150]}
+{"id":"SCREENSHOT","name":"13-rival-pausa","viewport":{"width":1366,"height":768}}
+{"id":"UX-002","modal":"pausa","turnBefore":1,"turnAfter":1,"lp":[4000,4000]}
+{"id":"SCREENSHOT","name":"14-menu-storage-denegado","viewport":{"width":1366,"height":768}}
+{"id":"UX-011","writeDenied":true,"save":null,"reported":0,"continue":false}
+{"id":"UX-011","malformedPrimary":true,"backupResumed":true,"corruptPrimaryUnchanged":true}
+{"id":"UX-011","invalidPrimary":"playerSlots vacío","offersContinue":true}
+{"id":"SCREENSHOT","name":"15-estabilizacion-recompensas","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"18-recompensa-inspector","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"19-siguiente-guardia","viewport":{"width":1366,"height":768}}
+{"id":"UX-016","chosen":"vacuna-arnm","guardBefore":1,"guardAfter":2,"directClick":true}
+{"id":"SCREENSHOT","name":"16-victoria-clasica","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"17-derrota","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-cerebro-3d-arena","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-cerebro-3d-detalle","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-cerebro-2d","viewport":{"width":1366,"height":768}}
+{"id":"UX-019","organ":"cerebro","seed":1}
+{"id":"SCREENSHOT","name":"organo-epitelio-3d-arena","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-epitelio-3d-detalle","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-epitelio-2d","viewport":{"width":1366,"height":768}}
+{"id":"UX-019","organ":"epitelio","seed":4}
+{"id":"SCREENSHOT","name":"organo-higado-3d-arena","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-higado-3d-detalle","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-higado-2d","viewport":{"width":1366,"height":768}}
+{"id":"UX-019","organ":"higado","seed":6}
+{"id":"SCREENSHOT","name":"organo-corazon-3d-arena","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-corazon-3d-detalle","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-corazon-2d","viewport":{"width":1366,"height":768}}
+{"id":"UX-019","organ":"corazon","seed":7}
+{"id":"SCREENSHOT","name":"organo-pulmon-3d-arena","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-pulmon-3d-detalle","viewport":{"width":1366,"height":768}}
+{"id":"SCREENSHOT","name":"organo-pulmon-2d","viewport":{"width":1366,"height":768}}
+{"id":"UX-019","organ":"pulmon","seed":12}
+{"id":"SCREENSHOT","name":"20-webgl-no-disponible","viewport":{"width":1366,"height":768}}
+{"id":"WEBGL","initialized2DFallback":true,"phaseAction":true,"feedbackVisible":false}
+{"id":"PERF","graphics":{"dimensions":[1366,768],"renderer":"ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)","deviceMemoryGiB":16,"jsHeapBytes":30925958},"before":{"frames":45,"fps":2.9661788201397283,"p50ms":332.7000000476837,"p95ms":376.5,"last":{"t":21574.100000023842,"organ":"pulmon","frame":110,"calls":85,"triangles":33360,"points":84,"lines":0,"geometries":50,"textures":7},"jsHeapBytes":28588302},"after":{"frames":45,"fps":2.9249679250722758,"p50ms":349.7999999523163,"p95ms":392.7999999523163,"last":{"t":44200.5,"organ":"pulmon","frame":175,"calls":85,"triangles":33360,"points":84,"lines":0,"geometries":50,"textures":7},"jsHeapBytes":30800458},"swaps":[{"t":21946.799999952316,"organ":"cerebro","frame":111,"calls":85,"triangles":33220,"points":84,"lines":0,"geometries":46,"textures":7},{"t":22295.5,"organ":"epitelio","frame":112,"calls":100,"triangles":33440,"points":84,"lines":0,"geometries":45,"textures":7},{"t":22681.200000047684,"organ":"higado","frame":113,"calls":77,"triangles":30736,"points":84,"lines":0,"geometries":46,"textures":7},{"t":23044.100000023842,"organ":"corazon","frame":114,"calls":78,"triangles":30872,"points":84,"lines":0,"geometries":47,"textures":7},{"t":23412.5,"organ":"pulmon","frame":115,"calls":85,"triangles":33360,"points":84,"lines":0,"geometries":50,"textures":7},{"t":23730.700000047684,"organ":"cerebro","frame":116,"calls":85,"triangles":33220,"points":84,"lines":0,"geometries":46,"textures":7},{"t":24101.799999952316,"organ":"epitelio","frame":117,"calls":100,"triangles":33440,"points":84,"lines":0,"geometries":45,"textures":7},{"t":24461.299999952316,"organ":"higado","frame":118,"calls":77,"triangles":30736,"points":84,"lines":0,"geometries":46,"textures":7},{"t":24813.799999952316,"organ":"corazon","frame":119,"calls":78,"triangles":30872,"points":84,"lines":0,"geometries":47,"textures":7},{"t":25179.200000047684,"organ":"pulmon","frame":120,"calls":85,"triangles":33360,"points":84,"lines":0,"geometries":50,"textures":7},{"t":25543.700000047684,"organ":"cerebro","frame":121,"calls":85,"triangles":33220,"points":84,"lines":0,"geometries":46,"textures":7},{"t":25927.799999952316,"organ":"epitelio","frame":122,"calls":100,"triangles":33440,"points":84,"lines":0,"geometries":45,"textures":7},{"t":26270.299999952316,"organ":"higado","frame":123,"calls":77,"triangles":30736,"points":84,"lines":0,"geometries":46,"textures":7},{"t":26673.100000023842,"organ":"corazon","frame":124,"calls":78,"triangles":30872,"points":84,"lines":0,"geometries":47,"textures":7},{"t":27044.899999976158,"organ":"pulmon","frame":125,"calls":85,"triangles":33360,"points":84,"lines":0,"geometries":50,"textures":7},{"t":27401.200000047684,"organ":"cerebro","frame":126,"calls":85,"triangles":33220,"points":84,"lines":0,"geometries":46,"textures":7},{"t":27776.899999976158,"organ":"epitelio","frame":127,"calls":100,"triangles":33440,"points":84,"lines":0,"geometries":45,"textures":7},{"t":28134.700000047684,"organ":"higado","frame":128,"calls":77,"triangles":30736,"points":84,"lines":0,"geometries":46,"textures":7},{"t":28478.200000047684,"organ":"corazon","frame":129,"calls":78,"triangles":30872,"points":84,"lines":0,"geometries":47,"textures":7},{"t":28817.700000047684,"organ":"pulmon","frame":130,"calls":85,"triangles":33360,"points":84,"lines":0,"geometries":50,"textures":7}]}
+{"id":"SCREENSHOT","name":"21-webgl-contexto-perdido","viewport":{"width":1366,"height":768}}
+{"id":"WEBGL","contextLoss":true,"recoveredTo2D":true,"canvasRemoved":true}
+{"id":"SCREENSHOT","name":"viewport-360x800","viewport":{"width":360,"height":800}}
+{"id":"RESPONSIVE","width":360,"height":800,"cta":{"x":231,"y":746,"width":119,"height":44},"rivalLabelVisible":false}
+{"id":"SCREENSHOT","name":"viewport-390x844","viewport":{"width":390,"height":844}}
+{"id":"RESPONSIVE","width":390,"height":844,"cta":{"x":261,"y":790,"width":119,"height":44},"rivalLabelVisible":false}
+{"id":"SCREENSHOT","name":"viewport-768x1024","viewport":{"width":768,"height":1024}}
+{"id":"RESPONSIVE","width":768,"height":1024,"cta":{"x":635,"y":966,"width":119,"height":44},"rivalLabelVisible":true}
+{"id":"SCREENSHOT","name":"viewport-1366x768","viewport":{"width":1366,"height":768}}
+{"id":"RESPONSIVE","width":1366,"height":768,"cta":{"x":1233,"y":710,"width":119,"height":44},"rivalLabelVisible":true}
+{"id":"SCREENSHOT","name":"viewport-1920x1080","viewport":{"width":1920,"height":1080}}
+{"id":"RESPONSIVE","width":1920,"height":1080,"cta":{"x":1787,"y":1022,"width":119,"height":44},"rivalLabelVisible":true}
+{"id":"SCREENSHOT","name":"viewport-800x360","viewport":{"width":800,"height":360}}
+{"id":"RESPONSIVE","width":800,"height":360,"cta":{"x":667,"y":302,"width":119,"height":44},"rivalLabelVisible":true}
+{"id":"RESULT","scenarioFailures":0}
