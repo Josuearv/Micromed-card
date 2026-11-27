@@ -22,6 +22,7 @@ export function CardInspectorModal({ card, active, onClose }: CardInspectorModal
       className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#050a10]/84"
       role="dialog"
       aria-modal={active || undefined}
+      aria-hidden={!active || undefined}
       aria-label={`Ficha médica de ${card.name}`}
       data-session-dialog="inspector"
       tabIndex={-1}

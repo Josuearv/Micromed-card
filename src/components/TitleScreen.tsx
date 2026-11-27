@@ -1,9 +1,13 @@
 import { Grid2x2, Play, Sparkles, Trophy, Volume2, VolumeX } from 'lucide-react';
-import { RunSavePayload } from '../game/persistence';
+import { RunCheckpoint } from '../game/persistence';
 import { GameMode, RunPreferences } from '../types/game';
+import { SaveStatus, SaveStatusProps } from './SaveStatus';
 
 interface TitleScreenProps {
-  savedRun: RunSavePayload | null;
+  savedRun: RunCheckpoint | null;
+  resumeUnsaved: boolean;
+  canQuickStart: boolean;
+  saveStatus: SaveStatusProps;
   bestGuardLevel: number;
   prefs: RunPreferences;
   onStartMode: (mode: GameMode) => void;
@@ -15,6 +19,9 @@ interface TitleScreenProps {
 
 export function TitleScreen({
   savedRun,
+  resumeUnsaved,
+  canQuickStart,
+  saveStatus,
   bestGuardLevel,
   prefs,
   onStartMode,
@@ -130,7 +137,7 @@ export function TitleScreen({
             >
               <Play className="w-4 h-4" aria-hidden="true" />
               <span>
-                Continuar ({savedRun.run.mode === 'endless' ? `Guardia ${savedRun.run.guardLevel}` : `Clásico ${savedRun.run.guardLevel}/3`})
+                {savedRun.terminal ? 'Ver resultado' : resumeUnsaved ? 'Continuar sin guardar' : 'Continuar'} ({savedRun.run.mode === 'endless' ? `Guardia ${savedRun.run.guardLevel}` : `Clásico ${savedRun.run.guardLevel}/3`})
               </span>
             </button>
           )}
@@ -152,6 +159,8 @@ export function TitleScreen({
             Modo Clásico (3 Duelos)
           </button>
         </div>
+
+        <SaveStatus {...saveStatus} />
 
         {/* Accessibility & View Preferences */}
         <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -195,7 +204,8 @@ export function TitleScreen({
         </div>
 
         <p className="text-xs font-mono-tabular text-slate-400 tracking-wide">
-          Enter Iniciar Guardia Infinita · 1-6 Carta · Espacio Fase/Combate · H Vista · Esc Pausa
+          {canQuickStart && 'Enter Iniciar Guardia Infinita · '}
+          1-6 Carta · Espacio Fase/Combate · H Vista · Esc Pausa
         </p>
       </div>
     </div>

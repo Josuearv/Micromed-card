@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { soundEngine } from './audio/soundEngine';
 import { CardInspectorModal } from './components/CardInspectorModal';
+import { ConfirmRunModal } from './components/ConfirmRunModal';
 import { DeckModal } from './components/DeckModal';
 import { EndModals } from './components/EndModals';
 import { GameHUD } from './components/GameHUD';
@@ -33,6 +34,7 @@ import {
   loadPreferences,
   loadRunSnapshot,
   RunCheckpoint,
+  RunLoadResult,
   savePreferences,
   saveRunSnapshot,
   updateBestGuardRecord,
@@ -57,6 +59,13 @@ const SPEED_DELAY_MS: Record<SpeedMode, number> = {
   normal: 520,
   fast: 240,
   reduced: 60,
+};
+
+const SAVE_MESSAGES: Partial<Record<RunLoadResult['status'], string>> = {
+  primary: 'Progreso guardado.',
+  backup: 'Hay un punto estable disponible en el respaldo.',
+  blocked: 'El navegador bloqueó el acceso a las partidas guardadas.',
+  unrecoverable: 'No se pudo recuperar un punto estable. Los datos guardados se conservaron.',
 };
 
 type TurnPlayback = {
@@ -115,13 +124,14 @@ export default function App() {
   const [isResolvingTurn, setIsResolvingTurn] = useState(false);
   const [inspectedCard, setInspectedCard] = useState<DuelCard | null>(null);
   const [deckModalOpen, setDeckModalOpen] = useState(false);
+  const [modeRequest, setModeRequest] = useState<{ mode: GameMode; restart: boolean } | null>(null);
   const [lastFeedback, setLastFeedback] = useState(
     'Fase de Preparación: elige cartas para desplegar o tratar.',
   );
   const [logs, setLogs] = useState<CombatLogEntry[]>([]);
   const [tutorialStep, setTutorialStep] = useState<number | null>(1);
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>('overview');
-  const topModal: ModalLayer | null = inspectedCard ? 'inspector' : deckModalOpen ? 'deck'
+  const topModal: ModalLayer | null = modeRequest ? 'confirm' : inspectedCard ? 'inspector' : deckModalOpen ? 'deck'
     : gameState !== 'PLAYING' && gameState !== 'TITLE_MENU' ? 'end' : null;
   const { rootRef, captureTrigger, handleTab } = useModalFocus(topModal);
 
@@ -162,6 +172,15 @@ export default function App() {
     const record = best ? updateBestGuardRecord(best) : null;
     setPendingSave(record && !record.ok ? { checkpoint, recordOnly: true } : null);
   }, []);
+
+  const saveStatus = {
+    message: pendingSave
+      ? pendingSave.recordOnly
+        ? 'No se pudo guardar el récord. El progreso de la partida está guardado.'
+        : 'No se pudo guardar el progreso. Puedes reintentar en esta pestaña.'
+      : SAVE_MESSAGES[savedRun.status],
+    onRetry: pendingSave ? () => persistCheckpoint(pendingSave.checkpoint, pendingSave.recordOnly) : undefined,
+  };
 
   const updateDuelState = useCallback(
     (
@@ -294,6 +313,17 @@ export default function App() {
     [cancelPlayback, persistCheckpoint, syncRun],
   );
 
+  const requestMode = useCallback((mode: GameMode, restart = false) => {
+    const loaded = loadRunSnapshot();
+    setSavedRun(loaded);
+    if (restart || pendingSave || loaded.status !== 'empty') {
+      captureTrigger('confirm');
+      setModeRequest({ mode, restart });
+    } else {
+      startMode(mode);
+    }
+  }, [captureTrigger, pendingSave, startMode]);
+
   const handleResumeSavedRun = useCallback(() => {
     const loaded = loadRunSnapshot();
     setSavedRun(loaded);
@@ -313,7 +343,9 @@ export default function App() {
     setTutorialStep(null);
     setCameraPreset('overview');
     setLastFeedback(
-      `Guardia reanudada: ${snap.run.rival.name} · ${ORGAN_PROFILES[snap.run.rival.organId].shortName}.`,
+      loaded.status === 'backup' && !pendingSave
+        ? `Partida restaurada desde el respaldo · Turno ${snap.run.duelState.turn}.`
+        : `Guardia reanudada: ${snap.run.rival.name} · ${ORGAN_PROFILES[snap.run.rival.organId].shortName}.`,
     );
     soundEngine.playStartShift();
     if (!pendingSave && snap.run.mode === 'endless' && snap.run.duelsWon > 0) {
@@ -814,7 +846,8 @@ export default function App() {
         if (e.key === 'Tab') handleTab(e, topModal);
         if (e.key === 'Escape' && !e.repeat) {
           e.preventDefault();
-          if (topModal === 'inspector') setInspectedCard(null);
+          if (topModal === 'confirm') setModeRequest(null);
+          else if (topModal === 'inspector') setInspectedCard(null);
           else if (topModal === 'deck') setDeckModalOpen(false);
           else if (gameState === 'PAUSED') handleResume();
           else handleReturnToMenu();
@@ -831,9 +864,9 @@ export default function App() {
         target instanceof HTMLTextAreaElement;
 
       if (gameState === 'TITLE_MENU') {
-        if ((e.key === 'Enter' || e.key === ' ') && !isInteractiveTarget) {
+        if (!pendingSave && savedRun.status === 'empty' && (e.key === 'Enter' || e.key === ' ') && !isInteractiveTarget) {
           e.preventDefault();
-          startMode('endless');
+          requestMode('endless');
         }
         return;
       }
@@ -883,7 +916,9 @@ export default function App() {
     topModal,
     handleTab,
     gameState,
-    startMode,
+    requestMode,
+    pendingSave,
+    savedRun.status,
     selectedCardUid,
     movingFromLane,
     handlePause,
@@ -939,7 +974,7 @@ export default function App() {
 
   return (
     <main ref={rootRef} className="relative w-screen h-[100dvh] overflow-hidden bg-[#081018]">
-      <div inert={topModal !== null} data-session-background tabIndex={-1}>
+      <div inert={topModal !== null} aria-hidden={topModal !== null || undefined} data-session-background tabIndex={-1}>
       {!prefs.tactical2D && (
         <MedicalTableCanvas
           telemetry={liveTelemetry}
@@ -975,10 +1010,13 @@ export default function App() {
 
       {gameState === 'TITLE_MENU' && (
         <TitleScreen
-          savedRun={savedRun.snapshot ?? null}
+          savedRun={pendingSave?.checkpoint ?? savedRun.snapshot ?? null}
+          resumeUnsaved={Boolean(pendingSave && !pendingSave.recordOnly)}
+          canQuickStart={!pendingSave && savedRun.status === 'empty'}
+          saveStatus={saveStatus}
           bestGuardLevel={bestGuardLevel}
           prefs={prefs}
-          onStartMode={startMode}
+          onStartMode={requestMode}
           onResumeSaved={handleResumeSavedRun}
           onToggleMute={handleToggleMute}
           onToggleTactical2D={handleToggleTactical2D}
@@ -1002,6 +1040,7 @@ export default function App() {
           pendingAttackerLanes={pendingAttackerLanes}
           isResolvingTurn={isResolvingTurn}
           lastFeedback={lastFeedback}
+          saveStatus={saveStatus}
           logs={logs}
           tutorialStep={tutorialStep}
           cameraPreset={cameraPreset}
@@ -1036,6 +1075,7 @@ export default function App() {
       <EndModals
         gameState={gameState}
         active={topModal === 'end'}
+        saveStatus={saveStatus}
         runMode={runState.mode}
         guardLevel={runState.guardLevel}
         bestGuardLevel={bestGuardLevel}
@@ -1052,7 +1092,7 @@ export default function App() {
         onPickReward={(card) => proceedToNextGuard(card)}
         onSkipReward={() => proceedToNextGuard(null)}
         onInspectCard={inspectCard}
-        onRestart={() => startMode(runState.mode)}
+        onRestart={() => requestMode(runState.mode, true)}
         onReturnToMenu={handleReturnToMenu}
       />
 
@@ -1070,6 +1110,16 @@ export default function App() {
         active={topModal === 'inspector'}
         onClose={() => setInspectedCard(null)}
       />
+      {modeRequest && (
+        <ConfirmRunModal
+          restart={modeRequest.restart}
+          onCancel={() => setModeRequest(null)}
+          onConfirm={() => {
+            setModeRequest(null);
+            startMode(modeRequest.mode);
+          }}
+        />
+      )}
     </main>
   );
 }

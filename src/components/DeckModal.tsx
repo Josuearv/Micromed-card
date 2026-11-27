@@ -68,6 +68,7 @@ export function DeckModal({
       className="fixed inset-0 z-40 flex items-center justify-center p-4 md:p-6 bg-[#050a10]/84"
       role="dialog"
       aria-modal={active || undefined}
+      aria-hidden={!active || undefined}
       aria-label="Visor de mazo y pilas clínicas"
       data-session-dialog="deck"
       tabIndex={-1}
