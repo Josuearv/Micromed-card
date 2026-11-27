@@ -1,0 +1,9 @@
+PASS: A01 - Zonas exclusivas: Unidad invocada vive en campo y va al descarte al morir
+PASS: A02 - Validación unificada rechaza sin mutar estado ni RNG
+PASS: A04 - Recuperación parcial de LP en Guardia Infinita
+PASS: A05 - Reproducibilidad determinista por semilla
+PASS: Preview coincide exactamente con resolución de ataque y aturdimiento
+PASS: Trampas múltiples en orden de armado sin doble consumo
+PASS: Generador procedural estable durante 1000 semillas y niveles
+PASS: Bot heurístico completa transiciones de Guardia Infinita sin violar invariantes
+ALL DOMAIN & ENDLESS GUARD TESTS PASSED

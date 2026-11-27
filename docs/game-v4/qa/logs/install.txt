@@ -1,0 +1,6 @@
+﻿UX-V4-00 | Bun 1.4.5 (a7733435c) | bun install --frozen-lockfile
+1. Caché por defecto del usuario: EPERM al escribir en .bun/install/cache.
+2. BUN_INSTALL_CACHE_DIR=node_modules/.cache/bun: ConnectionRefused a tarballs dentro del sandbox.
+3. Mismo comando con red habilitada: 188 packages installed [22.11s], exit 0.
+   Blocked 2 postinstalls. bun pm untrusted: @google/genai@2.32.0 (preinstall), protobufjs@7.6.6 (postinstall).
+   El lockfile de Git no cambió.
