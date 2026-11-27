@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test": "bun tests/engine.test.ts && bun test tests/session.test.ts",
+    "test:browser": "bun tests/session.browser.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
