@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { soundEngine } from './audio/soundEngine';
 import { CardInspectorModal } from './components/CardInspectorModal';
+import { ConfirmRunModal } from './components/ConfirmRunModal';
 import { DeckModal } from './components/DeckModal';
 import { EndModals } from './components/EndModals';
 import { GameHUD } from './components/GameHUD';
@@ -12,13 +13,12 @@ import { TitleScreen } from './components/TitleScreen';
 import { ALL_PLAYER_CARDS_MAP, RIVAL_DUELISTS } from './data/medicalCards';
 import { ORGAN_PROFILES } from './data/organs';
 import {
-  buildEndTurnSteps,
   canEndTurn,
   canPlayCard,
-  CombatStep,
   DuelEngineState,
   getPendingAttackers,
   resolveActivateSkill,
+  resolveEndTurn,
   resolveManualAttack,
   resolveMoveUnit,
   resolvePlayCard,
@@ -30,15 +30,16 @@ import {
   transitionRunOnVictory,
 } from './engine/runEngine';
 import {
-  clearRunSnapshot,
   loadBestGuardRecord,
   loadPreferences,
   loadRunSnapshot,
-  RunSavePayload,
+  RunCheckpoint,
+  RunLoadResult,
   savePreferences,
   saveRunSnapshot,
   updateBestGuardRecord,
 } from './game/persistence';
+import { ModalLayer, useModalFocus } from './game/useModalFocus';
 import {
   BoardUnit,
   CameraPreset,
@@ -50,7 +51,6 @@ import {
   GameMode,
   GameState,
   MedicalClass,
-  RivalDuelist,
   RunPreferences,
   SpeedMode,
 } from './types/game';
@@ -61,6 +61,47 @@ const SPEED_DELAY_MS: Record<SpeedMode, number> = {
   reduced: 60,
 };
 
+const SAVE_MESSAGES: Partial<Record<RunLoadResult['status'], string>> = {
+  primary: 'Progreso guardado.',
+  backup: 'Hay un punto estable disponible en el respaldo.',
+  blocked: 'El navegador bloqueó el acceso a las partidas guardadas.',
+  unrecoverable: 'No se pudo recuperar un punto estable. Los datos guardados se conservaron.',
+};
+
+type TurnPlayback = {
+  frames: NonNullable<ReturnType<typeof resolveEndTurn>>['frames'];
+  cursor: number;
+  checkpoint: RunCheckpoint;
+};
+
+function withDuel(run: RunState, duelState: DuelEngineState): RunState {
+  return {
+    ...run,
+    duelState,
+    rngState: duelState.rngState,
+    idSequence: duelState.idSequence,
+    playerLp: duelState.playerLp,
+  };
+}
+
+function duelCheckpoint(run: RunState): RunCheckpoint {
+  if (run.duelState.rivalLp <= 0) {
+    const outcome = transitionRunOnVictory(run);
+    return {
+      run: outcome.nextRun,
+      inRoundSummary: !outcome.isCampaignComplete,
+      recoveredLp: outcome.recoveredLp,
+      terminal: outcome.isCampaignComplete ? 'VICTORY' : undefined,
+    };
+  }
+  return {
+    run,
+    inRoundSummary: false,
+    recoveredLp: 0,
+    terminal: run.duelState.playerLp <= 0 ? 'GAME_OVER' : undefined,
+  };
+}
+
 export default function App() {
   const [prefs, setPrefs] = useState<RunPreferences>(() => {
     const loaded = loadPreferences();
@@ -70,9 +111,8 @@ export default function App() {
   const [bestGuardLevel, setBestGuardLevel] = useState<number>(() =>
     loadBestGuardRecord(),
   );
-  const [savedRun, setSavedRun] = useState<RunSavePayload | null>(() =>
-    loadRunSnapshot(),
-  );
+  const [savedRun, setSavedRun] = useState(loadRunSnapshot);
+  const [pendingSave, setPendingSave] = useState<{ checkpoint: RunCheckpoint; recordOnly?: boolean } | null>(null);
 
   const [gameState, setGameState] = useState<GameState>('TITLE_MENU');
   const [runState, setRunState] = useState<RunState>(() =>
@@ -89,12 +129,16 @@ export default function App() {
   const [isResolvingTurn, setIsResolvingTurn] = useState(false);
   const [inspectedCard, setInspectedCard] = useState<DuelCard | null>(null);
   const [deckModalOpen, setDeckModalOpen] = useState(false);
+  const [modeRequest, setModeRequest] = useState<{ mode: GameMode; restart: boolean } | null>(null);
   const [lastFeedback, setLastFeedback] = useState(
     'Fase de Preparación: elige cartas para desplegar o tratar.',
   );
   const [logs, setLogs] = useState<CombatLogEntry[]>([]);
   const [tutorialStep, setTutorialStep] = useState<number | null>(1);
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>('overview');
+  const topModal: ModalLayer | null = modeRequest ? 'confirm' : inspectedCard ? 'inspector' : deckModalOpen ? 'deck'
+    : gameState !== 'PLAYING' && gameState !== 'TITLE_MENU' ? 'end' : null;
+  const { rootRef, captureTrigger, handleTab } = useModalFocus(topModal);
 
   const [eventBatch, setEventBatch] = useState<CombatEvent[]>([]);
   const [playedCardMeta, setPlayedCardMeta] = useState<{
@@ -103,13 +147,9 @@ export default function App() {
     name: string;
   } | null>(null);
 
-  const timersRef = useRef<number[]>([]);
+  const timerRef = useRef<number | null>(null);
   const playbackGenRef = useRef(0);
-  const pausedStepRef = useRef<{
-    steps: CombatStep[];
-    cursor: number;
-    rival: RivalDuelist;
-  } | null>(null);
+  const playbackRef = useRef<TurnPlayback | null>(null);
   const metaNonceRef = useRef(1);
   const slotAnchorRefs = useRef<SlotAnchorDomRefs>({
     player: [null, null, null],
@@ -125,39 +165,64 @@ export default function App() {
     setRunState(next);
   }, []);
 
+  const persistCheckpoint = useCallback((checkpoint: RunCheckpoint, recordOnly = false) => {
+    const { run, inRoundSummary, recoveredLp, terminal } = checkpoint;
+    const best = run.mode === 'endless' ? run.duelsWon : 0;
+    if (best) setBestGuardLevel((old) => Math.max(old, best));
+    if (!recordOnly && !saveRunSnapshot(run, inRoundSummary, recoveredLp, terminal).ok) {
+      setPendingSave({ checkpoint });
+      return;
+    }
+    setSavedRun(loadRunSnapshot());
+    const record = best ? updateBestGuardRecord(best) : null;
+    setPendingSave(record && !record.ok ? { checkpoint, recordOnly: true } : null);
+  }, []);
+
+  const saveStatus = {
+    message: pendingSave
+      ? pendingSave.recordOnly
+        ? 'No se pudo guardar el récord. El progreso de la partida está guardado.'
+        : 'No se pudo guardar el progreso. Puedes reintentar en esta pestaña.'
+      : SAVE_MESSAGES[savedRun.status],
+    onRetry: pendingSave ? () => persistCheckpoint(pendingSave.checkpoint, pendingSave.recordOnly) : undefined,
+  };
+
   const updateDuelState = useCallback(
     (
       nextDuel: DuelEngineState,
-      extra?: Partial<Pick<RunState, 'cardsPlayedCount' | 'turnsElapsed'>>,
-      persist = true,
+      extra?: Pick<RunState, 'cardsPlayedCount'>,
     ) => {
-      const updated: RunState = {
-        ...runRef.current,
-        ...extra,
-        duelState: nextDuel,
-        rngState: nextDuel.rngState,
-        idSequence: nextDuel.idSequence,
-        playerLp: nextDuel.playerLp,
-      };
-      runRef.current = updated;
-      setRunState(updated);
-      if (persist && nextDuel.playerLp > 0 && nextDuel.rivalLp > 0) {
-        saveRunSnapshot(updated, false, 0);
+      const updated = withDuel({ ...runRef.current, ...extra }, nextDuel);
+      syncRun(updated);
+      if (nextDuel.playerLp > 0 && nextDuel.rivalLp > 0) {
+        persistCheckpoint(duelCheckpoint(updated));
       }
       return updated;
     },
-    [],
+    [persistCheckpoint, syncRun],
   );
 
   const clearTimers = useCallback(() => {
-    timersRef.current.forEach((id) => window.clearTimeout(id));
-    timersRef.current = [];
+    if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+    timerRef.current = null;
   }, []);
 
   const cancelPlayback = useCallback(() => {
     playbackGenRef.current += 1;
     clearTimers();
   }, [clearTimers]);
+
+  const openDeck = useCallback(() => {
+    captureTrigger('deck');
+    cancelPlayback();
+    setDeckModalOpen(true);
+  }, [captureTrigger, cancelPlayback]);
+
+  const inspectCard = useCallback((card: DuelCard) => {
+    captureTrigger('inspector');
+    cancelPlayback();
+    setInspectedCard(card);
+  }, [captureTrigger, cancelPlayback]);
 
   useEffect(() => {
     return () => {
@@ -203,60 +268,30 @@ export default function App() {
     [],
   );
 
-  const handleVictoryOrDefeat = useCallback(
-    (latestRun: RunState): boolean => {
-      const d = latestRun.duelState;
-      if (d.rivalLp <= 0) {
-        cancelPlayback();
-        pausedStepRef.current = null;
-        setIsResolvingTurn(false);
-        soundEngine.playCaseStabilized();
+  const showCheckpoint = useCallback((checkpoint: RunCheckpoint) => {
+    syncRun(checkpoint.run);
+    setRecoveredLp(checkpoint.recoveredLp);
+    setGameState(checkpoint.terminal ?? (checkpoint.inRoundSummary ? 'ROUND_SUMMARY' : 'PLAYING'));
+  }, [syncRun]);
 
-        const outcome = transitionRunOnVictory(latestRun);
-        syncRun(outcome.nextRun);
-        setRecoveredLp(outcome.recoveredLp);
+  const showDuelOutcome = useCallback((checkpoint: RunCheckpoint) => {
+    if (checkpoint.terminal === 'GAME_OVER') soundEngine.playInvalidAction();
+    else soundEngine.playCaseStabilized();
+    showCheckpoint(checkpoint);
+  }, [showCheckpoint]);
 
-        if (latestRun.mode === 'endless') {
-          const updatedBest = updateBestGuardRecord(latestRun.guardLevel);
-          setBestGuardLevel(updatedBest);
-        }
-
-        if (outcome.isCampaignComplete) {
-          clearRunSnapshot();
-          setSavedRun(null);
-          setGameState('VICTORY');
-        } else {
-          saveRunSnapshot(outcome.nextRun, true, outcome.recoveredLp);
-          setSavedRun(loadRunSnapshot());
-          setGameState('ROUND_SUMMARY');
-        }
-        return true;
-      }
-
-      if (d.playerLp <= 0) {
-        cancelPlayback();
-        pausedStepRef.current = null;
-        setIsResolvingTurn(false);
-        soundEngine.playInvalidAction();
-        if (latestRun.mode === 'endless' && latestRun.duelsWon > 0) {
-          const updatedBest = updateBestGuardRecord(latestRun.duelsWon);
-          setBestGuardLevel(updatedBest);
-        }
-        clearRunSnapshot();
-        setSavedRun(null);
-        setGameState('GAME_OVER');
-        return true;
-      }
-
-      return false;
-    },
-    [cancelPlayback, syncRun],
-  );
+  const handleVictoryOrDefeat = useCallback((latestRun: RunState) => {
+    if (latestRun.duelState.rivalLp > 0 && latestRun.duelState.playerLp > 0) return false;
+    const checkpoint = duelCheckpoint(latestRun);
+    persistCheckpoint(checkpoint);
+    showDuelOutcome(checkpoint);
+    return true;
+  }, [persistCheckpoint, showDuelOutcome]);
 
   const startMode = useCallback(
     (mode: GameMode) => {
       cancelPlayback();
-      pausedStepRef.current = null;
+      playbackRef.current = null;
       const seed = (Date.now() ^ Math.floor(Math.random() * 0xffffffff)) >>> 0;
       const fresh = startNewRun(mode, seed || 1);
       syncRun(fresh);
@@ -268,6 +303,7 @@ export default function App() {
       setInspectedCard(null);
       setDeckModalOpen(false);
       setEventBatch([]);
+      setPlayedCardMeta(null);
       setLogs([]);
       setTutorialStep(1);
       setCameraPreset('overview');
@@ -276,21 +312,32 @@ export default function App() {
           mode === 'endless' ? `Guardia 1 · ` : 'Duelo 1/3 · '
         }${fresh.rival.name} en ${ORGAN_PROFILES[fresh.rival.organId].shortName}.`,
       );
-      saveRunSnapshot(fresh, false, 0);
-      setSavedRun(loadRunSnapshot());
+      persistCheckpoint(duelCheckpoint(fresh));
       soundEngine.playStartShift();
       setGameState('PLAYING');
     },
-    [cancelPlayback, syncRun],
+    [cancelPlayback, persistCheckpoint, syncRun],
   );
 
+  const requestMode = useCallback((mode: GameMode, restart = false) => {
+    const loaded = loadRunSnapshot();
+    setSavedRun(loaded);
+    if (restart || pendingSave || loaded.status !== 'empty') {
+      captureTrigger('confirm');
+      setModeRequest({ mode, restart });
+    } else {
+      startMode(mode);
+    }
+  }, [captureTrigger, pendingSave, startMode]);
+
   const handleResumeSavedRun = useCallback(() => {
-    const snap = loadRunSnapshot();
+    const loaded = loadRunSnapshot();
+    setSavedRun(loaded);
+    const snap = pendingSave?.checkpoint ?? loaded.snapshot;
     if (!snap) return;
     cancelPlayback();
-    pausedStepRef.current = null;
-    syncRun(snap.run);
-    setRecoveredLp(snap.recoveredLp);
+    playbackRef.current = null;
+    showCheckpoint(snap);
     setSelectedCardUid(null);
     setMovingFromLane(null);
     setSelectedAttackerLane(null);
@@ -298,15 +345,22 @@ export default function App() {
     setInspectedCard(null);
     setDeckModalOpen(false);
     setEventBatch([]);
+    setPlayedCardMeta(null);
     setLogs([]);
     setTutorialStep(null);
     setCameraPreset('overview');
     setLastFeedback(
-      `Guardia reanudada: ${snap.run.rival.name} · ${ORGAN_PROFILES[snap.run.rival.organId].shortName}.`,
+      loaded.status === 'backup' && !pendingSave
+        ? `Partida restaurada desde el respaldo · Turno ${snap.run.duelState.turn}.`
+        : `Guardia reanudada: ${snap.run.rival.name} · ${ORGAN_PROFILES[snap.run.rival.organId].shortName}.`,
     );
     soundEngine.playStartShift();
-    setGameState(snap.inRoundSummary ? 'ROUND_SUMMARY' : 'PLAYING');
-  }, [cancelPlayback, syncRun]);
+    if (!pendingSave && snap.run.mode === 'endless' && snap.run.duelsWon > 0) {
+      persistCheckpoint(snap, true);
+      // Keep the recovery notice until a fresh checkpoint is written.
+      setSavedRun(loaded);
+    }
+  }, [cancelPlayback, pendingSave, persistCheckpoint, showCheckpoint]);
 
   const selectedCard = useMemo(
     () => engineState.hand.find((c) => c.uid === selectedCardUid) ?? null,
@@ -606,83 +660,65 @@ export default function App() {
 
   const handleInspectUnit = useCallback((unit: BoardUnit) => {
     if (unit.sourceCard) {
-      setInspectedCard(unit.sourceCard);
+      inspectCard(unit.sourceCard);
       return;
     }
     const template = ALL_PLAYER_CARDS_MAP[unit.cardId];
     if (template) {
-      setInspectedCard(template);
+      inspectCard(template);
     }
-  }, []);
+  }, [inspectCard]);
 
-  const runPlaybackFrom = useCallback(
-    (steps: CombatStep[], startCursor: number, rival: RivalDuelist) => {
-      cancelPlayback();
-      const myGen = playbackGenRef.current;
-      let cursor = startCursor;
-      setIsResolvingTurn(true);
+  const runPlayback = useCallback((playback: TurnPlayback) => {
+    cancelPlayback();
+    const generation = playbackGenRef.current;
+    const stepDelay = prefs.reducedMotion || prefs.speedMode === 'reduced'
+      ? 40
+      : SPEED_DELAY_MS[prefs.speedMode];
 
-      const stepDelay =
-        prefs.reducedMotion || prefs.speedMode === 'reduced'
-          ? 40
-          : SPEED_DELAY_MS[prefs.speedMode];
-
-      const runNextStep = () => {
-        if (playbackGenRef.current !== myGen) return;
-
-        if (cursor >= steps.length) {
-          pausedStepRef.current = null;
-          setIsResolvingTurn(false);
-          const finishedRun = updateDuelState(runRef.current.duelState, {
-            turnsElapsed: runRef.current.turnsElapsed + 1,
-          });
-          setLastFeedback(
-            `Turno ${finishedRun.duelState.turn}: ${finishedRun.duelState.energy} PA disponibles.`,
-          );
-          return;
+    const runNextStep = () => {
+      if (playbackGenRef.current !== generation) return;
+      if (playback.cursor >= playback.frames.length) {
+        timerRef.current = null;
+        playbackRef.current = null;
+        setIsResolvingTurn(false);
+        const { checkpoint } = playback;
+        if (checkpoint.terminal || checkpoint.inRoundSummary) {
+          showDuelOutcome(checkpoint);
+        } else {
+          showCheckpoint(checkpoint);
+          const duel = checkpoint.run.duelState;
+          setLastFeedback(`Turno ${duel.turn}: ${duel.energy} PA disponibles.`);
         }
+        return;
+      }
 
-        const step = steps[cursor++];
-        pausedStepRef.current = { steps, cursor, rival };
+      const { nextState, events } = playback.frames[playback.cursor++];
+      // Intermediate frames only drive the board and effects.
+      setRunState(withDuel(runRef.current, nextState));
+      appendEventsToFeed(events, nextState.turn);
+      timerRef.current = window.setTimeout(runNextStep, events.length ? stepDelay : 30);
+    };
 
-        const { nextState, events } = step.execute(runRef.current.duelState);
-        const updatedRun = updateDuelState(nextState);
-
-        if (events.length > 0) {
-          appendEventsToFeed(events, nextState.turn);
-        }
-
-        if (handleVictoryOrDefeat(updatedRun)) {
-          return;
-        }
-
-        const delay = events.length > 0 ? stepDelay : 30;
-        const tid = window.setTimeout(runNextStep, delay);
-        timersRef.current.push(tid);
-      };
-
-      runNextStep();
-    },
-    [
-      cancelPlayback,
-      prefs.reducedMotion,
-      prefs.speedMode,
-      updateDuelState,
-      appendEventsToFeed,
-      handleVictoryOrDefeat,
-    ],
-  );
+    runNextStep();
+  }, [cancelPlayback, prefs.reducedMotion, prefs.speedMode, appendEventsToFeed, showCheckpoint, showDuelOutcome]);
 
   const executeEndTurnSequence = useCallback(() => {
+    if (playbackRef.current) return;
+    const run = runRef.current;
+    const resolution = resolveEndTurn(run.duelState, run.rival);
+    if (!resolution) return;
+    const checkpoint = duelCheckpoint(withDuel({ ...run, turnsElapsed: run.turnsElapsed + 1 }, resolution.nextState));
+    const playback = { frames: resolution.frames, cursor: 0, checkpoint };
+    playbackRef.current = playback;
+    persistCheckpoint(checkpoint);
+    setIsResolvingTurn(true);
     setSelectedCardUid(null);
     setMovingFromLane(null);
     setSelectedAttackerLane(null);
     if (tutorialStep !== null) setTutorialStep(null);
-
-    const rival = runRef.current.rival;
-    const steps = buildEndTurnSteps(rival);
-    runPlaybackFrom(steps, 0, rival);
-  }, [tutorialStep, runPlaybackFrom]);
+    runPlayback(playback);
+  }, [tutorialStep, persistCheckpoint, runPlayback]);
 
   const handlePhaseAction = useCallback(() => {
     const duel = runRef.current.duelState;
@@ -727,23 +763,27 @@ export default function App() {
 
   const handlePause = useCallback(() => {
     if (gameState !== 'PLAYING') return;
+    captureTrigger('end');
     cancelPlayback();
     setGameState('PAUSED');
-  }, [gameState, cancelPlayback]);
+  }, [gameState, captureTrigger, cancelPlayback]);
 
   const handleResume = useCallback(() => {
     if (gameState !== 'PAUSED') return;
     setGameState('PLAYING');
-    if (pausedStepRef.current) {
-      const { steps, cursor, rival } = pausedStepRef.current;
-      runPlaybackFrom(steps, cursor, rival);
+  }, [gameState]);
+
+  useEffect(() => {
+    if (gameState === 'PLAYING' && !topModal && playbackRef.current && timerRef.current === null) {
+      runPlayback(playbackRef.current);
     }
-  }, [gameState, runPlaybackFrom]);
+  }, [gameState, topModal, runPlayback]);
 
   const proceedToNextGuard = useCallback(
     (chosenReward: DuelCard | null) => {
+      if (!runRef.current.rewardChoices.length) return;
       cancelPlayback();
-      pausedStepRef.current = null;
+      playbackRef.current = null;
       const nextRun = advanceToNextGuard(runRef.current, chosenReward);
       syncRun(nextRun);
       setRecoveredLp(0);
@@ -752,6 +792,7 @@ export default function App() {
       setSelectedAttackerLane(null);
       setIsResolvingTurn(false);
       setEventBatch([]);
+      setPlayedCardMeta(null);
       setLogs([]);
       setLastFeedback(
         `${
@@ -762,20 +803,21 @@ export default function App() {
           ORGAN_PROFILES[nextRun.rival.organId].shortName
         }.`,
       );
-      saveRunSnapshot(nextRun, false, 0);
-      setSavedRun(loadRunSnapshot());
+      persistCheckpoint(duelCheckpoint(nextRun));
       soundEngine.playStartShift();
       setGameState('PLAYING');
     },
-    [cancelPlayback, syncRun],
+    [cancelPlayback, persistCheckpoint, syncRun],
   );
 
   const handleReturnToMenu = useCallback(() => {
     cancelPlayback();
-    pausedStepRef.current = null;
+    playbackRef.current = null;
     setIsResolvingTurn(false);
     setDeckModalOpen(false);
     setInspectedCard(null);
+    setEventBatch([]);
+    setPlayedCardMeta(null);
     setSavedRun(loadRunSnapshot());
     setGameState('TITLE_MENU');
   }, [cancelPlayback]);
@@ -810,8 +852,19 @@ export default function App() {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (topModal) {
+        if (e.key === 'Tab') handleTab(e, topModal);
+        if (e.key === 'Escape' && !e.repeat) {
+          e.preventDefault();
+          if (topModal === 'confirm') setModeRequest(null);
+          else if (topModal === 'inspector') setInspectedCard(null);
+          else if (topModal === 'deck') setDeckModalOpen(false);
+          else if (gameState === 'PAUSED') handleResume();
+          else handleReturnToMenu();
+        }
+        return;
+      }
       if (e.repeat) return;
-      if (inspectedCard || deckModalOpen) return;
 
       const target = e.target;
       const isInteractiveTarget =
@@ -821,9 +874,9 @@ export default function App() {
         target instanceof HTMLTextAreaElement;
 
       if (gameState === 'TITLE_MENU') {
-        if ((e.key === 'Enter' || e.key === ' ') && !isInteractiveTarget) {
+        if (!pendingSave && savedRun.status === 'empty' && (e.key === 'Enter' || e.key === ' ') && !isInteractiveTarget) {
           e.preventDefault();
-          startMode('endless');
+          requestMode('endless');
         }
         return;
       }
@@ -835,7 +888,6 @@ export default function App() {
           return;
         }
         if (gameState === 'PLAYING') handlePause();
-        else if (gameState === 'PAUSED') handleResume();
         return;
       }
 
@@ -871,14 +923,17 @@ export default function App() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [
-    inspectedCard,
-    deckModalOpen,
+    topModal,
+    handleTab,
     gameState,
-    startMode,
+    requestMode,
+    pendingSave,
+    savedRun.status,
     selectedCardUid,
     movingFromLane,
     handlePause,
     handleResume,
+    handleReturnToMenu,
     handleToggleMute,
     cycleCameraPreset,
     handlePhaseAction,
@@ -928,7 +983,8 @@ export default function App() {
   ]);
 
   return (
-    <main className="relative w-screen h-[100dvh] overflow-hidden bg-[#081018]">
+    <main ref={rootRef} className="relative w-screen h-[100dvh] overflow-hidden bg-[#081018]">
+      <div inert={topModal !== null} aria-hidden={topModal !== null || undefined} data-session-background tabIndex={-1}>
       {!prefs.tactical2D && (
         <MedicalTableCanvas
           telemetry={liveTelemetry}
@@ -936,6 +992,7 @@ export default function App() {
           eventBatch={eventBatch}
           playedCardMeta={playedCardMeta}
           reducedMotion={prefs.reducedMotion || prefs.speedMode === 'reduced'}
+          suspended={topModal !== null}
           slotAnchorRefs={slotAnchorRefs}
           onClickPlayerSlot={handleSelectPlayerLane}
           onClickEnemySlot={handleSelectEnemyLane}
@@ -950,7 +1007,7 @@ export default function App() {
           }}
           onClickDeck={() => {
             soundEngine.playCardHover();
-            setDeckModalOpen(true);
+            openDeck();
           }}
           onWebGLUnavailable={() => {
             updatePrefs((p) => ({ ...p, tactical2D: true }));
@@ -963,10 +1020,13 @@ export default function App() {
 
       {gameState === 'TITLE_MENU' && (
         <TitleScreen
-          savedRun={savedRun}
+          savedRun={pendingSave?.checkpoint ?? savedRun.snapshot ?? null}
+          resumeUnsaved={Boolean(pendingSave && !pendingSave.recordOnly)}
+          canQuickStart={!pendingSave && savedRun.status === 'empty'}
+          saveStatus={saveStatus}
           bestGuardLevel={bestGuardLevel}
           prefs={prefs}
-          onStartMode={startMode}
+          onStartMode={requestMode}
           onResumeSaved={handleResumeSavedRun}
           onToggleMute={handleToggleMute}
           onToggleTactical2D={handleToggleTactical2D}
@@ -990,6 +1050,7 @@ export default function App() {
           pendingAttackerLanes={pendingAttackerLanes}
           isResolvingTurn={isResolvingTurn}
           lastFeedback={lastFeedback}
+          saveStatus={saveStatus}
           logs={logs}
           tutorialStep={tutorialStep}
           cameraPreset={cameraPreset}
@@ -998,9 +1059,9 @@ export default function App() {
           speedMode={prefs.speedMode}
           slotAnchorRefs={slotAnchorRefs}
           onCardClick={handleCardClick}
-          onInspectCard={(card) => setInspectedCard(card)}
+          onInspectCard={inspectCard}
           onInspectUnit={handleInspectUnit}
-          onOpenDeck={() => setDeckModalOpen(true)}
+          onOpenDeck={openDeck}
           onCancelSelection={() => {
             setSelectedCardUid(null);
             setMovingFromLane(null);
@@ -1019,9 +1080,12 @@ export default function App() {
           onPause={handlePause}
         />
       )}
+      </div>
 
       <EndModals
         gameState={gameState}
+        active={topModal === 'end'}
+        saveStatus={saveStatus}
         runMode={runState.mode}
         guardLevel={runState.guardLevel}
         bestGuardLevel={bestGuardLevel}
@@ -1034,26 +1098,38 @@ export default function App() {
         cardsPlayedCount={runState.cardsPlayedCount}
         turnsElapsed={runState.turnsElapsed}
         onResume={handleResume}
-        onOpenDeck={() => setDeckModalOpen(true)}
+        onOpenDeck={openDeck}
         onPickReward={(card) => proceedToNextGuard(card)}
         onSkipReward={() => proceedToNextGuard(null)}
-        onInspectCard={(card) => setInspectedCard(card)}
-        onRestart={() => startMode(runState.mode)}
+        onInspectCard={inspectCard}
+        onRestart={() => requestMode(runState.mode, true)}
         onReturnToMenu={handleReturnToMenu}
       />
 
       <DeckModal
         open={deckModalOpen}
+        active={topModal === 'deck'}
         masterDeck={runState.masterDeck}
         duelState={engineState}
-        onInspectCard={(card) => setInspectedCard(card)}
+        onInspectCard={inspectCard}
         onClose={() => setDeckModalOpen(false)}
       />
 
       <CardInspectorModal
         card={inspectedCard}
+        active={topModal === 'inspector'}
         onClose={() => setInspectedCard(null)}
       />
+      {modeRequest && (
+        <ConfirmRunModal
+          restart={modeRequest.restart}
+          onCancel={() => setModeRequest(null)}
+          onConfirm={() => {
+            setModeRequest(null);
+            startMode(modeRequest.mode);
+          }}
+        />
+      )}
     </main>
   );
 }

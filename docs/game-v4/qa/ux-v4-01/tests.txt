@@ -1,0 +1,26 @@
+$ bun tests/engine.test.ts && bun test tests/session.test.ts
+PASS: A01 - Zonas exclusivas: Unidad invocada vive en campo y va al descarte al morir
+PASS: A02 - Validación unificada rechaza sin mutar estado ni RNG
+PASS: A04 - Recuperación parcial de LP en Guardia Infinita
+PASS: A05 - Reproducibilidad determinista por semilla
+PASS: Preview coincide exactamente con resolución de ataque y aturdimiento
+PASS: Trampas múltiples en orden de armado sin doble consumo
+PASS: Generador procedural estable durante 1000 semillas y niveles
+PASS: Bot heurístico completa transiciones de Guardia Infinita sin violar invariantes
+ALL DOMAIN & ENDLESS GUARD TESTS PASSED
+bun test v1.4.5 (a7733435c)
+
+tests\session.test.ts:
+(pass) UX-006: four resolvers reject real phase atomically [4.70ms]
+(pass) UX-011: reports absent, blocked and valid V3 reads separately [2.48ms]
+(pass) UX-001: legacy rival-phase save only recovers an earlier checkpoint from the same run [1.64ms]
+(pass) UX-011: invalid primary never displaces a valid backup [2.06ms]
+(pass) UX-001: restores the V3 turn counter when the interrupted previous frame proves the boundary [1.85ms]
+(pass) UX-011: a partial write preserves the last valid checkpoint and reports failure [1.01ms]
+(pass) UX-011: removing a run fails visibly and can be retried [0.85ms]
+(pass) UX-011: failed deletion preserves a backup when it is the only valid checkpoint [0.46ms]
+(pass) UX-001: frames preserve ordered events and deterministic state for both modes [48.55ms]
+
+ 9 pass
+ 0 fail
+Ran 9 tests across 1 file. [95.00ms]

@@ -760,7 +760,7 @@ export function resolveManualAttack(
   targetLane: number | 'direct',
 ): { nextState: DuelEngineState; events: CombatEvent[]; error?: string } {
   const check = validateDuelCommand(
-    { ...state, phase: 'COMBATE' },
+    state,
     { type: 'ATTACK', attackerLane, targetLane },
   );
   if (!check.valid) {
@@ -894,7 +894,7 @@ export function resolvePlayCard(
   rival?: RivalDuelist,
 ): { nextState: DuelEngineState; events: CombatEvent[]; error?: string } {
   const check = validateDuelCommand(
-    { ...state, phase: 'PREPARACION' },
+    state,
     { type: 'PLAY_CARD', cardUid, targetLane },
   );
   if (!check.valid) {
@@ -1412,7 +1412,7 @@ export function resolveMoveUnit(
   toLane: number,
 ): { nextState: DuelEngineState; events: CombatEvent[]; error?: string } {
   const check = validateDuelCommand(
-    { ...state, phase: 'PREPARACION' },
+    state,
     { type: 'MOVE_UNIT', fromLane, toLane },
   );
   if (!check.valid) {
@@ -1456,7 +1456,7 @@ export function resolveActivateSkill(
   laneIndex: number,
 ): { nextState: DuelEngineState; events: CombatEvent[]; error?: string } {
   const check = validateDuelCommand(
-    { ...state, phase: 'PREPARACION' },
+    state,
     { type: 'ACTIVATE_SKILL', laneIndex },
   );
   if (!check.valid) {
@@ -1767,6 +1767,19 @@ export interface CombatStep {
     nextState: DuelEngineState;
     events: CombatEvent[];
   };
+}
+
+export function resolveEndTurn(state: DuelEngineState, rival: RivalDuelist) {
+  if (state.phase === 'TURNO_RIVAL' || isDuelTerminal(state) || !canEndTurn(state).allowed) return null;
+  const frames = [];
+  let current = state;
+  for (const step of buildEndTurnSteps(rival)) {
+    const frame = step.execute(current);
+    frames.push(frame);
+    current = frame.nextState;
+    if (isDuelTerminal(current)) break;
+  }
+  return { frames, nextState: current };
 }
 
 /**

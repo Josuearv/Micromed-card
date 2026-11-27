@@ -1,0 +1,19 @@
+$ bun tests/session.browser.mjs
+Chrome 158.0.8127.37
+PASS UX-001 stable commit at every boundary: reload
+PASS UX-001 stable commit at every boundary: close
+PASS UX-001 stable commit at every boundary: menu
+PASS UX-002 suspension and focus mazo
+PASS UX-002 suspension and focus inspector
+PASS UX-002 suspension and focus pausa
+PASS UX-003 cancel new mode and restart without touching either save
+PASS UX-011 denied write, visible retry and recover from corrupt primary
+PASS UX-002 modals in PREPARACION
+PASS UX-002 modals in COMBATE
+PASS UX-001 legacy interruption with an earlier same-run checkpoint
+PASS UX-001 legacy interruption without a safe checkpoint preserves data
+PASS UX-011 unsaved in-memory progress survives returning to the menu
+PASS V3 infinite rewards, partial recovery, record and next guard
+PASS V3 terminal reload VICTORY
+PASS V3 terminal reload GAME_OVER
+PASS V3 3D turn and 2D fallback after context loss

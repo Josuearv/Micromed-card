@@ -29,6 +29,7 @@ import {
 import { ArenaBoard } from './ArenaBoard';
 import { CardVisual } from './CardVisual';
 import { SlotAnchorDomRefs } from './MedicalTableCanvas';
+import { SaveStatus, SaveStatusProps } from './SaveStatus';
 
 interface GameHUDProps {
   runMode: GameMode;
@@ -45,6 +46,7 @@ interface GameHUDProps {
   pendingAttackerLanes: number[];
   isResolvingTurn: boolean;
   lastFeedback: string;
+  saveStatus: SaveStatusProps;
   logs: CombatLogEntry[];
   tutorialStep: number | null;
   cameraPreset: CameraPreset;
@@ -98,6 +100,7 @@ export function GameHUD({
   pendingAttackerLanes,
   isResolvingTurn,
   lastFeedback,
+  saveStatus,
   logs,
   tutorialStep,
   cameraPreset,
@@ -234,6 +237,7 @@ export function GameHUD({
                 {engineState.rivalIntent.actions.map((a) => a.label).join(' · ')}
               </span>
             </div>
+            <SaveStatus {...saveStatus} />
           </div>
 
           {/* Top-Center: Compact Rival LP Gauge */}

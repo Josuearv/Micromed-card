@@ -7,9 +7,12 @@ import {
   RivalDuelist,
 } from '../types/game';
 import { CardVisual } from './CardVisual';
+import { SaveStatus, SaveStatusProps } from './SaveStatus';
 
 interface EndModalsProps {
   gameState: GameState;
+  active: boolean;
+  saveStatus: SaveStatusProps;
   runMode: GameMode;
   guardLevel: number;
   bestGuardLevel: number;
@@ -32,6 +35,8 @@ interface EndModalsProps {
 
 export function EndModals({
   gameState,
+  active,
+  saveStatus,
   runMode,
   guardLevel,
   bestGuardLevel,
@@ -59,7 +64,12 @@ export function EndModals({
     <div
       className="fixed inset-0 z-30 flex items-center justify-center p-4 md:p-6 bg-[#050a10]/84 overflow-y-auto"
       role="dialog"
-      aria-modal="true"
+      aria-modal={active || undefined}
+      aria-hidden={!active || undefined}
+      aria-label={gameState === 'PAUSED' ? 'Duelo en Pausa' : 'Resultado de guardia'}
+      data-session-dialog="end"
+      tabIndex={-1}
+      inert={!active}
     >
       {gameState === 'PAUSED' && (
         <div className="w-full max-w-md rounded-2xl bg-[#0c1724] border border-slate-800 p-7 shadow-2xl">
@@ -73,8 +83,9 @@ export function EndModals({
             Duelo en Pausa
           </h2>
           <p className="text-sm text-slate-400 leading-relaxed mb-6">
-            {rival.name} ({rival.diseaseName}). El progreso de la guardia se guarda automáticamente.
+            {rival.name} ({rival.diseaseName}).
           </p>
+          <div className="mb-3"><SaveStatus {...saveStatus} /></div>
           <div className="space-y-2.5">
             <button
               type="button"
@@ -127,6 +138,7 @@ export function EndModals({
               <p className="text-sm text-slate-300">
                 Elige 1 de 3 recursos médicos para incorporar a tu mazo maestro antes de la siguiente guardia.
               </p>
+              <SaveStatus {...saveStatus} />
             </div>
 
             <button
@@ -187,6 +199,7 @@ export function EndModals({
               ? 'Coordinaste inmunidad celular, farmacología específica y soporte quirúrgico para neutralizar todos los brotes.'
               : `${rival.name} (${organProfile.shortName}) superó los LP del paciente. Aprovecha las sinergias de órgano, trampas reactivas y fármacos dirigidos.`}
           </p>
+          <SaveStatus {...saveStatus} />
 
           <div className="grid grid-cols-3 gap-3 border-t border-b border-slate-800 py-4 mb-6 text-center">
             <div>
