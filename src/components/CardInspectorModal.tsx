@@ -1,29 +1,51 @@
 import { X } from 'lucide-react';
-import { DuelCard } from '../types/game';
+import { useEffect } from 'react';
+import { DuelCard, TrapTrigger } from '../types/game';
 
 interface CardInspectorModalProps {
   card: DuelCard | null;
   onClose: () => void;
 }
 
+const TRAP_TRIGGER_LABEL: Record<TrapTrigger, string> = {
+  beforeDirectDamage: 'Al recibir un ataque directo al LP del paciente',
+  beforeEnemySummon: 'Cuando el brote despliega un nuevo patógeno',
+  beforeOutbreak: 'Cuando el brote activa una Carta de Brote',
+  beforeAllyDamage: 'Cuando un efecto de brote daña a tus unidades',
+};
+
 export function CardInspectorModal({ card, onClose }: CardInspectorModalProps) {
+  useEffect(() => {
+    if (!card) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [card, onClose]);
+
   if (!card) return null;
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-center justify-center p-6 bg-[#050a10]/82"
+      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#050a10]/84"
       role="dialog"
       aria-modal="true"
+      aria-label={`Ficha médica de ${card.name}`}
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-2xl bg-[#0c1724] border border-slate-700 p-6 shadow-2xl"
+        className="w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl bg-[#0c1724] border border-slate-700 p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
             <p className="text-xs font-mono-tabular text-sky-400 mb-1">
               {card.code} · {card.kind} · {card.medicalClass}
+              {card.rarity && card.rarity !== 'Comun' ? ` · ${card.rarity}` : ''}
             </p>
             <h2 className="font-display text-xl font-bold text-slate-100">
               {card.name}
@@ -48,6 +70,11 @@ export function CardInspectorModal({ card, onClose }: CardInspectorModalProps) {
             {card.kind === 'Unidad' && (
               <p className="font-mono-tabular text-slate-400 mt-1.5">
                 Coste {card.cost} PA · ATK {card.atk} · PS {card.maxHp} · Habilidad: {card.abilityLabel}
+              </p>
+            )}
+            {card.kind === 'Trampa' && card.trapTrigger && (
+              <p className="font-mono-tabular text-violet-300 mt-1.5">
+                Coste {card.cost} PA · Disparador: {TRAP_TRIGGER_LABEL[card.trapTrigger]}
               </p>
             )}
           </div>

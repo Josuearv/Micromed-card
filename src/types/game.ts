@@ -1,4 +1,15 @@
-export type CardKind = 'Unidad' | 'Tratamiento' | 'Diagnostico';
+export type GameMode = 'endless' | 'classic';
+
+export type OrganId =
+  | 'corazon'
+  | 'pulmon'
+  | 'higado'
+  | 'cerebro'
+  | 'epitelio';
+
+export type CardKind = 'Unidad' | 'Tratamiento' | 'Diagnostico' | 'Trampa';
+
+export type CardRarity = 'Comun' | 'Rara' | 'Especialista';
 
 export type MedicalClass =
   | 'Inmunologia'
@@ -7,7 +18,7 @@ export type MedicalClass =
   | 'Diagnostico'
   | 'Patogeno';
 
-export type PathogenSubtype = 'Viral' | 'Bacteriano' | 'Vascular';
+export type PathogenSubtype = 'Viral' | 'Bacteriano' | 'Vascular' | 'Fungico';
 
 export type EntityVisualArchetype =
   | 'macrofago'
@@ -15,8 +26,10 @@ export type EntityVisualArchetype =
   | 'anticuerpo'
   | 'celula_madre'
   | 'unidad_qx'
+  | 'plaqueta'
   | 'virus'
   | 'bacteria'
+  | 'hongo'
   | 'trombo';
 
 export type UnitAbilityId =
@@ -26,22 +39,64 @@ export type UnitAbilityId =
   | 'perforina'
   | 'mitosis'
   | 'descarga_sincronizada'
+  | 'inflamacion_net'
+  | 'escudo_plaquetario'
+  | 'citotoxicidad_nk'
   | 'biofilm'
-  | 'replicacion';
+  | 'replicacion'
+  | 'espora_toxica';
+
+export type TrapTrigger =
+  | 'beforeDirectDamage'
+  | 'beforeEnemySummon'
+  | 'beforeOutbreak'
+  | 'beforeAllyDamage';
+
+export type TrapEffectId =
+  | 'barrera_mucociliar'
+  | 'ig_m_neutralizante'
+  | 'contramedida_citoquina'
+  | 'hemostasia_urgencia';
+
+export type OutbreakEffectId =
+  | 'resistencia_plasmidica'
+  | 'embolo_septico'
+  | 'tormenta_citoquinas'
+  | 'evasion_antigenica'
+  | 'bloqueo_mucoso'
+  | 'neurotoxina_sinaptica';
+
+export type CaseMutatorId =
+  | 'tormenta_citoquinica'
+  | 'evasion_antigenica'
+  | 'coagulopatia'
+  | 'biofilm_persistente'
+  | 'neurotoxicidad'
+  | 'hipoxia_alveolar';
 
 export type StatusEffectType =
-  | 'opsonizado' // +50% damage taken from all sources
-  | 'inhibido'   // -450 ATK & disables replication
-  | 'biofilm'    // Absorbs first 400 damage / reduces antibiotic non-carbapenem impact
-  | 'aturdido'   // Skips next attack in combat phase
-  | 'sobrecarga'; // Loses 200 PS at end of combat (e.g. adrenaline rebound)
+  | 'opsonizado'
+  | 'inhibido'
+  | 'biofilm'
+  | 'aturdido'
+  | 'sobrecarga'
+  | 'inflamado'
+  | 'regenerando'
+  | 'escudo'
+  | 'inmunosuprimido';
 
 export interface StatusState {
-  opsonizado?: number; // turns remaining
-  inhibido?: number;   // turns remaining
-  biofilm?: number;    // shield amount remaining
-  aturdido?: boolean;
-  sobrecarga?: number; // recoil damage at end of turn
+  opsonizado?: number;      // turns remaining (+50% dmg taken)
+  inhibido?: number;        // turns remaining (-450 ATK & blocks mutation/replication)
+  biofilm?: number;         // shield amount absorbing physical hits
+  aturdido?: boolean;       // skips next attack / pressure
+  sobrecarga?: number;      // end-of-turn recoil damage
+  inflamado?: number;       // turns remaining (200 damage at end of turn)
+  regenerando?: number;     // turns remaining (+200 PS at end of turn)
+  escudo?: number;          // ally barrier absorbing incoming damage
+  inmunosuprimido?: number; // turns remaining (-250 ally ATK)
+  tempAtkBoost?: number;    // temporary ATK boost cleared at end of turn
+  vacunaStacks?: number;    // cap permanent vaccine stacks cleanly
 }
 
 export type TurnPhase =
@@ -57,13 +112,31 @@ export type GameState =
   | 'VICTORY'
   | 'GAME_OVER';
 
-export type CameraPreset = 'overview' | 'heart' | 'instruments';
+export type CameraPreset = 'overview' | 'organ' | 'heart' | 'instruments';
+
+export type CardEffectTag =
+  | 'summon'
+  | 'adrenalina'
+  | 'antiviral'
+  | 'antibiotico'
+  | 'antifungico'
+  | 'trombolisis'
+  | 'suero'
+  | 'diagnostico_pcr'
+  | 'hemocultivo'
+  | 'desfibrilacion'
+  | 'vacuna'
+  | 'corticosteroide'
+  | 'interferon'
+  | 'hiperinmune'
+  | 'trap';
 
 export interface DuelCard {
   id: string;
   code: string;
   name: string;
   kind: CardKind;
+  rarity?: CardRarity;
   medicalClass: MedicalClass;
   subtype?: PathogenSubtype;
   archetype: EntityVisualArchetype;
@@ -73,20 +146,14 @@ export interface DuelCard {
   maxHp: number;
   ability: UnitAbilityId;
   abilityLabel: string;
-  activeSkillCost?: number; // If > 0, player can manually trigger special skill during Preparation
+  activeSkillCost?: number;
   activeSkillLabel?: string;
+  // Trap parameters (when kind === 'Trampa')
+  trapTrigger?: TrapTrigger;
+  trapEffectId?: TrapEffectId;
   // Treatment / Diagnostic parameters
-  targetMode: 'none' | 'ally' | 'enemy' | 'empty_lane';
-  effectTag:
-    | 'summon'
-    | 'adrenalina'
-    | 'antiviral'
-    | 'antibiotico'
-    | 'trombolisis'
-    | 'suero'
-    | 'diagnostico_pcr'
-    | 'desfibrilacion'
-    | 'vacuna';
+  targetMode: 'none' | 'ally' | 'enemy' | 'empty_lane' | 'trap_slot';
+  effectTag: CardEffectTag;
   // Medical & Game Design Documentation
   shortRule: string;
   medicalBasis: string;
@@ -102,6 +169,7 @@ export interface CardInstance extends DuelCard {
 export interface BoardUnit {
   uid: string;
   cardId: string;
+  sourceCard: CardInstance;
   name: string;
   medicalClass: MedicalClass;
   subtype?: PathogenSubtype;
@@ -117,10 +185,57 @@ export interface BoardUnit {
   usedActiveSkillThisTurn: boolean;
   hasAttackedThisTurn: boolean;
   statuses: StatusState;
-  laneIndex: number; // 0, 1, 2
+  laneIndex: number;
   isEnemy: boolean;
   shortRule: string;
   medicalBasis: string;
+}
+
+export interface ArmedTrap {
+  uid: string;
+  sourceCard: CardInstance;
+  trigger: TrapTrigger;
+  effectId: TrapEffectId;
+  armedTurn: number;
+}
+
+export interface OrganProfile {
+  id: OrganId;
+  name: string;
+  shortName: string;
+  clinicalZone: string;
+  favoredClass: MedicalClass;
+  synergyTitle: string;
+  synergyRule: string;
+  counterplayHint: string;
+  accentHex: number;
+  accentCss: string;
+  bpmBase: number;
+  spo2Base: number;
+}
+
+export interface RareDiseaseMutator {
+  id: CaseMutatorId;
+  name: string;
+  description: string;
+}
+
+export interface RivalOutbreakCard {
+  id: string;
+  name: string;
+  effectId: OutbreakEffectId;
+  description: string;
+  medicalBasis: string;
+}
+
+export interface IntentAction {
+  id: string;
+  kind: 'direct_pressure' | 'summon' | 'outbreak_card' | 'mutation_buff';
+  label: string;
+  description: string;
+  lane: number;
+  estimatedDamage?: number;
+  cardName?: string;
 }
 
 export interface RivalIntent {
@@ -128,15 +243,23 @@ export interface RivalIntent {
   description: string;
   plannedLane: number;
   plannedCardName?: string;
+  plannedOutbreakId?: string;
+  actions: IntentAction[];
 }
 
 export interface RivalDuelist {
   id: string;
   roundNumber: number;
+  isBoss?: boolean;
   name: string;
+  diseaseName: string;
   clinicalContext: string;
+  organId: OrganId;
+  mutators: RareDiseaseMutator[];
   startingLp: number;
+  threatBudget?: number;
   deck: DuelCard[];
+  outbreakDeck: RivalOutbreakCard[];
 }
 
 export type AnimationKind =
@@ -149,16 +272,18 @@ export type AnimationKind =
   | 'mitosis'
   | 'clash'
   | 'direct_strike'
-  | 'infect';
+  | 'infect'
+  | 'trap'
+  | 'outbreak';
 
 export interface CombatEvent {
   id: string;
   nonce: number;
   animKind: AnimationKind;
   sourceSide: 'player' | 'enemy';
-  sourceLane: number; // 0-2, or -1 for global card
+  sourceLane: number;
   targetSide: 'player' | 'enemy';
-  targetLane: number; // 0-2, or -1 for direct LP / global
+  targetLane: number;
   colorHex: number;
   value: number;
   isCritical: boolean;
@@ -180,6 +305,7 @@ export interface AttackPreview {
   outcomeText: string;
   tone: 'advantage' | 'even' | 'danger';
   isSuperEffective: boolean;
+  organBonusNote?: string | null;
 }
 
 export interface DuelTelemetry {
@@ -188,9 +314,12 @@ export interface DuelTelemetry {
   rivalLp: number;
   rivalMaxLp: number;
   rivalName: string;
+  organId: OrganId;
+  organAccentHex: number;
   phase: TurnPhase;
   playerSlots: Array<BoardUnit | null>;
   enemySlots: Array<BoardUnit | null>;
+  armedTrapsCount: number;
   selectedAttackerLane: number | null;
   selectingSummonOrMove: boolean;
   selectingAllyTarget: boolean;
@@ -199,4 +328,13 @@ export interface DuelTelemetry {
   spo2: number;
   isCritical: boolean;
   gameState: GameState;
+}
+
+export type SpeedMode = 'normal' | 'fast' | 'reduced';
+
+export interface RunPreferences {
+  muted: boolean;
+  speedMode: SpeedMode;
+  reducedMotion: boolean;
+  tactical2D: boolean;
 }

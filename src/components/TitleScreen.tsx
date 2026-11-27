@@ -1,17 +1,37 @@
+import { Grid2x2, Play, Sparkles, Trophy, Volume2, VolumeX } from 'lucide-react';
+import { RunSavePayload } from '../game/persistence';
+import { GameMode, RunPreferences } from '../types/game';
+
 interface TitleScreenProps {
-  onStart: () => void;
+  savedRun: RunSavePayload | null;
+  bestGuardLevel: number;
+  prefs: RunPreferences;
+  onStartMode: (mode: GameMode) => void;
+  onResumeSaved: () => void;
+  onToggleMute: () => void;
+  onToggleTactical2D: () => void;
+  onToggleReducedMotion: () => void;
 }
 
-export function TitleScreen({ onStart }: TitleScreenProps) {
+export function TitleScreen({
+  savedRun,
+  bestGuardLevel,
+  prefs,
+  onStartMode,
+  onResumeSaved,
+  onToggleMute,
+  onToggleTactical2D,
+  onToggleReducedMotion,
+}: TitleScreenProps) {
   return (
-    <div className="fixed inset-0 z-20 flex items-center pointer-events-none">
+    <div className="fixed inset-0 z-20 flex items-center pointer-events-none overflow-y-auto">
       <div
-        className="absolute inset-y-0 left-0 w-full md:w-[56%] bg-gradient-to-r from-[#070f17]/95 via-[#070f17]/82 to-transparent"
+        className="fixed inset-y-0 left-0 w-full md:w-[58%] bg-gradient-to-r from-[#070f17]/95 via-[#070f17]/84 to-transparent"
         aria-hidden="true"
       />
 
-      <div className="relative z-10 max-w-xl px-8 md:px-14 py-10 pointer-events-auto">
-        <div className="mb-5">
+      <div className="relative z-10 max-w-xl px-6 md:px-14 py-8 pointer-events-auto my-auto">
+        <div className="mb-4">
           <svg
             viewBox="0 0 380 86"
             className="w-full max-w-[360px] h-auto"
@@ -68,49 +88,114 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
           </svg>
         </div>
 
-        <p className="text-base text-slate-300 leading-relaxed max-w-md mb-7">
-          Dirige la respuesta inmune y farmacológica en 3 carriles vasculares
-          frente a brotes virales, bacterianos y trombóticos. Despliega entidades,
-          aplica tratamientos dirigidos y observa la resolución del combate en la
-          arena biológica 3D.
+        <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-md mb-5">
+          Defiende 5 órganos y tejidos vitales en 3 carriles vasculares frente a
+          brotes procedurales, enfermedades raras y cartas de brote rivales.
         </p>
 
-        <div className="space-y-2.5 mb-8 text-sm text-slate-300 border-t border-b border-slate-800/80 py-4">
+        <div className="space-y-2 mb-6 text-xs md:text-sm text-slate-300 border-t border-b border-slate-800/80 py-3.5">
           <div className="flex items-baseline gap-3">
             <span className="font-mono-tabular text-emerald-400 font-semibold">01.</span>
             <span>
-              <strong className="text-slate-100 font-semibold">Fase Táctica</strong>: elige en qué carril desplegar células inmunes, reposiciona unidades o aplica diagnósticos y fármacos específicos.
+              <strong className="text-slate-100 font-semibold">Órganos y Sinergias</strong>: Corazón, Pulmón, Hígado, Cerebro y Tejido Epitelial rotan con bonificaciones clínicas por clase.
             </span>
           </div>
           <div className="flex items-baseline gap-3">
-            <span className="font-mono-tabular text-sky-400 font-semibold">02.</span>
+            <span className="font-mono-tabular text-violet-400 font-semibold">02.</span>
             <span>
-              <strong className="text-slate-100 font-semibold">Coherencia Clínica</strong>: usa Antivirales contra Virus, Meropenem para disolver Biofilm bacteriano y Alteplasa contra Trombos.
+              <strong className="text-slate-100 font-semibold">Trampas Reactivas y Brote</strong>: arma respuestas inmunes boca abajo para interceptar ataques directos y cartas del rival.
             </span>
           </div>
           <div className="flex items-baseline gap-3">
             <span className="font-mono-tabular text-amber-400 font-semibold">03.</span>
             <span>
-              <strong className="text-slate-100 font-semibold">Combate Automático por Carriles</strong>: pulsa Resolver Combate para ejecutar fagocitosis, opsonización y ataques directos al LP rival.
+              <strong className="text-slate-100 font-semibold">Guardia Infinita</strong>: escala tu mazo eligiendo 1 de 3 cartas tras cada victoria mientras sube la dificultad.
             </span>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 mb-5">
+        {bestGuardLevel > 0 && (
+          <div className="inline-flex items-center gap-2 text-xs font-mono-tabular text-amber-300 mb-4 px-3 py-1 rounded-lg bg-amber-950/35 border border-amber-500/35">
+            <Trophy className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>Mejor Guardia Infinita: Nivel {bestGuardLevel}</span>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-3 mb-5">
+          {savedRun && (
+            <button
+              type="button"
+              onClick={onResumeSaved}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-display font-bold text-sm tracking-wide transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <Play className="w-4 h-4" aria-hidden="true" />
+              <span>
+                Continuar ({savedRun.run.mode === 'endless' ? `Guardia ${savedRun.run.guardLevel}` : `Clásico ${savedRun.run.guardLevel}/3`})
+              </span>
+            </button>
+          )}
+
           <button
             type="button"
-            onClick={onStart}
-            className="px-7 py-3.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:translate-y-px text-slate-950 font-display font-bold text-base tracking-wide transition-colors cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+            onClick={() => onStartMode('endless')}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:translate-y-px text-slate-950 font-display font-bold text-sm md:text-base tracking-wide transition-colors cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
           >
-            Iniciar Duelo
+            <Sparkles className="w-4 h-4" aria-hidden="true" />
+            <span>Guardia Infinita</span>
           </button>
-          <span className="text-xs font-mono-tabular text-slate-400">
-            Pulsa Enter o Espacio
-          </span>
+
+          <button
+            type="button"
+            onClick={() => onStartMode('classic')}
+            className="px-5 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 font-display font-semibold text-sm tracking-wide transition-colors cursor-pointer whitespace-nowrap"
+          >
+            Modo Clásico (3 Duelos)
+          </button>
+        </div>
+
+        {/* Accessibility & View Preferences */}
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <button
+            type="button"
+            onClick={onToggleMute}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0c1724] border border-slate-800 hover:border-slate-600 text-xs text-slate-300 cursor-pointer"
+          >
+            {prefs.muted ? (
+              <VolumeX className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+            ) : (
+              <Volume2 className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+            )}
+            <span>{prefs.muted ? 'Audio silenciado' : 'Audio activo'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onToggleTactical2D}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs cursor-pointer ${
+              prefs.tactical2D
+                ? 'bg-emerald-950/50 border-emerald-500/50 text-emerald-300'
+                : 'bg-[#0c1724] border-slate-800 hover:border-slate-600 text-slate-300'
+            }`}
+          >
+            <Grid2x2 className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>{prefs.tactical2D ? 'Tablero Táctico 2D' : 'Arena 3D'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onToggleReducedMotion}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs cursor-pointer ${
+              prefs.reducedMotion
+                ? 'bg-sky-950/50 border-sky-500/50 text-sky-300'
+                : 'bg-[#0c1724] border-slate-800 hover:border-slate-600 text-slate-300'
+            }`}
+          >
+            <span>{prefs.reducedMotion ? 'Movimiento reducido' : 'Animación estándar'}</span>
+          </button>
         </div>
 
         <p className="text-xs font-mono-tabular text-slate-400 tracking-wide">
-          1-6 Seleccionar Carta · Espacio Resolver Combate · ? Ficha Médica · H Vista 3D · Esc Pausa
+          Enter Iniciar Guardia Infinita · 1-6 Carta · Espacio Fase/Combate · H Vista · Esc Pausa
         </p>
       </div>
     </div>

@@ -7,6 +7,7 @@ export interface Entity3DHandle {
   opsonizedRing: THREE.Mesh;
   biofilmShell: THREE.Mesh;
   stunRing: THREE.Mesh;
+  shieldRing: THREE.Mesh;
   archetype: EntityVisualArchetype;
   lungeX: number;
   lungeZ: number;
@@ -19,8 +20,10 @@ const ARCHETYPE_COLORS: Record<EntityVisualArchetype, number> = {
   anticuerpo: 0x38bdf8,
   celula_madre: 0x2dd4bf,
   unidad_qx: 0xf59e0b,
+  plaqueta: 0xfbbf24,
   virus: 0xf43f5e,
   bacteria: 0xfb7185,
+  hongo: 0xe879f9,
   trombo: 0xb91c1c,
 };
 
@@ -51,7 +54,6 @@ export function createBioEntityMesh(
   });
 
   if (archetype === 'macrofago') {
-    // Lobulated amoeboid cell + pseudopods + nucleus
     const core = new THREE.Mesh(new THREE.SphereGeometry(0.24, 20, 20), primaryMat);
     core.scale.set(1.15, 0.85, 1.1);
     core.castShadow = true;
@@ -94,7 +96,6 @@ export function createBioEntityMesh(
       bodyGroup.add(arm);
     }
   } else if (archetype === 'anticuerpo') {
-    // Y-shaped Immunoglobulin IgG
     const stem = new THREE.Mesh(
       new THREE.CylinderGeometry(0.042, 0.05, 0.28, 12),
       primaryMat,
@@ -135,7 +136,6 @@ export function createBioEntityMesh(
     n2.position.set(0.07, -0.02, 0);
     bodyGroup.add(outer, n1, n2);
   } else if (archetype === 'unidad_qx') {
-    // Articulated medical defibrillator / surgical bot
     const chassis = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.22, 0.24), primaryMat);
     chassis.castShadow = true;
     const visor = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.08, 0.26), accentMat);
@@ -148,8 +148,24 @@ export function createBioEntityMesh(
     padR.position.set(0.22, 0.04, 0.06);
     padR.rotation.z = Math.PI / 2;
     bodyGroup.add(chassis, visor, padL, padR);
+  } else if (archetype === 'plaqueta') {
+    // Stellate activated platelet disc + pseudopod rays
+    const disc = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.22, 0.22, 0.08, 18),
+      primaryMat,
+    );
+    disc.castShadow = true;
+    bodyGroup.add(disc);
+    const rayGeo = new THREE.ConeGeometry(0.038, 0.2, 8);
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const ray = new THREE.Mesh(rayGeo, accentMat);
+      ray.position.set(Math.cos(a) * 0.24, 0, Math.sin(a) * 0.24);
+      ray.rotation.z = -Math.PI / 2;
+      ray.rotation.y = -a;
+      bodyGroup.add(ray);
+    }
   } else if (archetype === 'virus') {
-    // Icosahedral capsid + glycoprotein spikes
     const capsid = new THREE.Mesh(new THREE.IcosahedronGeometry(0.21, 0), primaryMat);
     capsid.castShadow = true;
     bodyGroup.add(capsid);
@@ -172,8 +188,22 @@ export function createBioEntityMesh(
       spGrp.add(stalk, head);
       bodyGroup.add(spGrp);
     });
+  } else if (archetype === 'hongo') {
+    // Budding yeast + fungal pseudohyphae cluster
+    const main = new THREE.Mesh(new THREE.SphereGeometry(0.2, 18, 18), primaryMat);
+    main.castShadow = true;
+    const bud1 = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 14), accentMat);
+    bud1.position.set(0.18, 0.14, 0.08);
+    const bud2 = new THREE.Mesh(new THREE.SphereGeometry(0.1, 14, 14), primaryMat);
+    bud2.position.set(-0.18, 0.08, -0.1);
+    const hypha = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.035, 0.045, 0.36, 10),
+      accentMat,
+    );
+    hypha.position.set(0, -0.16, 0.04);
+    hypha.rotation.z = 0.35;
+    bodyGroup.add(main, bud1, bud2, hypha);
   } else if (archetype === 'bacteria') {
-    // Bacillus capsule + flagellum tail
     const capsule = new THREE.Mesh(
       new THREE.CapsuleGeometry(0.14, 0.24, 8, 16),
       primaryMat,
@@ -194,7 +224,6 @@ export function createBioEntityMesh(
     );
     bodyGroup.add(flagellum);
   } else {
-    // Vascular Thrombus: fibrin-platelet aggregate
     const mainClot = new THREE.Mesh(
       new THREE.DodecahedronGeometry(0.23, 1),
       primaryMat,
@@ -214,7 +243,6 @@ export function createBioEntityMesh(
     bodyGroup.add(mainClot, strand, strand2);
   }
 
-  // Base pedestal ring on slot floor
   const baseRing = new THREE.Mesh(
     new THREE.TorusGeometry(0.42, 0.022, 10, 32),
     new THREE.MeshStandardMaterial({
@@ -228,7 +256,6 @@ export function createBioEntityMesh(
   baseRing.position.y = 0.02;
   root.add(baseRing);
 
-  // Status Indicator 1: Opsonized Cyan Target Ring
   const opsonizedRing = new THREE.Mesh(
     new THREE.TorusGeometry(0.36, 0.02, 8, 32),
     new THREE.MeshBasicMaterial({ color: 0x38bdf8 }),
@@ -237,7 +264,6 @@ export function createBioEntityMesh(
   opsonizedRing.visible = false;
   root.add(opsonizedRing);
 
-  // Status Indicator 2: Biofilm Protective Dome
   const biofilmShell = new THREE.Mesh(
     new THREE.SphereGeometry(0.38, 18, 14),
     new THREE.MeshStandardMaterial({
@@ -252,7 +278,6 @@ export function createBioEntityMesh(
   biofilmShell.visible = false;
   root.add(biofilmShell);
 
-  // Status Indicator 3: Stunned Electric Halo
   const stunRing = new THREE.Mesh(
     new THREE.TorusGeometry(0.25, 0.018, 8, 24),
     new THREE.MeshBasicMaterial({ color: 0xfbbf24 }),
@@ -262,12 +287,22 @@ export function createBioEntityMesh(
   stunRing.visible = false;
   root.add(stunRing);
 
+  const shieldRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.38, 0.018, 8, 28),
+    new THREE.MeshBasicMaterial({ color: 0x38bdf8 }),
+  );
+  shieldRing.rotation.x = Math.PI / 2;
+  shieldRing.position.y = 0.14;
+  shieldRing.visible = false;
+  root.add(shieldRing);
+
   return {
     root,
     bodyGroup,
     opsonizedRing,
     biofilmShell,
     stunRing,
+    shieldRing,
     archetype,
     lungeX: 0,
     lungeZ: 0,
@@ -284,7 +319,6 @@ export interface BloodstreamHandle {
 
 export function createBloodstreamErythrocytes(): BloodstreamHandle {
   const count = 36;
-  // Biconcave erythrocyte profile via LatheGeometry
   const profile = [
     new THREE.Vector2(0, 0.012),
     new THREE.Vector2(0.035, 0.016),

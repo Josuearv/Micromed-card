@@ -3,18 +3,11 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import {
-  CameraPreset,
-  CombatEvent,
-  DuelTelemetry,
-  MedicalClass,
-} from '../types/game';
-import {
-  createBloodstreamErythrocytes,
   createBioEntityMesh,
+  createBloodstreamErythrocytes,
   Entity3DHandle,
 } from '../three/bioEntities';
 import {
-  createAnatomicalHeartRig,
   createCardDeckStack,
   createContactShadowPlane,
   createMedicalMaterials,
@@ -23,6 +16,7 @@ import {
   createSurgicalTable,
   createVitalMonitorRig,
 } from '../three/models';
+import { createOrganRig, OrganRigHandle } from '../three/organRigs';
 import {
   createBrushedMetalRoughnessTexture,
   createCardBackTexture,
@@ -31,6 +25,12 @@ import {
   createSurgicalMatTexture,
   VitalMonitorScreen,
 } from '../three/textures';
+import {
+  CameraPreset,
+  CombatEvent,
+  DuelTelemetry,
+  MedicalClass,
+} from '../types/game';
 
 export interface SlotAnchorDomRefs {
   player: Array<HTMLDivElement | null>;
@@ -40,13 +40,15 @@ export interface SlotAnchorDomRefs {
 interface MedicalTableCanvasProps {
   telemetry: DuelTelemetry;
   cameraPreset: CameraPreset;
-  activeCombatEvent: CombatEvent | null;
+  eventBatch: CombatEvent[];
   playedCardMeta: { nonce: number; medicalClass: MedicalClass; name: string } | null;
+  reducedMotion?: boolean;
   slotAnchorRefs: MutableRefObject<SlotAnchorDomRefs>;
   onClickPlayerSlot: (lane: number) => void;
   onClickEnemySlot: (lane: number) => void;
-  onInspectHeart: () => void;
+  onInspectOrgan: () => void;
   onClickDeck: () => void;
+  onWebGLUnavailable?: () => void;
 }
 
 const CAMERA_TARGETS: Record<
@@ -54,6 +56,7 @@ const CAMERA_TARGETS: Record<
   { pos: [number, number, number]; look: [number, number, number] }
 > = {
   overview: { pos: [0.0, 6.7, 9.0], look: [0, 0.1, 0.2] },
+  organ: { pos: [-1.6, 2.6, 3.4], look: [0, 0.9, -0.1] },
   heart: { pos: [-1.6, 2.6, 3.4], look: [0, 0.9, -0.1] },
   instruments: { pos: [3.1, 3.0, 4.1], look: [1.6, 0.35, 0.2] },
 };
@@ -97,27 +100,37 @@ function detectSoftwareGl(): boolean {
 export function MedicalTableCanvas({
   telemetry,
   cameraPreset,
-  activeCombatEvent,
+  eventBatch,
   playedCardMeta,
+  reducedMotion = false,
   slotAnchorRefs,
   onClickPlayerSlot,
   onClickEnemySlot,
-  onInspectHeart,
+  onInspectOrgan,
   onClickDeck,
+  onWebGLUnavailable,
 }: MedicalTableCanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const telemetryRef = useRef<DuelTelemetry>(telemetry);
   const presetRef = useRef<CameraPreset>(cameraPreset);
+  const reducedMotionRef = useRef<boolean>(reducedMotion);
   const userOrbitingRef = useRef(false);
   const transitionActiveRef = useRef(false);
-  const inspectCbRef = useRef(onInspectHeart);
+
+  const inspectCbRef = useRef(onInspectOrgan);
   const deckCbRef = useRef(onClickDeck);
   const playerSlotCbRef = useRef(onClickPlayerSlot);
   const enemySlotCbRef = useRef(onClickEnemySlot);
+  const fallbackCbRef = useRef(onWebGLUnavailable);
 
-  const eventTriggerRef = useRef<CombatEvent | null>(null);
+  // A10: Ordered VFX event queue instead of dropping earlier events
+  const eventQueueRef = useRef<CombatEvent[]>([]);
   const lastEventNonceRef = useRef<number>(0);
-  const cardTriggerRef = useRef<{ nonce: number; medicalClass: MedicalClass; name: string } | null>(null);
+  const cardTriggerRef = useRef<{
+    nonce: number;
+    medicalClass: MedicalClass;
+    name: string;
+  } | null>(null);
   const lastCardNonceRef = useRef<number>(0);
 
   useEffect(() => {
@@ -130,6 +143,10 @@ export function MedicalTableCanvas({
   }, [telemetry]);
 
   useEffect(() => {
+    reducedMotionRef.current = reducedMotion;
+  }, [reducedMotion]);
+
+  useEffect(() => {
     if (presetRef.current !== cameraPreset) {
       presetRef.current = cameraPreset;
       userOrbitingRef.current = false;
@@ -138,18 +155,30 @@ export function MedicalTableCanvas({
   }, [cameraPreset]);
 
   useEffect(() => {
-    inspectCbRef.current = onInspectHeart;
+    inspectCbRef.current = onInspectOrgan;
     deckCbRef.current = onClickDeck;
     playerSlotCbRef.current = onClickPlayerSlot;
     enemySlotCbRef.current = onClickEnemySlot;
-  }, [onInspectHeart, onClickDeck, onClickPlayerSlot, onClickEnemySlot]);
+    fallbackCbRef.current = onWebGLUnavailable;
+  }, [
+    onInspectOrgan,
+    onClickDeck,
+    onClickPlayerSlot,
+    onClickEnemySlot,
+    onWebGLUnavailable,
+  ]);
 
   useEffect(() => {
-    if (activeCombatEvent && activeCombatEvent.nonce !== lastEventNonceRef.current) {
-      lastEventNonceRef.current = activeCombatEvent.nonce;
-      eventTriggerRef.current = activeCombatEvent;
+    for (const evt of eventBatch) {
+      if (evt.nonce > lastEventNonceRef.current) {
+        lastEventNonceRef.current = evt.nonce;
+        eventQueueRef.current.push(evt);
+        if (eventQueueRef.current.length > 16) {
+          eventQueueRef.current.shift();
+        }
+      }
     }
-  }, [activeCombatEvent]);
+  }, [eventBatch]);
 
   useEffect(() => {
     if (playedCardMeta && playedCardMeta.nonce !== lastCardNonceRef.current) {
@@ -162,12 +191,19 @@ export function MedicalTableCanvas({
     const container = containerRef.current;
     if (!container) return;
 
+    let renderer: THREE.WebGLRenderer;
     const isSoftwareGl = detectSoftwareGl();
 
-    const renderer = new THREE.WebGLRenderer({
-      antialias: !isSoftwareGl,
-      powerPreference: 'high-performance',
-    });
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: !isSoftwareGl,
+        powerPreference: 'high-performance',
+      });
+    } catch {
+      fallbackCbRef.current?.();
+      return;
+    }
+
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.12;
@@ -241,7 +277,7 @@ export function MedicalTableCanvas({
     bioPointLight.position.set(0, 1.35, -0.1);
     scene.add(bioPointLight);
 
-    // Textures & Materials
+    // Shared Textures & Materials
     const maxAniso = renderer.capabilities.getMaxAnisotropy();
     const matTexture = createSurgicalMatTexture(maxAniso);
     const brushedMap = createBrushedMetalRoughnessTexture();
@@ -250,15 +286,14 @@ export function MedicalTableCanvas({
     const monitorScreen = new VitalMonitorScreen(maxAniso);
     const mats = createMedicalMaterials(brushedMap, isSoftwareGl);
 
-    // 1. Surgical Table
+    // 1. Surgical Table & Bloodstream
     const table = createSurgicalTable(mats, matTexture);
     scene.add(table);
 
-    // 2. Flowing Microvascular Erythrocytes (InstancedMesh)
     const bloodstream = createBloodstreamErythrocytes();
     scene.add(bloodstream.mesh);
 
-    // 3. Vital Monitor Rig
+    // 2. Vital Monitor Rig
     const monitorRig = createVitalMonitorRig(mats, monitorScreen);
     monitorRig.position.set(-3.45, 0.055, -2.25);
     monitorRig.rotation.y = 0.44;
@@ -267,16 +302,20 @@ export function MedicalTableCanvas({
     monitorShadow.position.set(-3.45, 0.062, -2.25);
     scene.add(monitorShadow);
 
-    // 4. Anatomical Heart Reactor
-    const heartRig = createAnatomicalHeartRig(mats);
-    heartRig.root.position.set(0, 0.055, -0.1);
-    heartRig.root.scale.setScalar(0.72);
-    scene.add(heartRig.root);
-    const heartShadow = createContactShadowPlane(shadowTexture, 1.85, 1.85, 0.48);
-    heartShadow.position.set(0, 0.062, -0.1);
-    scene.add(heartShadow);
+    // 3. Dynamic Central Organ Rig (supports all 5 organs with clean dispose)
+    let activeOrganRig: OrganRigHandle = createOrganRig(
+      telemetryRef.current.organId,
+      mats,
+      isSoftwareGl,
+    );
+    activeOrganRig.root.position.set(0, 0.055, -0.1);
+    activeOrganRig.root.scale.setScalar(0.72);
+    scene.add(activeOrganRig.root);
+    const organShadow = createContactShadowPlane(shadowTexture, 1.85, 1.85, 0.48);
+    organShadow.position.set(0, 0.062, -0.1);
+    scene.add(organShadow);
 
-    // 5. Stethoscope & Pharmacology Tray & Deck Stack
+    // 4. Stethoscope, Pharmacology Tray & Deck Stack
     const stethoscope = createStethoscopeModel(mats);
     stethoscope.position.set(-3.65, 0.065, 1.35);
     stethoscope.rotation.y = 0.5;
@@ -303,7 +342,7 @@ export function MedicalTableCanvas({
     deckShadow.rotation.y = -0.2;
     scene.add(deckShadow);
 
-    // 6. Dynamic 3D Biological Entity Slots (rebuilt only when slot uid/archetype changes)
+    // 5. Dynamic Biological Entities per Lane
     const playerEntityMap: Array<{ uid: string; handle: Entity3DHandle } | null> = [
       null,
       null,
@@ -326,7 +365,7 @@ export function MedicalTableCanvas({
       });
     };
 
-    // 7. Action Beam + Shockwave Ring
+    // 6. Action Beam + Shockwave Ring + Played Card Arc
     const beamGeo = new THREE.CylinderGeometry(0.04, 0.04, 1, 12);
     beamGeo.rotateX(Math.PI / 2);
     const beamMat = new THREE.MeshBasicMaterial({
@@ -353,7 +392,6 @@ export function MedicalTableCanvas({
     scene.add(shockwaveRing);
     let waveTimer = 0;
 
-    // 8. 3D Played Card Arc
     const playedCardGeo = new THREE.BoxGeometry(0.95, 0.018, 1.34);
     let currentCardTex = createPlayedCardTexture('Inmunologia', 'Duelo Clínico', maxAniso);
     const playedCardTopMat = new THREE.MeshStandardMaterial({
@@ -379,7 +417,7 @@ export function MedicalTableCanvas({
     let cardFlightT = 0;
     let cardVisibleTimer = 0;
 
-    // 9. Pooled Particle System
+    // 7. Pooled Particle System
     const PARTICLE_COUNT = 84;
     const pPositions = new Float32Array(PARTICLE_COUNT * 3);
     const pVelocities = new Float32Array(PARTICLE_COUNT * 3);
@@ -399,7 +437,13 @@ export function MedicalTableCanvas({
     scene.add(particlePoints);
     let particleBurstTimer = 0;
 
-    const triggerBurst = (colorHex: number, ox: number, oy: number, oz: number, upward = false) => {
+    const triggerBurst = (
+      colorHex: number,
+      ox: number,
+      oy: number,
+      oz: number,
+      upward = false,
+    ) => {
       pMat.color.setHex(colorHex);
       particleBurstTimer = 1.0;
       for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -410,14 +454,16 @@ export function MedicalTableCanvas({
         pPositions[i * 3 + 2] = oz + (Math.random() - 0.5) * 0.4;
 
         pVelocities[i * 3] = Math.cos(angle) * speed;
-        pVelocities[i * 3 + 1] = upward ? 1.4 + Math.random() * 1.4 : 0.6 + Math.random() * 1.8;
+        pVelocities[i * 3 + 1] = upward
+          ? 1.4 + Math.random() * 1.4
+          : 0.6 + Math.random() * 1.8;
         pVelocities[i * 3 + 2] = Math.sin(angle) * speed;
         pLife[i] = 0.55 + Math.random() * 0.35;
       }
       (pGeo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
     };
 
-    // 10. Interactive 3D Lane Slot Pads + Tactical Glow Rings
+    // 8. Interactive 3D Slot Pads
     const padHitGeo = new THREE.BoxGeometry(1.38, 0.9, 1.38);
     const padHitMat = new THREE.MeshBasicMaterial({ visible: false });
     const padRingGeo = new THREE.RingGeometry(0.46, 0.56, 36);
@@ -468,16 +514,19 @@ export function MedicalTableCanvas({
       enemySlotHits.push(hit);
     });
 
-    // Raycasting
+    // Raycasting with pointerup + drag threshold (A13)
     const raycaster = new THREE.Raycaster();
     raycaster.layers.set(1);
-    const interactiveProxies = [
-      heartRig.hitProxy,
+    let interactiveProxies: THREE.Object3D[] = [
+      activeOrganRig.hitProxy,
       deckHit,
       ...playerSlotHits,
       ...enemySlotHits,
     ];
     let lastHoverCheck = 0;
+    let downX = 0;
+    let downY = 0;
+    let pointerDownActive = false;
 
     const updateRayMouse = (e: PointerEvent) => {
       const rect = renderer.domElement.getBoundingClientRect();
@@ -496,7 +545,18 @@ export function MedicalTableCanvas({
     };
 
     const onPointerDown = (e: PointerEvent) => {
+      downX = e.clientX;
+      downY = e.clientY;
+      pointerDownActive = true;
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      if (!pointerDownActive) return;
+      pointerDownActive = false;
       if (telemetryRef.current.gameState !== 'PLAYING') return;
+      const dist = Math.hypot(e.clientX - downX, e.clientY - downY);
+      if (dist > 6) return; // Dragged to orbit -> ignore click
+
       updateRayMouse(e);
       raycaster.setFromCamera(_rayMouse, camera);
       const hits = raycaster.intersectObjects(interactiveProxies, false);
@@ -506,9 +566,9 @@ export function MedicalTableCanvas({
           playerSlotCbRef.current(data.lane);
         } else if (data.interactiveType === 'enemy_slot') {
           enemySlotCbRef.current(data.lane);
-        } else if (data.interactiveType === 'heart') {
+        } else if (data.interactiveType === 'organ' || data.interactiveType === 'heart') {
           inspectCbRef.current();
-          triggerBurst(0x38bdf8, 0, 0.9, -0.1, true);
+          triggerBurst(telemetryRef.current.organAccentHex || 0x38bdf8, 0, 0.9, -0.1, true);
         } else if (data.interactiveType === 'deck') {
           deckCbRef.current();
         }
@@ -517,8 +577,17 @@ export function MedicalTableCanvas({
 
     renderer.domElement.addEventListener('pointermove', onPointerMove);
     renderer.domElement.addEventListener('pointerdown', onPointerDown);
-    const onContextLost = (e: Event) => e.preventDefault();
+    renderer.domElement.addEventListener('pointerup', onPointerUp);
+
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      fallbackCbRef.current?.();
+    };
+    const onContextRestored = () => {
+      if (!isSoftwareGl) renderer.compile(scene, camera);
+    };
     renderer.domElement.addEventListener('webglcontextlost', onContextLost);
+    renderer.domElement.addEventListener('webglcontextrestored', onContextRestored);
 
     if (!isSoftwareGl) renderer.compile(scene, camera);
 
@@ -529,45 +598,77 @@ export function MedicalTableCanvas({
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      renderer.setPixelRatio(isSoftwareGl ? 1 : Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(
+        isSoftwareGl ? 1 : Math.min(window.devicePixelRatio || 1, 2),
+      );
     };
     window.addEventListener('resize', onResize);
 
     const clock = new THREE.Clock();
     let frameId = 0;
     let disposed = false;
-    let beatPhase = 0;
     let screenUpdateAccum = 0;
     let shakeAmplitude = 0;
-    let heartHighlightPulse = 0;
+    let organHighlightPulse = 0;
+    let eventCooldown = 0;
 
-    function afterDraw(cb: () => void) {
-      const gl = renderer.getContext() as WebGL2RenderingContext;
-      const sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
-      gl.flush();
-      const poll = () => {
-        if (disposed) {
-          if (sync) gl.deleteSync(sync);
-          return;
-        }
-        const state = sync && gl.getSyncParameter(sync, gl.SYNC_STATUS);
-        if (state === gl.UNSIGNALED) {
-          frameId = window.setTimeout(poll, 5);
-        } else {
-          if (sync) gl.deleteSync(sync);
-          frameId = window.setTimeout(cb, 80);
-        }
-      };
-      frameId = window.setTimeout(poll, 5);
-    }
+    const scheduleNext = (cb: () => void) => {
+      if (disposed || document.hidden) return;
+      if (isSoftwareGl) {
+        const gl = renderer.getContext() as WebGL2RenderingContext;
+        const sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+        gl.flush();
+        const poll = () => {
+          if (disposed || document.hidden) {
+            if (sync) gl.deleteSync(sync);
+            return;
+          }
+          const state = sync && gl.getSyncParameter(sync, gl.SYNC_STATUS);
+          if (state === gl.UNSIGNALED) {
+            frameId = window.setTimeout(poll, 5);
+          } else {
+            if (sync) gl.deleteSync(sync);
+            frameId = window.setTimeout(cb, 80);
+          }
+        };
+        frameId = window.setTimeout(poll, 5);
+      } else {
+        frameId = requestAnimationFrame(cb);
+      }
+    };
+
+    const onVisibilityChange = () => {
+      if (!document.hidden && !disposed) {
+        clock.getDelta();
+        scheduleNext(tick);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     function tick() {
-      if (disposed) return;
+      if (disposed || document.hidden) return;
 
       const rawDt = clock.getDelta();
       const dt = Math.min(rawDt, 0.05);
       const elapsed = clock.elapsedTime;
       const tel = telemetryRef.current;
+
+      // 0. Hot-swap Central Organ 3D Rig when organId changes across Endless Guard levels
+      if (activeOrganRig.organId !== tel.organId) {
+        scene.remove(activeOrganRig.root);
+        activeOrganRig.dispose();
+        activeOrganRig = createOrganRig(tel.organId, mats, isSoftwareGl);
+        activeOrganRig.root.position.set(0, 0.055, -0.1);
+        activeOrganRig.root.scale.setScalar(0.72);
+        scene.add(activeOrganRig.root);
+        interactiveProxies = [
+          activeOrganRig.hitProxy,
+          deckHit,
+          ...playerSlotHits,
+          ...enemySlotHits,
+        ];
+        organHighlightPulse = 1.0;
+      }
 
       // 1. Sync 3D Biological Entities with Engine Slots
       for (let i = 0; i < 3; i++) {
@@ -602,7 +703,7 @@ export function MedicalTableCanvas({
         }
       }
 
-      // 2. Animate Idle, Status Effects, Directional Lunges & Tactical Pad Glows
+      // 2. Animate Idle, Status Rings, Directional Lunges & Slot Pads
       const pulseWave = 0.5 + 0.5 * Math.sin(elapsed * 5.2);
 
       for (let i = 0; i < 3; i++) {
@@ -624,9 +725,11 @@ export function MedicalTableCanvas({
           h.bodyGroup.position.x = h.lungeX;
           h.bodyGroup.position.z = h.lungeZ;
           h.bodyGroup.rotation.y += dt * (h.archetype === 'unidad_qx' ? 0.6 : 1.0);
+
+          h.shieldRing.visible = Boolean(pUnit.statuses.escudo);
+          h.stunRing.visible = Boolean(pUnit.statuses.aturdido);
         }
 
-        // Player 3D Lane Pad Highlighting
         const pRing = playerPadRings[i];
         const pMat = pRing.material as THREE.MeshBasicMaterial;
         const canPlaceEmpty = tel.selectingSummonOrMove && !pUnit;
@@ -685,7 +788,6 @@ export function MedicalTableCanvas({
           }
         }
 
-        // Enemy 3D Lane Pad Highlighting
         const eRing = enemyPadRings[i];
         const eMat = eRing.material as THREE.MeshBasicMaterial;
         const canAttackOrTreat =
@@ -703,7 +805,7 @@ export function MedicalTableCanvas({
         }
       }
 
-      // 3. Handle Played Card Arc
+      // 3. Played Card Arc
       if (cardTriggerRef.current) {
         const meta = cardTriggerRef.current;
         cardTriggerRef.current = null;
@@ -716,23 +818,27 @@ export function MedicalTableCanvas({
         cardVisibleTimer = 1.5;
       }
 
-      // 4. Execute Real Combat Event Animations (supports cross-lane vector lunges)
-      if (eventTriggerRef.current) {
-        const evt = eventTriggerRef.current;
-        eventTriggerRef.current = null;
+      // 4. Ordered Combat Event Queue Playback
+      eventCooldown = Math.max(0, eventCooldown - dt);
+      if (eventCooldown === 0 && eventQueueRef.current.length > 0) {
+        const evt = eventQueueRef.current.shift()!;
+        eventCooldown = 0.14;
 
         const srcPos =
           evt.sourceLane >= 0
-            ? (evt.sourceSide === 'player' ? PLAYER_SLOT_POS : ENEMY_SLOT_POS)[evt.sourceLane]
+            ? (evt.sourceSide === 'player' ? PLAYER_SLOT_POS : ENEMY_SLOT_POS)[
+                evt.sourceLane
+              ]
             : [0, 0.6, 0.5];
         const dstPos =
           evt.targetLane >= 0
-            ? (evt.targetSide === 'player' ? PLAYER_SLOT_POS : ENEMY_SLOT_POS)[evt.targetLane]
+            ? (evt.targetSide === 'player' ? PLAYER_SLOT_POS : ENEMY_SLOT_POS)[
+                evt.targetLane
+              ]
             : evt.targetSide === 'enemy'
               ? [0, 0.5, -2.5]
               : [0, 0.5, 2.3];
 
-        // Trigger directional lunge toward target on involved entities
         if (evt.sourceSide === 'player' && evt.sourceLane >= 0) {
           const h = playerEntityMap[evt.sourceLane]?.handle;
           if (h) {
@@ -753,7 +859,6 @@ export function MedicalTableCanvas({
           }
         }
 
-        // Visual FX tailored to medical mechanism
         if (evt.animKind === 'summon' || evt.animKind === 'infect') {
           waveMat.color.setHex(evt.colorHex);
           shockwaveRing.position.set(dstPos[0], 0.08, dstPos[2]);
@@ -763,14 +868,20 @@ export function MedicalTableCanvas({
           triggerBurst(evt.colorHex, dstPos[0], 0.4, dstPos[2], true);
         } else if (evt.animKind === 'heal' || evt.animKind === 'mitosis') {
           triggerBurst(0x10b981, dstPos[0], 0.35, 1.15, true);
-          heartHighlightPulse = 0.9;
-        } else if (evt.animKind === 'opsonize') {
-          waveMat.color.setHex(0x38bdf8);
+          organHighlightPulse = 0.9;
+        } else if (evt.animKind === 'opsonize' || evt.animKind === 'trap') {
+          waveMat.color.setHex(evt.animKind === 'trap' ? 0xa855f7 : 0x38bdf8);
           shockwaveRing.position.set(dstPos[0], 0.3, dstPos[2]);
           shockwaveRing.scale.setScalar(0.4);
           shockwaveRing.visible = true;
           waveTimer = 0.5;
-          triggerBurst(0x38bdf8, dstPos[0], 0.55, dstPos[2], true);
+          triggerBurst(
+            evt.animKind === 'trap' ? 0xa855f7 : 0x38bdf8,
+            dstPos[0],
+            0.55,
+            dstPos[2],
+            true,
+          );
         } else {
           _beamStart.set(srcPos[0], 0.48, srcPos[2]);
           _beamEnd.set(dstPos[0], 0.48, dstPos[2]);
@@ -784,12 +895,14 @@ export function MedicalTableCanvas({
           beamTimer = 0.42;
 
           triggerBurst(evt.colorHex, dstPos[0], 0.55, dstPos[2], false);
-          shakeAmplitude = evt.isCritical ? 0.13 : 0.075;
-          heartHighlightPulse = 1.0;
+          if (!reducedMotionRef.current) {
+            shakeAmplitude = evt.isCritical ? 0.13 : 0.075;
+          }
+          organHighlightPulse = 1.0;
         }
       }
 
-      // 5. Update Erythrocyte Flow
+      // 5. Erythrocyte Flow
       const laneX = [-2.1, 0, 2.1];
       for (let i = 0; i < bloodstream.phases.length; i++) {
         bloodstream.phases[i] = (bloodstream.phases[i] + dt * bloodstream.speeds[i]) % 1;
@@ -818,26 +931,16 @@ export function MedicalTableCanvas({
         if (waveTimer === 0) shockwaveRing.visible = false;
       }
 
-      // 7. Heartbeat Dynamics
-      const bpmFreq = Math.max(1.0, tel.bpm / 60);
-      beatPhase = (beatPhase + dt * bpmFreq) % 1;
-      const systole =
-        Math.exp(-Math.pow((beatPhase - 0.18) / 0.07, 2)) * 0.12 +
-        Math.exp(-Math.pow((beatPhase - 0.34) / 0.08, 2)) * 0.06;
-
-      heartRig.heartPivot.scale.setScalar(1.0 + systole + heartHighlightPulse * 0.06);
-      heartRig.heartPivot.rotation.y += dt * 0.42;
-      heartRig.heartPivot.position.y = 1.15 + Math.sin(elapsed * 1.8) * 0.035;
-      heartRig.outerRing.rotation.z += dt * 0.55;
-      heartRig.outerRing.rotation.y -= dt * 0.3;
-      heartHighlightPulse = THREE.MathUtils.damp(heartHighlightPulse, 0, 5, dt);
+      // 7. Active Organ Rig Dynamics & Telemetry Color
+      activeOrganRig.update(dt, elapsed, tel, organHighlightPulse);
+      organHighlightPulse = THREE.MathUtils.damp(organHighlightPulse, 0, 5, dt);
 
       const danger = tel.playerLp <= 1200 || tel.isCritical;
-      const targetColor = danger ? 0xf43f5e : 0x10b981;
+      const targetColor = danger ? 0xf43f5e : tel.organAccentHex || 0x10b981;
       mats.glowRing.color.setHex(targetColor);
       mats.glowRing.emissive.setHex(targetColor);
       bioPointLight.color.setHex(targetColor);
-      bioPointLight.intensity = 0.9 + systole * 4.5 + heartHighlightPulse * 1.2;
+      bioPointLight.intensity = 1.0 + organHighlightPulse * 1.25;
 
       // 8. Played Card Flight
       if (playedCardMesh.visible) {
@@ -893,7 +996,7 @@ export function MedicalTableCanvas({
       } else {
         controls.enabled = true;
         if (transitionActiveRef.current && !userOrbitingRef.current) {
-          const cfg = CAMERA_TARGETS[presetRef.current];
+          const cfg = CAMERA_TARGETS[presetRef.current] ?? CAMERA_TARGETS.overview;
           _desiredPos.set(cfg.pos[0], cfg.pos[1], cfg.pos[2]);
           _desiredLook.set(cfg.look[0], cfg.look[1], cfg.look[2]);
           camera.position.x = THREE.MathUtils.damp(camera.position.x, _desiredPos.x, 5.5, dt);
@@ -911,7 +1014,7 @@ export function MedicalTableCanvas({
 
       controls.update();
 
-      if (shakeAmplitude > 0.002) {
+      if (shakeAmplitude > 0.002 && !reducedMotionRef.current) {
         camera.position.x += (Math.random() - 0.5) * shakeAmplitude;
         camera.position.y += (Math.random() - 0.5) * shakeAmplitude;
         shakeAmplitude = THREE.MathUtils.damp(shakeAmplitude, 0, 12, dt);
@@ -921,9 +1024,10 @@ export function MedicalTableCanvas({
 
       renderer.render(scene, camera);
 
-      // 12. Project 3D Slot Anchors onto DOM Overlays (60fps zero-react-render)
-      const viewW = renderer.domElement.clientWidth || window.innerWidth;
-      const viewH = renderer.domElement.clientHeight || window.innerHeight;
+      // 12. Project 3D Slot Anchors relative to actual canvas rect (inerts when out-of-frustum)
+      const rect = renderer.domElement.getBoundingClientRect();
+      const viewW = rect.width || window.innerWidth;
+      const viewH = rect.height || window.innerHeight;
       for (let i = 0; i < 3; i++) {
         const pEl = slotAnchorRefs.current.player[i];
         if (pEl) {
@@ -931,27 +1035,42 @@ export function MedicalTableCanvas({
           const zOffset = tel.playerSlots[i] ? 0.52 : 0.0;
           const yOffset = tel.playerSlots[i] ? 0.06 : 0.14;
           _projVec.set(pos[0], yOffset, pos[2] + zOffset).project(camera);
-          const visible = _projVec.z >= -1 && _projVec.z <= 1;
-          const sx = (_projVec.x * 0.5 + 0.5) * viewW;
-          const sy = (-_projVec.y * 0.5 + 0.5) * viewH;
+          const visible =
+            _projVec.z >= -1 &&
+            _projVec.z <= 1 &&
+            _projVec.x >= -1.05 &&
+            _projVec.x <= 1.05 &&
+            _projVec.y >= -1.05 &&
+            _projVec.y <= 1.05;
+          const sx = rect.left + (_projVec.x * 0.5 + 0.5) * viewW;
+          const sy = rect.top + (-_projVec.y * 0.5 + 0.5) * viewH;
           pEl.style.transform = `translate3d(${Math.round(sx)}px, ${Math.round(sy)}px, 0) translate(-50%, -50%)`;
           pEl.style.opacity = visible ? '1' : '0';
+          pEl.style.visibility = visible ? 'visible' : 'hidden';
+          pEl.style.pointerEvents = visible ? 'auto' : 'none';
         }
 
         const eEl = slotAnchorRefs.current.enemy[i];
         if (eEl) {
           const pos = ENEMY_SLOT_POS[i];
           _projVec.set(pos[0], 0.06, pos[2] - 0.54).project(camera);
-          const visible = _projVec.z >= -1 && _projVec.z <= 1;
-          const sx = (_projVec.x * 0.5 + 0.5) * viewW;
-          const sy = (-_projVec.y * 0.5 + 0.5) * viewH;
+          const visible =
+            _projVec.z >= -1 &&
+            _projVec.z <= 1 &&
+            _projVec.x >= -1.05 &&
+            _projVec.x <= 1.05 &&
+            _projVec.y >= -1.05 &&
+            _projVec.y <= 1.05;
+          const sx = rect.left + (_projVec.x * 0.5 + 0.5) * viewW;
+          const sy = rect.top + (-_projVec.y * 0.5 + 0.5) * viewH;
           eEl.style.transform = `translate3d(${Math.round(sx)}px, ${Math.round(sy)}px, 0) translate(-50%, -50%)`;
           eEl.style.opacity = visible ? '1' : '0';
+          eEl.style.visibility = visible ? 'visible' : 'hidden';
+          eEl.style.pointerEvents = visible ? 'auto' : 'none';
         }
       }
 
-      if (isSoftwareGl) afterDraw(tick);
-      else frameId = requestAnimationFrame(tick);
+      scheduleNext(tick);
     }
 
     transitionActiveRef.current = true;
@@ -962,18 +1081,26 @@ export function MedicalTableCanvas({
       disposed = true;
       cancelAnimationFrame(frameId);
       clearTimeout(frameId);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       window.removeEventListener('resize', onResize);
       controls.removeEventListener('start', onControlStart);
       controls.dispose();
       renderer.domElement.removeEventListener('pointermove', onPointerMove);
       renderer.domElement.removeEventListener('pointerdown', onPointerDown);
+      renderer.domElement.removeEventListener('pointerup', onPointerUp);
       renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
+      renderer.domElement.removeEventListener('webglcontextrestored', onContextRestored);
 
       playerEntityMap.forEach((entry) => entry && disposeEntityHandle(entry.handle));
       enemyEntityMap.forEach((entry) => entry && disposeEntityHandle(entry.handle));
+      activeOrganRig.dispose();
 
       scene.traverse((obj) => {
-        if (obj instanceof THREE.Mesh || obj instanceof THREE.InstancedMesh || obj instanceof THREE.Points) {
+        if (
+          obj instanceof THREE.Mesh ||
+          obj instanceof THREE.InstancedMesh ||
+          obj instanceof THREE.Points
+        ) {
           obj.geometry?.dispose();
           if (Array.isArray(obj.material)) obj.material.forEach((m) => m.dispose());
           else obj.material?.dispose();
@@ -997,7 +1124,7 @@ export function MedicalTableCanvas({
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#081018]"
+      className="fixed inset-0 w-screen h-[100dvh] overflow-hidden bg-[#081018]"
       aria-label="Arena microvascular 3D interactiva"
     />
   );

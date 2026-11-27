@@ -28,6 +28,15 @@ class SoundEngine {
     return this.muted;
   }
 
+  public suspendOnHidden(hidden: boolean) {
+    if (!this.ctx) return;
+    if (hidden && this.ctx.state === 'running') {
+      this.ctx.suspend().catch(() => {});
+    } else if (!hidden && !this.muted && this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
+  }
+
   public playCardHover() {
     const ctx = this.ensureContext();
     if (!ctx) return;
@@ -67,6 +76,40 @@ class SoundEngine {
     if (!ctx) return;
     const now = ctx.currentTime;
 
+    if (kind === 'trap') {
+      [587.33, 880, 1174.66].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = 'triangle';
+        const t = now + i * 0.04;
+        osc.frequency.setValueAtTime(freq, t);
+        g.gain.setValueAtTime(0.055, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.18);
+      });
+      return;
+    }
+
+    if (kind === 'outbreak') {
+      [195, 145, 110].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = 'sawtooth';
+        const t = now + i * 0.06;
+        osc.frequency.setValueAtTime(freq, t);
+        g.gain.setValueAtTime(0.05, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.18);
+      });
+      return;
+    }
+
     if (kind === 'summon') {
       [440, 554.37, 659.25].forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -85,7 +128,6 @@ class SoundEngine {
     }
 
     if (kind === 'opsonize') {
-      // Diagnostic / antigen binding double chime
       [784, 1174.66].forEach((freq, i) => {
         const osc = ctx.createOscillator();
         const g = ctx.createGain();
@@ -167,7 +209,6 @@ class SoundEngine {
       return;
     }
 
-    // Clash / Direct Strike
     const osc = ctx.createOscillator();
     const g = ctx.createGain();
     osc.type = 'triangle';

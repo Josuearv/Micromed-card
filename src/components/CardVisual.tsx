@@ -70,6 +70,29 @@ function CardArtwork({
   kind: DuelCard['kind'];
   stroke: string;
 }) {
+  if (kind === 'Trampa') {
+    const trapStroke = '#c084fc';
+    return (
+      <svg viewBox="0 0 120 40" className="w-full h-9" aria-hidden="true">
+        <path
+          d="M60,5 L78,12 V21 C78,29 69,34 60,37 C51,34 42,29 42,21 V12 Z"
+          fill={trapStroke}
+          fillOpacity="0.16"
+          stroke={trapStroke}
+          strokeWidth="2"
+        />
+        <path
+          d="M54,20 L58,24 L67,15"
+          fill="none"
+          stroke={trapStroke}
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
   if (kind === 'Diagnostico') {
     return (
       <svg viewBox="0 0 120 40" className="w-full h-9" aria-hidden="true">
@@ -119,8 +142,61 @@ function CardArtwork({
   if (archetype === 'linfocito') {
     return (
       <svg viewBox="0 0 120 40" className="w-full h-9" aria-hidden="true">
-        <circle cx="60" cy="20" r="11" fill={stroke} fillOpacity="0.18" stroke={stroke} strokeWidth="2" />
-        <path d="M60,4 V9 M60,31 V36 M44,20 H49 M71,20 H76 M48,9 L52,13 M68,27 L72,31" stroke={stroke} strokeWidth="2" strokeLinecap="round" />
+        <circle
+          cx="60"
+          cy="20"
+          r="11"
+          fill={stroke}
+          fillOpacity="0.18"
+          stroke={stroke}
+          strokeWidth="2"
+        />
+        <path
+          d="M60,4 V9 M60,31 V36 M44,20 H49 M71,20 H76 M48,9 L52,13 M68,27 L72,31"
+          stroke={stroke}
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  }
+
+  if (archetype === 'plaqueta') {
+    return (
+      <svg viewBox="0 0 120 40" className="w-full h-9" aria-hidden="true">
+        <polygon
+          points="60,6 75,15 71,31 49,31 45,15"
+          fill={stroke}
+          fillOpacity="0.2"
+          stroke={stroke}
+          strokeWidth="2"
+        />
+        <circle cx="60" cy="20" r="4" fill={stroke} />
+      </svg>
+    );
+  }
+
+  if (archetype === 'hongo') {
+    return (
+      <svg viewBox="0 0 120 40" className="w-full h-9" aria-hidden="true">
+        <path
+          d="M44,22 C44,12 76,12 76,22 Z"
+          fill={stroke}
+          fillOpacity="0.22"
+          stroke={stroke}
+          strokeWidth="2"
+        />
+        <rect
+          x="56"
+          y="22"
+          width="8"
+          height="12"
+          rx="2"
+          fill={stroke}
+          fillOpacity="0.2"
+          stroke={stroke}
+          strokeWidth="2"
+        />
       </svg>
     );
   }
@@ -142,8 +218,24 @@ function CardArtwork({
 
   return (
     <svg viewBox="0 0 120 40" className="w-full h-9" aria-hidden="true">
-      <circle cx="54" cy="20" r="9" fill={stroke} fillOpacity="0.2" stroke={stroke} strokeWidth="2" />
-      <circle cx="66" cy="20" r="9" fill={stroke} fillOpacity="0.2" stroke={stroke} strokeWidth="2" />
+      <circle
+        cx="54"
+        cy="20"
+        r="9"
+        fill={stroke}
+        fillOpacity="0.2"
+        stroke={stroke}
+        strokeWidth="2"
+      />
+      <circle
+        cx="66"
+        cy="20"
+        r="9"
+        fill={stroke}
+        fillOpacity="0.2"
+        stroke={stroke}
+        strokeWidth="2"
+      />
     </svg>
   );
 }
@@ -160,6 +252,12 @@ export function CardVisual({
   onInspect,
 }: CardVisualProps) {
   const style = CLASS_STYLE[card.medicalClass];
+  const isTrap = card.kind === 'Trampa';
+  const accentText = isTrap ? 'text-violet-300' : style.accentText;
+  const accentBorder = isTrap
+    ? 'border-violet-500/50 hover:border-violet-400'
+    : style.accentBorder;
+  const costBg = isTrap ? 'bg-violet-500 text-white' : style.costBg;
 
   if (variant === 'hand') {
     return (
@@ -167,12 +265,12 @@ export function CardVisual({
         className={[
           'group relative flex flex-col justify-between rounded-lg border p-2',
           'transition-[transform,opacity,border-color] duration-150 ease-out will-change-transform',
-          'w-[126px] md:w-[138px] h-[118px]',
+          'w-[126px] md:w-[138px] h-[120px]',
           'bg-[#0a1623]/94 shadow-[0_10px_22px_rgba(0,0,0,0.6)]',
           selected
             ? 'border-amber-400 -translate-y-3 ring-2 ring-amber-400/60'
             : playable
-              ? `${style.accentBorder} hover:-translate-y-2 opacity-100`
+              ? `${accentBorder} hover:-translate-y-2 opacity-100`
               : 'border-slate-700/60 opacity-55',
         ].join(' ')}
       >
@@ -183,15 +281,15 @@ export function CardVisual({
             if (playable) soundEngine.playCardHover();
           }}
           title={`${card.name}: ${card.shortRule}`}
-          aria-label={`${card.name}. Coste ${card.cost}. ${card.shortRule}`}
+          aria-label={`${card.name}. ${card.kind}. Coste ${card.cost} PA. ${card.shortRule}`}
           className="flex-1 flex flex-col justify-between text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 rounded"
         >
           <div className="flex items-center justify-between gap-1">
-            <span className={`text-[9px] font-mono-tabular font-semibold truncate ${style.accentText}`}>
+            <span className={`text-[9px] font-mono-tabular font-semibold truncate ${accentText}`}>
               {card.kind}
             </span>
             <span
-              className={`font-mono-tabular shrink-0 inline-flex items-center justify-center w-5 h-5 rounded text-[11px] font-bold ${style.costBg}`}
+              className={`font-mono-tabular shrink-0 inline-flex items-center justify-center w-5 h-5 rounded text-[11px] font-bold ${costBg}`}
             >
               {card.cost}
             </span>
@@ -213,6 +311,10 @@ export function CardVisual({
                 <span className="text-amber-400">{card.atk}</span>
                 <span className="text-slate-600 mx-0.5">/</span>
                 <span className="text-emerald-400">{card.maxHp}</span>
+              </span>
+            ) : isTrap ? (
+              <span className="text-violet-300 truncate text-[9px]">
+                Armar Trampa
               </span>
             ) : (
               <span className="text-slate-300 truncate text-[9px]">
@@ -248,16 +350,15 @@ export function CardVisual({
       className={[
         'group relative flex flex-col justify-between rounded-xl border p-3',
         'transition-[transform,opacity,border-color] duration-150 ease-out will-change-transform',
-        compact ? 'w-56 min-h-[246px]' : 'w-[186px] xl:w-[198px] min-h-[234px]',
+        compact ? 'w-56 min-h-[252px]' : 'w-[186px] xl:w-[198px] min-h-[234px]',
         'bg-[#0c1826]/95 shadow-[0_14px_28px_rgba(0,0,0,0.52)]',
         selected
           ? 'border-amber-400 -translate-y-3 ring-2 ring-amber-400/50'
           : playable
-            ? `${style.accentBorder} hover:-translate-y-2 opacity-100`
+            ? `${accentBorder} hover:-translate-y-2 opacity-100`
             : 'border-slate-700/60 opacity-55',
       ].join(' ')}
     >
-      {/* Card Primary Action Surface */}
       <button
         type="button"
         onClick={onSelect}
@@ -270,14 +371,19 @@ export function CardVisual({
         <div>
           <div className="flex items-start justify-between gap-2 mb-1.5">
             <div className="text-[11px] font-medium tracking-wide text-slate-400 leading-tight">
-              <span className={style.accentText}>{card.kind}</span>
+              <span className={accentText}>{card.kind}</span>
               <span className="mx-1 text-slate-600" aria-hidden="true">
                 ·
               </span>
               <span>{style.label}</span>
+              {card.rarity && card.rarity !== 'Comun' && (
+                <span className="block text-[10px] font-mono-tabular text-amber-300/90 mt-0.5">
+                  {card.rarity}
+                </span>
+              )}
             </div>
             <span
-              className={`font-mono-tabular shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md text-xs font-semibold ${style.costBg}`}
+              className={`font-mono-tabular shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md text-xs font-semibold ${costBg}`}
             >
               {card.cost}
             </span>
@@ -308,6 +414,8 @@ export function CardVisual({
                 </span>
                 <span className="text-emerald-400">PS {card.maxHp}</span>
               </div>
+            ) : isTrap ? (
+              <span className="text-violet-300 truncate">Trampa Reactiva</span>
             ) : (
               <span className="text-slate-400 truncate">
                 {selected ? 'Elige objetivo' : card.abilityLabel}
@@ -321,7 +429,6 @@ export function CardVisual({
         </div>
       </button>
 
-      {/* Medical Knowledge & Rule Inspector Button */}
       {onInspect && (
         <button
           type="button"

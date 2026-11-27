@@ -2,8 +2,12 @@ import {
   Camera,
   ChevronDown,
   ChevronUp,
+  Gauge,
+  Grid2x2,
   History,
+  Layers,
   Pause,
+  Shield,
   Volume2,
   VolumeX,
   X,
@@ -16,7 +20,10 @@ import {
   CardInstance,
   CombatLogEntry,
   DuelCard,
+  GameMode,
+  OrganProfile,
   RivalDuelist,
+  SpeedMode,
   TurnPhase,
 } from '../types/game';
 import { ArenaBoard } from './ArenaBoard';
@@ -24,9 +31,13 @@ import { CardVisual } from './CardVisual';
 import { SlotAnchorDomRefs } from './MedicalTableCanvas';
 
 interface GameHUDProps {
+  runMode: GameMode;
+  guardLevel: number;
+  bestGuardLevel: number;
+  totalRivals: number;
+  organProfile: OrganProfile;
   engineState: DuelEngineState;
   rival: RivalDuelist;
-  totalRivals: number;
   phase: TurnPhase;
   selectedCard: CardInstance | null;
   movingFromLane: number | null;
@@ -38,10 +49,13 @@ interface GameHUDProps {
   tutorialStep: number | null;
   cameraPreset: CameraPreset;
   muted: boolean;
+  tactical2D: boolean;
+  speedMode: SpeedMode;
   slotAnchorRefs: MutableRefObject<SlotAnchorDomRefs>;
   onCardClick: (uid: string) => void;
   onInspectCard: (card: DuelCard) => void;
   onInspectUnit: (unit: BoardUnit) => void;
+  onOpenDeck: () => void;
   onCancelSelection: () => void;
   onSelectPlayerLane: (lane: number) => void;
   onSelectEnemyLane: (lane: number) => void;
@@ -51,20 +65,32 @@ interface GameHUDProps {
   onPhaseAction: () => void;
   onDismissTutorial: () => void;
   onChangeCamera: (preset: CameraPreset) => void;
+  onToggleTactical2D: () => void;
+  onCycleSpeedMode: () => void;
   onToggleMute: () => void;
   onPause: () => void;
 }
 
 const TUTORIAL_TEXT: Record<number, string> = {
-  1: 'Tutorial (1/3): Elige una Unidad o Diagnóstico PCR en tu mano inferior.',
-  2: 'Tutorial (2/3): Toca un carril iluminado en la arena 3D para desplegar o tratar.',
+  1: 'Tutorial (1/3): Elige una Unidad, Diagnóstico o Trampa en tu mano inferior.',
+  2: 'Tutorial (2/3): Toca un carril iluminado en la arena para desplegar o tratar.',
   3: 'Tutorial (3/3): Pulsa "Ir a Combate", elige a qué patógeno atacar con cada unidad y finaliza turno.',
 };
 
+const SPEED_LABEL: Record<SpeedMode, string> = {
+  normal: '1x',
+  fast: '2x',
+  reduced: 'Instant',
+};
+
 export function GameHUD({
+  runMode,
+  guardLevel,
+  bestGuardLevel,
+  totalRivals,
+  organProfile,
   engineState,
   rival,
-  totalRivals,
   phase,
   selectedCard,
   movingFromLane,
@@ -76,10 +102,13 @@ export function GameHUD({
   tutorialStep,
   cameraPreset,
   muted,
+  tactical2D,
+  speedMode,
   slotAnchorRefs,
   onCardClick,
   onInspectCard,
   onInspectUnit,
+  onOpenDeck,
   onCancelSelection,
   onSelectPlayerLane,
   onSelectEnemyLane,
@@ -89,6 +118,8 @@ export function GameHUD({
   onPhaseAction,
   onDismissTutorial,
   onChangeCamera,
+  onToggleTactical2D,
+  onCycleSpeedMode,
   onToggleMute,
   onPause,
 }: GameHUDProps) {
@@ -111,8 +142,11 @@ export function GameHUD({
     <>
       <ArenaBoard
         phase={phase}
+        organId={engineState.organId}
+        tactical2D={tactical2D}
         playerSlots={engineState.playerSlots}
         enemySlots={engineState.enemySlots}
+        armedTraps={engineState.armedTraps}
         selectedCard={selectedCard}
         movingFromLane={movingFromLane}
         selectedAttackerLane={selectedAttackerLane}
@@ -126,13 +160,14 @@ export function GameHUD({
         onStartMoveUnit={onStartMoveUnit}
         onActivateSkill={onActivateSkill}
         onInspectUnit={onInspectUnit}
+        onInspectCard={onInspectCard}
       />
 
       <div className="fixed inset-0 z-30 pointer-events-none flex flex-col justify-between p-2.5 md:p-3.5">
-        {/* TOP CORNER-FRAMED HEADER (Yu-Gi-Oh! Master Duel Style) */}
+        {/* TOP CORNER-FRAMED HEADER */}
         <header className="flex items-start justify-between gap-2">
-          {/* Top-Left: Phase Stepper & Rival Intent Telegraph */}
-          <div className="pointer-events-auto bg-[#08121d]/90 border border-slate-800 rounded-xl px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.5)] max-w-xs md:max-w-sm">
+          {/* Top-Left: Phase Stepper, Organ Synergy, Mutators & Transparent Intent */}
+          <div className="pointer-events-auto bg-[#08121d]/92 border border-slate-800 rounded-xl px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.5)] max-w-[330px] md:max-w-sm">
             <div className="flex items-center gap-1.5 text-[11px] font-mono-tabular">
               <span
                 className={
@@ -166,28 +201,53 @@ export function GameHUD({
               <span className="text-slate-600 ml-1" aria-hidden="true">
                 ·
               </span>
-              <span className="text-slate-300">
-                D{rival.roundNumber}/{totalRivals} T{engineState.turn}
+              <span className="text-slate-200 font-semibold">
+                {runMode === 'endless'
+                  ? `Guardia ${guardLevel}${bestGuardLevel > 0 ? ` (Réc ${bestGuardLevel})` : ''}`
+                  : `D${rival.roundNumber}/${totalRivals}`}
+                {` · T${engineState.turn}`}
               </span>
             </div>
 
             <div
-              className="text-[11px] text-rose-300/90 truncate mt-1"
-              title={engineState.rivalIntent.description}
+              className="text-[10px] font-mono-tabular text-sky-300 truncate mt-1"
+              title={`${organProfile.synergyTitle}: ${organProfile.synergyRule}`}
             >
-              Rival: <span className="font-semibold">{engineState.rivalIntent.actionTitle}</span>
+              {organProfile.shortName}: <span className="text-slate-300">{organProfile.synergyTitle}</span>
+            </div>
+
+            {rival.mutators.length > 0 && (
+              <div
+                className="text-[10px] font-mono-tabular text-amber-300 truncate mt-0.5"
+                title={rival.mutators.map((m) => `${m.name}: ${m.description}`).join(' | ')}
+              >
+                Mutación: {rival.mutators.map((m) => m.name).join(' · ')}
+              </div>
+            )}
+
+            <div
+              className="text-[11px] text-rose-300/95 truncate mt-0.5"
+              title={engineState.rivalIntent.actions.map((a) => a.description).join(' | ')}
+            >
+              Rival:{' '}
+              <span className="font-semibold">
+                {engineState.rivalIntent.actions.map((a) => a.label).join(' · ')}
+              </span>
             </div>
           </div>
 
           {/* Top-Center: Compact Rival LP Gauge */}
-          <div className="pointer-events-auto hidden sm:block bg-[#08121d]/90 border border-rose-900/60 rounded-xl px-3.5 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.5)] min-w-[230px]">
-            <div className="flex items-center justify-between gap-3 text-xs mb-1">
+          <div className="pointer-events-auto hidden sm:block bg-[#08121d]/92 border border-rose-900/60 rounded-xl px-3.5 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.5)] min-w-[230px] max-w-[300px]">
+            <div className="flex items-center justify-between gap-3 text-xs mb-0.5">
               <span className="font-display font-semibold text-slate-100 truncate">
                 {rival.name}
               </span>
               <span className="font-mono-tabular text-sm font-bold text-rose-400 shrink-0">
                 LP {engineState.rivalLp}
               </span>
+            </div>
+            <div className="text-[10px] text-slate-400 truncate mb-1">
+              {rival.diseaseName}
             </div>
             <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
               <div
@@ -197,8 +257,18 @@ export function GameHUD({
             </div>
           </div>
 
-          {/* Top-Right: Compact Utility Icons */}
-          <div className="pointer-events-auto flex items-center gap-1 bg-[#08121d]/90 border border-slate-800 rounded-xl p-1.5 shadow-[0_8px_20px_rgba(0,0,0,0.5)]">
+          {/* Top-Right: Utility Controls */}
+          <div className="pointer-events-auto flex items-center gap-1 bg-[#08121d]/92 border border-slate-800 rounded-xl p-1.5 shadow-[0_8px_20px_rgba(0,0,0,0.5)]">
+            <button
+              type="button"
+              onClick={onOpenDeck}
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer min-h-[36px]"
+              title="Ver mazo y pilas"
+            >
+              <Layers className="w-3.5 h-3.5 text-sky-400" aria-hidden="true" />
+              <span className="hidden lg:inline">Mazo</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setHistoryOpen((p) => !p)}
@@ -217,7 +287,7 @@ export function GameHUD({
               type="button"
               onClick={() => setCameraDockOpen((prev) => !prev)}
               className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer min-h-[36px]"
-              title="Vistas 3D (H)"
+              title="Vistas 3D / 2D (H)"
               aria-expanded={cameraDockOpen}
             >
               <Camera className="w-3.5 h-3.5" aria-hidden="true" />
@@ -255,29 +325,59 @@ export function GameHUD({
           </div>
         </header>
 
-        {/* Collapsible Camera Preset Bar */}
+        {/* Collapsible Camera / View / Speed Bar */}
         {cameraDockOpen && (
-          <div className="self-end pointer-events-auto bg-[#08121d]/95 border border-slate-800 rounded-xl p-1.5 flex items-center gap-1 shadow-xl my-1">
+          <div className="self-end pointer-events-auto bg-[#08121d]/95 border border-slate-800 rounded-xl p-1.5 flex flex-wrap items-center gap-1 shadow-xl my-1">
             {(
               [
                 { id: 'overview', label: 'Arena Vascular' },
-                { id: 'heart', label: 'Corazón 3D' },
+                { id: 'organ', label: `${organProfile.shortName} 3D` },
                 { id: 'instruments', label: 'Instrumental' },
               ] as const
             ).map((preset) => (
               <button
                 key={preset.id}
                 type="button"
+                disabled={tactical2D}
                 onClick={() => onChangeCamera(preset.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
-                  cameraPreset === preset.id
-                    ? 'bg-sky-500 text-slate-950 font-semibold'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                  tactical2D
+                    ? 'text-slate-600 cursor-not-allowed'
+                    : cameraPreset === preset.id ||
+                        (preset.id === 'organ' && cameraPreset === 'heart')
+                      ? 'bg-sky-500 text-slate-950 font-semibold cursor-pointer'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800 cursor-pointer'
                 }`}
               >
                 {preset.label}
               </button>
             ))}
+
+            <span className="w-px h-5 bg-slate-800 mx-0.5" aria-hidden="true" />
+
+            <button
+              type="button"
+              onClick={onToggleTactical2D}
+              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                tactical2D
+                  ? 'bg-emerald-500 text-slate-950 font-semibold'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+              }`}
+              title="Alternar tablero táctico 2D accesible"
+            >
+              <Grid2x2 className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Vista 2D</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onCycleSpeedMode}
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-mono-tabular text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Velocidad de resolución"
+            >
+              <Gauge className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
+              <span>{SPEED_LABEL[speedMode]}</span>
+            </button>
           </div>
         )}
 
@@ -341,10 +441,10 @@ export function GameHUD({
         {/* UNOBSTRUCTED 3D ARENA SPACE */}
         <div className="flex-1" />
 
-        {/* BOTTOM YUGIOH-STYLE CORNER DOCKS + LOW DOCKED HAND */}
+        {/* BOTTOM CORNER DOCKS + LOW DOCKED HAND */}
         <section className="flex items-end justify-between gap-2.5">
-          {/* Bottom-Left: Player LP & PA Dock */}
-          <div className="pointer-events-auto bg-[#08121d]/92 border border-slate-800 rounded-xl px-3 py-2 shadow-[0_8px_22px_rgba(0,0,0,0.55)] w-[184px] md:w-[206px] shrink-0">
+          {/* Bottom-Left: Player LP, PA, Deck Trigger & Trap Slots */}
+          <div className="pointer-events-auto bg-[#08121d]/92 border border-slate-800 rounded-xl px-3 py-2 shadow-[0_8px_22px_rgba(0,0,0,0.55)] w-[196px] md:w-[218px] shrink-0">
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="text-slate-300 font-medium">LP Paciente</span>
               <span
@@ -352,7 +452,7 @@ export function GameHUD({
                   playerDanger ? 'text-rose-400' : 'text-emerald-400'
                 }`}
               >
-                {engineState.playerLp}
+                {engineState.playerLp}/{engineState.playerMaxLp}
               </span>
             </div>
             <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden mb-2">
@@ -364,19 +464,28 @@ export function GameHUD({
               />
             </div>
 
-            <div className="flex items-center justify-between text-[11px] font-mono-tabular">
-              <span className="text-sky-400 font-bold">
+            <div className="flex items-center justify-between text-[11px] font-mono-tabular gap-1.5">
+              <span className="text-sky-400 font-bold shrink-0">
                 {engineState.energy}/{engineState.maxEnergy} PA
               </span>
-              <span className="text-slate-400">
-                Mazo {engineState.drawPile.length} · Desc {engineState.discardPile.length}
+              <span className="inline-flex items-center gap-0.5 text-violet-300 shrink-0" title="Trampas armadas">
+                <Shield className="w-3 h-3" aria-hidden="true" />
+                {engineState.armedTraps.length}/2
               </span>
+              <button
+                type="button"
+                onClick={onOpenDeck}
+                className="text-slate-300 hover:text-sky-300 underline decoration-slate-600 cursor-pointer truncate"
+                title="Abrir visor completo del mazo"
+              >
+                M:{engineState.drawPile.length} D:{engineState.discardPile.length}
+              </button>
             </div>
           </div>
 
-          {/* Bottom-Center: Compact Status Line + Sleek Docked Hand */}
+          {/* Bottom-Center: Compact Status Line + Docked Hand */}
           <div className="flex-1 flex flex-col items-center gap-1.5 min-w-0">
-            <div className="pointer-events-none px-3 py-0.5 rounded bg-[#07111b]/85 border border-slate-800/80 text-[11px] text-slate-200 truncate max-w-xl">
+            <div className="pointer-events-none px-3 py-0.5 rounded bg-[#07111b]/88 border border-slate-800/80 text-[11px] text-slate-200 truncate max-w-xl">
               {lastFeedback}
             </div>
 
@@ -408,7 +517,7 @@ export function GameHUD({
             </div>
           </div>
 
-          {/* Bottom-Right: Phase Action Button (Master Duel Style) */}
+          {/* Bottom-Right: Phase Action Button */}
           <div className="pointer-events-auto flex flex-col items-end gap-1.5 shrink-0">
             {(selectedCard !== null || movingFromLane !== null) && (
               <button

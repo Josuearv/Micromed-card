@@ -1,32 +1,44 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { soundEngine } from './audio/soundEngine';
 import { CardInspectorModal } from './components/CardInspectorModal';
+import { DeckModal } from './components/DeckModal';
 import { EndModals } from './components/EndModals';
 import { GameHUD } from './components/GameHUD';
-import { MedicalTableCanvas, SlotAnchorDomRefs } from './components/MedicalTableCanvas';
-import { TitleScreen } from './components/TitleScreen';
 import {
-  createStarterDuelDeck,
-  instantiateCard,
-  PLAYER_DECK_CARDS,
-  REWARD_CARD_POOL,
-  RIVAL_DUELISTS,
-  shuffleCards,
-} from './data/medicalCards';
+  MedicalTableCanvas,
+  SlotAnchorDomRefs,
+} from './components/MedicalTableCanvas';
+import { TitleScreen } from './components/TitleScreen';
+import { ALL_PLAYER_CARDS_MAP, RIVAL_DUELISTS } from './data/medicalCards';
+import { ORGAN_PROFILES } from './data/organs';
 import {
   buildEndTurnSteps,
   canEndTurn,
   canPlayCard,
-  createBoardUnit,
-  drawCardsPure,
+  CombatStep,
   DuelEngineState,
   getPendingAttackers,
-  planRivalIntent,
   resolveActivateSkill,
   resolveManualAttack,
   resolveMoveUnit,
   resolvePlayCard,
 } from './engine/combatEngine';
+import {
+  advanceToNextGuard,
+  RunState,
+  startNewRun,
+  transitionRunOnVictory,
+} from './engine/runEngine';
+import {
+  clearRunSnapshot,
+  loadBestGuardRecord,
+  loadPreferences,
+  loadRunSnapshot,
+  RunSavePayload,
+  savePreferences,
+  saveRunSnapshot,
+  updateBestGuardRecord,
+} from './game/persistence';
 import {
   BoardUnit,
   CameraPreset,
@@ -35,60 +47,39 @@ import {
   CombatLogEntry,
   DuelCard,
   DuelTelemetry,
+  GameMode,
   GameState,
   MedicalClass,
-  TurnPhase,
+  RivalDuelist,
+  RunPreferences,
+  SpeedMode,
 } from './types/game';
 
-const PLAYER_MAX_LP = 4000;
-const INITIAL_ENERGY = 4;
-const HAND_SIZE = 5;
-
-function createInitialEngineState(
-  rivalIdx: number,
-  deck: CardInstance[],
-): DuelEngineState {
-  const rival = RIVAL_DUELISTS[rivalIdx];
-  const shuffled = shuffleCards(deck);
-  const { drawn, nextDraw, nextDiscard } = drawCardsPure(HAND_SIZE, shuffled, []);
-
-  const openingUnit = createBoardUnit(rival.deck[0], 1, true);
-  const enemySlots: Array<BoardUnit | null> = [null, openingUnit, null];
-  const playerSlots: Array<BoardUnit | null> = [null, null, null];
-
-  return {
-    turn: 1,
-    playerLp: PLAYER_MAX_LP,
-    playerMaxLp: PLAYER_MAX_LP,
-    rivalLp: rival.startingLp,
-    rivalMaxLp: rival.startingLp,
-    energy: INITIAL_ENERGY,
-    maxEnergy: INITIAL_ENERGY,
-    freeMovesLeft: 1,
-    playerSlots,
-    enemySlots,
-    hand: drawn,
-    drawPile: nextDraw,
-    discardPile: nextDiscard,
-    rivalIntent: planRivalIntent(rival, enemySlots, playerSlots),
-  };
-}
+const SPEED_DELAY_MS: Record<SpeedMode, number> = {
+  normal: 520,
+  fast: 240,
+  reduced: 60,
+};
 
 export default function App() {
-  const [gameState, setGameState] = useState<GameState>('TITLE_MENU');
-  const [rivalIndex, setRivalIndex] = useState(0);
-  const [phase, setPhase] = useState<TurnPhase>('PREPARACION');
-  const [duelsWon, setDuelsWon] = useState(0);
-  const [cardsPlayedCount, setCardsPlayedCount] = useState(0);
-  const [turnsElapsed, setTurnsElapsed] = useState(0);
+  const [prefs, setPrefs] = useState<RunPreferences>(() => {
+    const loaded = loadPreferences();
+    soundEngine.setMuted(loaded.muted);
+    return loaded;
+  });
+  const [bestGuardLevel, setBestGuardLevel] = useState<number>(() =>
+    loadBestGuardRecord(),
+  );
+  const [savedRun, setSavedRun] = useState<RunSavePayload | null>(() =>
+    loadRunSnapshot(),
+  );
 
-  const [masterDeck, setMasterDeck] = useState<CardInstance[]>(() =>
-    createStarterDuelDeck(),
+  const [gameState, setGameState] = useState<GameState>('TITLE_MENU');
+  const [runState, setRunState] = useState<RunState>(() =>
+    startNewRun('endless', Date.now() >>> 0),
   );
-  const [engineState, setEngineState] = useState<DuelEngineState>(() =>
-    createInitialEngineState(0, createStarterDuelDeck()),
-  );
-  const engineRef = useRef<DuelEngineState>(engineState);
+  const runRef = useRef<RunState>(runState);
+  const [recoveredLp, setRecoveredLp] = useState(0);
 
   const [selectedCardUid, setSelectedCardUid] = useState<string | null>(null);
   const [movingFromLane, setMovingFromLane] = useState<number | null>(null);
@@ -97,19 +88,15 @@ export default function App() {
   );
   const [isResolvingTurn, setIsResolvingTurn] = useState(false);
   const [inspectedCard, setInspectedCard] = useState<DuelCard | null>(null);
+  const [deckModalOpen, setDeckModalOpen] = useState(false);
   const [lastFeedback, setLastFeedback] = useState(
     'Fase de Preparación: elige cartas para desplegar o tratar.',
   );
   const [logs, setLogs] = useState<CombatLogEntry[]>([]);
   const [tutorialStep, setTutorialStep] = useState<number | null>(1);
-
-  const [rewardChoices, setRewardChoices] = useState<DuelCard[]>([]);
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>('overview');
-  const [muted, setMuted] = useState(false);
 
-  const [activeCombatEvent, setActiveCombatEvent] = useState<CombatEvent | null>(
-    null,
-  );
+  const [eventBatch, setEventBatch] = useState<CombatEvent[]>([]);
   const [playedCardMeta, setPlayedCardMeta] = useState<{
     nonce: number;
     medicalClass: MedicalClass;
@@ -117,34 +104,86 @@ export default function App() {
   } | null>(null);
 
   const timersRef = useRef<number[]>([]);
+  const playbackGenRef = useRef(0);
+  const pausedStepRef = useRef<{
+    steps: CombatStep[];
+    cursor: number;
+    rival: RivalDuelist;
+  } | null>(null);
   const metaNonceRef = useRef(1);
   const slotAnchorRefs = useRef<SlotAnchorDomRefs>({
     player: [null, null, null],
     enemy: [null, null, null],
   });
 
-  const currentRival = RIVAL_DUELISTS[rivalIndex] ?? RIVAL_DUELISTS[0];
+  const engineState = runState.duelState;
+  const currentRival = runState.rival;
+  const organProfile = ORGAN_PROFILES[currentRival.organId];
 
-  const syncEngineState = useCallback((next: DuelEngineState) => {
-    engineRef.current = next;
-    setEngineState(next);
+  const syncRun = useCallback((next: RunState) => {
+    runRef.current = next;
+    setRunState(next);
   }, []);
+
+  const updateDuelState = useCallback(
+    (
+      nextDuel: DuelEngineState,
+      extra?: Partial<Pick<RunState, 'cardsPlayedCount' | 'turnsElapsed'>>,
+      persist = true,
+    ) => {
+      const updated: RunState = {
+        ...runRef.current,
+        ...extra,
+        duelState: nextDuel,
+        rngState: nextDuel.rngState,
+        idSequence: nextDuel.idSequence,
+        playerLp: nextDuel.playerLp,
+      };
+      runRef.current = updated;
+      setRunState(updated);
+      if (persist && nextDuel.playerLp > 0 && nextDuel.rivalLp > 0) {
+        saveRunSnapshot(updated, false, 0);
+      }
+      return updated;
+    },
+    [],
+  );
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach((id) => window.clearTimeout(id));
     timersRef.current = [];
   }, []);
 
-  useEffect(() => {
-    return () => clearTimers();
+  const cancelPlayback = useCallback(() => {
+    playbackGenRef.current += 1;
+    clearTimers();
   }, [clearTimers]);
+
+  useEffect(() => {
+    return () => {
+      playbackGenRef.current += 1;
+      clearTimers();
+    };
+  }, [clearTimers]);
+
+  const updatePrefs = useCallback(
+    (updater: (prev: RunPreferences) => RunPreferences) => {
+      setPrefs((prev) => {
+        const next = updater(prev);
+        soundEngine.setMuted(next.muted);
+        savePreferences(next);
+        return next;
+      });
+    },
+    [],
+  );
 
   const appendEventsToFeed = useCallback(
     (events: CombatEvent[], turnNum: number) => {
       if (events.length === 0) return;
 
+      setEventBatch(events);
       const latest = events[events.length - 1];
-      setActiveCombatEvent(latest);
       soundEngine.playAnimationEvent(latest.animKind, latest.isCritical);
       setLastFeedback(latest.logText);
 
@@ -164,65 +203,110 @@ export default function App() {
     [],
   );
 
-  const checkDuelOutcome = useCallback(
-    (state: DuelEngineState, activeRivalIdx: number): boolean => {
-      if (state.rivalLp <= 0) {
-        clearTimers();
+  const handleVictoryOrDefeat = useCallback(
+    (latestRun: RunState): boolean => {
+      const d = latestRun.duelState;
+      if (d.rivalLp <= 0) {
+        cancelPlayback();
+        pausedStepRef.current = null;
+        setIsResolvingTurn(false);
         soundEngine.playCaseStabilized();
-        const won = activeRivalIdx + 1;
-        setDuelsWon(won);
-        if (won >= RIVAL_DUELISTS.length) {
+
+        const outcome = transitionRunOnVictory(latestRun);
+        syncRun(outcome.nextRun);
+        setRecoveredLp(outcome.recoveredLp);
+
+        if (latestRun.mode === 'endless') {
+          const updatedBest = updateBestGuardRecord(latestRun.guardLevel);
+          setBestGuardLevel(updatedBest);
+        }
+
+        if (outcome.isCampaignComplete) {
+          clearRunSnapshot();
+          setSavedRun(null);
           setGameState('VICTORY');
         } else {
-          setRewardChoices(shuffleCards(REWARD_CARD_POOL).slice(0, 3));
+          saveRunSnapshot(outcome.nextRun, true, outcome.recoveredLp);
+          setSavedRun(loadRunSnapshot());
           setGameState('ROUND_SUMMARY');
         }
         return true;
       }
-      if (state.playerLp <= 0) {
-        clearTimers();
+
+      if (d.playerLp <= 0) {
+        cancelPlayback();
+        pausedStepRef.current = null;
+        setIsResolvingTurn(false);
         soundEngine.playInvalidAction();
+        if (latestRun.mode === 'endless' && latestRun.duelsWon > 0) {
+          const updatedBest = updateBestGuardRecord(latestRun.duelsWon);
+          setBestGuardLevel(updatedBest);
+        }
+        clearRunSnapshot();
+        setSavedRun(null);
         setGameState('GAME_OVER');
         return true;
       }
+
       return false;
     },
-    [clearTimers],
+    [cancelPlayback, syncRun],
   );
 
-  const startDuelRound = useCallback(
-    (targetIdx: number, deck: CardInstance[], keepTutorial: boolean) => {
-      clearTimers();
-      const fresh = createInitialEngineState(targetIdx, deck);
-      setRivalIndex(targetIdx);
-      setPhase('PREPARACION');
+  const startMode = useCallback(
+    (mode: GameMode) => {
+      cancelPlayback();
+      pausedStepRef.current = null;
+      const seed = (Date.now() ^ Math.floor(Math.random() * 0xffffffff)) >>> 0;
+      const fresh = startNewRun(mode, seed || 1);
+      syncRun(fresh);
+      setRecoveredLp(0);
       setSelectedCardUid(null);
       setMovingFromLane(null);
       setSelectedAttackerLane(null);
       setIsResolvingTurn(false);
       setInspectedCard(null);
+      setDeckModalOpen(false);
+      setEventBatch([]);
       setLogs([]);
-      syncEngineState(fresh);
+      setTutorialStep(1);
+      setCameraPreset('overview');
       setLastFeedback(
-        `Duelo contra ${RIVAL_DUELISTS[targetIdx].name}. Despliega en los 3 carriles.`,
+        `${
+          mode === 'endless' ? `Guardia 1 · ` : 'Duelo 1/3 · '
+        }${fresh.rival.name} en ${ORGAN_PROFILES[fresh.rival.organId].shortName}.`,
       );
-      if (!keepTutorial) setTutorialStep(null);
+      saveRunSnapshot(fresh, false, 0);
+      setSavedRun(loadRunSnapshot());
+      soundEngine.playStartShift();
       setGameState('PLAYING');
     },
-    [clearTimers, syncEngineState],
+    [cancelPlayback, syncRun],
   );
 
-  const startNewCampaign = useCallback(() => {
-    const freshDeck = createStarterDuelDeck();
-    setMasterDeck(freshDeck);
-    setDuelsWon(0);
-    setCardsPlayedCount(0);
-    setTurnsElapsed(0);
-    setTutorialStep(1);
+  const handleResumeSavedRun = useCallback(() => {
+    const snap = loadRunSnapshot();
+    if (!snap) return;
+    cancelPlayback();
+    pausedStepRef.current = null;
+    syncRun(snap.run);
+    setRecoveredLp(snap.recoveredLp);
+    setSelectedCardUid(null);
+    setMovingFromLane(null);
+    setSelectedAttackerLane(null);
+    setIsResolvingTurn(false);
+    setInspectedCard(null);
+    setDeckModalOpen(false);
+    setEventBatch([]);
+    setLogs([]);
+    setTutorialStep(null);
     setCameraPreset('overview');
+    setLastFeedback(
+      `Guardia reanudada: ${snap.run.rival.name} · ${ORGAN_PROFILES[snap.run.rival.organId].shortName}.`,
+    );
     soundEngine.playStartShift();
-    startDuelRound(0, freshDeck, true);
-  }, [startDuelRound]);
+    setGameState(snap.inRoundSummary ? 'ROUND_SUMMARY' : 'PLAYING');
+  }, [cancelPlayback, syncRun]);
 
   const selectedCard = useMemo(
     () => engineState.hand.find((c) => c.uid === selectedCardUid) ?? null,
@@ -236,15 +320,23 @@ export default function App() {
 
   const executeCardPlay = useCallback(
     (card: CardInstance, targetLane?: number) => {
-      const { nextState, events } = resolvePlayCard(
-        engineRef.current,
+      const { nextState, events, error } = resolvePlayCard(
+        runRef.current.duelState,
         card.uid,
         targetLane,
+        runRef.current.rival,
       );
-      syncEngineState(nextState);
+      if (error) {
+        soundEngine.playInvalidAction();
+        setLastFeedback(error);
+        return;
+      }
+
+      const updatedRun = updateDuelState(nextState, {
+        cardsPlayedCount: runRef.current.cardsPlayedCount + 1,
+      });
       setSelectedCardUid(null);
       setMovingFromLane(null);
-      setCardsPlayedCount((c) => c + 1);
       setPlayedCardMeta({
         nonce: metaNonceRef.current++,
         medicalClass: card.medicalClass,
@@ -254,23 +346,24 @@ export default function App() {
       if (tutorialStep === 1 || tutorialStep === 2) {
         setTutorialStep(3);
       }
-      checkDuelOutcome(nextState, rivalIndex);
+      handleVictoryOrDefeat(updatedRun);
     },
-    [
-      syncEngineState,
-      appendEventsToFeed,
-      tutorialStep,
-      checkDuelOutcome,
-      rivalIndex,
-    ],
+    [updateDuelState, appendEventsToFeed, tutorialStep, handleVictoryOrDefeat],
   );
 
   const handleCardClick = useCallback(
     (uid: string) => {
-      if (gameState !== 'PLAYING' || phase !== 'PREPARACION') return;
+      if (
+        gameState !== 'PLAYING' ||
+        runRef.current.duelState.phase !== 'PREPARACION' ||
+        isResolvingTurn
+      ) {
+        return;
+      }
 
-      const check = canPlayCard(engineRef.current, uid);
-      const card = engineRef.current.hand.find((c) => c.uid === uid);
+      const duel = runRef.current.duelState;
+      const check = canPlayCard(duel, uid);
+      const card = duel.hand.find((c) => c.uid === uid);
       if (!card) return;
 
       if (!check.valid) {
@@ -286,7 +379,7 @@ export default function App() {
         return;
       }
 
-      if (card.targetMode === 'none') {
+      if (card.targetMode === 'none' || card.targetMode === 'trap_slot') {
         executeCardPlay(card);
         return;
       }
@@ -308,16 +401,25 @@ export default function App() {
         );
       }
     },
-    [gameState, phase, selectedCardUid, executeCardPlay, tutorialStep],
+    [gameState, isResolvingTurn, selectedCardUid, executeCardPlay, tutorialStep],
   );
+
+  const advanceNextAttacker = useCallback((state: DuelEngineState) => {
+    const nextPending = getPendingAttackers(state);
+    if (nextPending.length > 0) {
+      setSelectedAttackerLane(nextPending[0].laneIndex);
+    } else {
+      setSelectedAttackerLane(null);
+    }
+  }, []);
 
   const handleSelectPlayerLane = useCallback(
     (lane: number) => {
       if (gameState !== 'PLAYING' || isResolvingTurn) return;
+      const duel = runRef.current.duelState;
 
-      // In Combat phase: select an allied unit that hasn't attacked yet as attacker
-      if (phase === 'COMBATE') {
-        const ally = engineRef.current.playerSlots[lane];
+      if (duel.phase === 'COMBATE') {
+        const ally = duel.playerSlots[lane];
         if (!ally) return;
         if (ally.statuses.aturdido) {
           soundEngine.playInvalidAction();
@@ -337,32 +439,30 @@ export default function App() {
         return;
       }
 
-      if (phase !== 'PREPARACION') return;
+      if (duel.phase !== 'PREPARACION') return;
 
-      // 1. Repositioning unit
       if (movingFromLane !== null) {
-        const res = resolveMoveUnit(engineRef.current, movingFromLane, lane);
+        const res = resolveMoveUnit(duel, movingFromLane, lane);
         if (res.error) {
           soundEngine.playInvalidAction();
           setLastFeedback(res.error);
           return;
         }
-        syncEngineState(res.nextState);
+        updateDuelState(res.nextState);
         setMovingFromLane(null);
         appendEventsToFeed(res.events, res.nextState.turn);
         return;
       }
 
-      // 2. Summoning or Ally Buff Card
       if (selectedCard) {
         if (
           selectedCard.kind === 'Unidad' &&
-          engineRef.current.playerSlots[lane] === null
+          duel.playerSlots[lane] === null
         ) {
           executeCardPlay(selectedCard, lane);
         } else if (
           selectedCard.targetMode === 'ally' &&
-          engineRef.current.playerSlots[lane] !== null
+          duel.playerSlots[lane] !== null
         ) {
           executeCardPlay(selectedCard, lane);
         }
@@ -371,57 +471,43 @@ export default function App() {
     [
       gameState,
       isResolvingTurn,
-      phase,
       movingFromLane,
       selectedCard,
-      syncEngineState,
+      updateDuelState,
       appendEventsToFeed,
       executeCardPlay,
     ],
   );
 
-  const advanceNextAttacker = useCallback((state: DuelEngineState) => {
-    const nextPending = getPendingAttackers(state);
-    if (nextPending.length > 0) {
-      setSelectedAttackerLane(nextPending[0].laneIndex);
-    } else {
-      setSelectedAttackerLane(null);
-    }
-  }, []);
-
   const handleSelectEnemyLane = useCallback(
     (lane: number) => {
       if (gameState !== 'PLAYING' || isResolvingTurn) return;
+      const duel = runRef.current.duelState;
 
-      // In Combat phase: execute manual attack with selectedAttackerLane onto target enemy
-      if (phase === 'COMBATE') {
+      if (duel.phase === 'COMBATE') {
         if (selectedAttackerLane === null) {
           soundEngine.playInvalidAction();
           setLastFeedback('Primero selecciona una unidad aliada lista para atacar.');
           return;
         }
-        const res = resolveManualAttack(
-          engineRef.current,
-          selectedAttackerLane,
-          lane,
-        );
+        const res = resolveManualAttack(duel, selectedAttackerLane, lane);
         if (res.error) {
           soundEngine.playInvalidAction();
           setLastFeedback(res.error);
           return;
         }
-        syncEngineState(res.nextState);
+        const updatedRun = updateDuelState(res.nextState);
         appendEventsToFeed(res.events, res.nextState.turn);
-        if (checkDuelOutcome(res.nextState, rivalIndex)) return;
+        if (handleVictoryOrDefeat(updatedRun)) return;
         advanceNextAttacker(res.nextState);
         return;
       }
 
-      if (phase !== 'PREPARACION') return;
+      if (duel.phase !== 'PREPARACION') return;
       if (
         selectedCard &&
         selectedCard.targetMode === 'enemy' &&
-        engineRef.current.enemySlots[lane] !== null
+        duel.enemySlots[lane] !== null
       ) {
         executeCardPlay(selectedCard, lane);
       }
@@ -429,56 +515,55 @@ export default function App() {
     [
       gameState,
       isResolvingTurn,
-      phase,
       selectedAttackerLane,
       selectedCard,
-      syncEngineState,
+      updateDuelState,
       appendEventsToFeed,
-      checkDuelOutcome,
-      rivalIndex,
+      handleVictoryOrDefeat,
       advanceNextAttacker,
       executeCardPlay,
     ],
   );
 
   const handleDirectAttack = useCallback(() => {
+    const duel = runRef.current.duelState;
     if (
       gameState !== 'PLAYING' ||
-      phase !== 'COMBATE' ||
+      duel.phase !== 'COMBATE' ||
       isResolvingTurn ||
       selectedAttackerLane === null
     ) {
       return;
     }
-    const res = resolveManualAttack(
-      engineRef.current,
-      selectedAttackerLane,
-      'direct',
-    );
+    const res = resolveManualAttack(duel, selectedAttackerLane, 'direct');
     if (res.error) {
       soundEngine.playInvalidAction();
       setLastFeedback(res.error);
       return;
     }
-    syncEngineState(res.nextState);
+    const updatedRun = updateDuelState(res.nextState);
     appendEventsToFeed(res.events, res.nextState.turn);
-    if (checkDuelOutcome(res.nextState, rivalIndex)) return;
+    if (handleVictoryOrDefeat(updatedRun)) return;
     advanceNextAttacker(res.nextState);
   }, [
     gameState,
-    phase,
     isResolvingTurn,
     selectedAttackerLane,
-    syncEngineState,
+    updateDuelState,
     appendEventsToFeed,
-    checkDuelOutcome,
-    rivalIndex,
+    handleVictoryOrDefeat,
     advanceNextAttacker,
   ]);
 
   const handleStartMoveUnit = useCallback(
     (lane: number) => {
-      if (gameState !== 'PLAYING' || phase !== 'PREPARACION' || isResolvingTurn) return;
+      if (
+        gameState !== 'PLAYING' ||
+        runRef.current.duelState.phase !== 'PREPARACION' ||
+        isResolvingTurn
+      ) {
+        return;
+      }
       setSelectedCardUid(null);
       if (movingFromLane === lane) {
         setMovingFromLane(null);
@@ -487,143 +572,146 @@ export default function App() {
       setMovingFromLane(lane);
       setLastFeedback('Toca un carril iluminado en la arena para reposicionar.');
     },
-    [gameState, phase, isResolvingTurn, movingFromLane],
+    [gameState, isResolvingTurn, movingFromLane],
   );
 
   const handleActivateSkill = useCallback(
     (lane: number) => {
-      if (gameState !== 'PLAYING' || phase !== 'PREPARACION' || isResolvingTurn) return;
-      const res = resolveActivateSkill(engineRef.current, lane);
+      const duel = runRef.current.duelState;
+      if (
+        gameState !== 'PLAYING' ||
+        duel.phase !== 'PREPARACION' ||
+        isResolvingTurn
+      ) {
+        return;
+      }
+      const res = resolveActivateSkill(duel, lane);
       if (res.error) {
         soundEngine.playInvalidAction();
         setLastFeedback(res.error);
         return;
       }
-      syncEngineState(res.nextState);
+      const updatedRun = updateDuelState(res.nextState);
       appendEventsToFeed(res.events, res.nextState.turn);
-      checkDuelOutcome(res.nextState, rivalIndex);
+      handleVictoryOrDefeat(updatedRun);
     },
     [
       gameState,
-      phase,
       isResolvingTurn,
-      syncEngineState,
+      updateDuelState,
       appendEventsToFeed,
-      checkDuelOutcome,
-      rivalIndex,
+      handleVictoryOrDefeat,
     ],
   );
 
   const handleInspectUnit = useCallback((unit: BoardUnit) => {
-    const template =
-      PLAYER_DECK_CARDS.find((c) => c.id === unit.cardId) ??
-      REWARD_CARD_POOL.find((c) => c.id === unit.cardId);
-
+    if (unit.sourceCard) {
+      setInspectedCard(unit.sourceCard);
+      return;
+    }
+    const template = ALL_PLAYER_CARDS_MAP[unit.cardId];
     if (template) {
       setInspectedCard(template);
-    } else {
-      setInspectedCard({
-        id: unit.cardId,
-        code: 'PAT',
-        name: unit.name,
-        kind: 'Unidad',
-        medicalClass: unit.medicalClass,
-        subtype: unit.subtype,
-        archetype: unit.archetype,
-        cost: 0,
-        atk: unit.atk,
-        maxHp: unit.maxHp,
-        ability: unit.ability,
-        abilityLabel: unit.abilityLabel,
-        targetMode: 'none',
-        effectTag: 'summon',
-        shortRule: unit.shortRule,
-        medicalBasis: unit.medicalBasis,
-        gameSimplification: 'Entidad patógena controlada por la IA del brote.',
-        synergies: 'Exploitable mediante fármacos dirigidos y opsonización.',
-        counterEffects: 'Ataca su carril si queda sin defensa.',
-      });
     }
   }, []);
 
+  const runPlaybackFrom = useCallback(
+    (steps: CombatStep[], startCursor: number, rival: RivalDuelist) => {
+      cancelPlayback();
+      const myGen = playbackGenRef.current;
+      let cursor = startCursor;
+      setIsResolvingTurn(true);
+
+      const stepDelay =
+        prefs.reducedMotion || prefs.speedMode === 'reduced'
+          ? 40
+          : SPEED_DELAY_MS[prefs.speedMode];
+
+      const runNextStep = () => {
+        if (playbackGenRef.current !== myGen) return;
+
+        if (cursor >= steps.length) {
+          pausedStepRef.current = null;
+          setIsResolvingTurn(false);
+          const finishedRun = updateDuelState(runRef.current.duelState, {
+            turnsElapsed: runRef.current.turnsElapsed + 1,
+          });
+          setLastFeedback(
+            `Turno ${finishedRun.duelState.turn}: ${finishedRun.duelState.energy} PA disponibles.`,
+          );
+          return;
+        }
+
+        const step = steps[cursor++];
+        pausedStepRef.current = { steps, cursor, rival };
+
+        const { nextState, events } = step.execute(runRef.current.duelState);
+        const updatedRun = updateDuelState(nextState);
+
+        if (events.length > 0) {
+          appendEventsToFeed(events, nextState.turn);
+        }
+
+        if (handleVictoryOrDefeat(updatedRun)) {
+          return;
+        }
+
+        const delay = events.length > 0 ? stepDelay : 30;
+        const tid = window.setTimeout(runNextStep, delay);
+        timersRef.current.push(tid);
+      };
+
+      runNextStep();
+    },
+    [
+      cancelPlayback,
+      prefs.reducedMotion,
+      prefs.speedMode,
+      updateDuelState,
+      appendEventsToFeed,
+      handleVictoryOrDefeat,
+    ],
+  );
+
   const executeEndTurnSequence = useCallback(() => {
-    clearTimers();
-    setIsResolvingTurn(true);
     setSelectedCardUid(null);
     setMovingFromLane(null);
     setSelectedAttackerLane(null);
     if (tutorialStep !== null) setTutorialStep(null);
 
-    const steps = buildEndTurnSteps(currentRival);
-    let stepCursor = 0;
-
-    const runNextStep = () => {
-      if (stepCursor >= steps.length) {
-        setTurnsElapsed((t) => t + 1);
-        setIsResolvingTurn(false);
-        setPhase('PREPARACION');
-        setLastFeedback(
-          `Turno ${engineRef.current.turn}: ${engineRef.current.energy} PA disponibles.`,
-        );
-        return;
-      }
-
-      const step = steps[stepCursor++];
-      setPhase(step.phase);
-
-      const { nextState, events } = step.execute(engineRef.current);
-      syncEngineState(nextState);
-
-      if (events.length > 0) {
-        appendEventsToFeed(events, nextState.turn);
-      }
-
-      if (checkDuelOutcome(nextState, rivalIndex)) {
-        setIsResolvingTurn(false);
-        return;
-      }
-
-      const delay = events.length > 0 ? 520 : 40;
-      const tid = window.setTimeout(runNextStep, delay);
-      timersRef.current.push(tid);
-    };
-
-    runNextStep();
-  }, [
-    clearTimers,
-    tutorialStep,
-    currentRival,
-    syncEngineState,
-    appendEventsToFeed,
-    checkDuelOutcome,
-    rivalIndex,
-  ]);
+    const rival = runRef.current.rival;
+    const steps = buildEndTurnSteps(rival);
+    runPlaybackFrom(steps, 0, rival);
+  }, [tutorialStep, runPlaybackFrom]);
 
   const handlePhaseAction = useCallback(() => {
-    if (gameState !== 'PLAYING' || isResolvingTurn || phase === 'TURNO_RIVAL') {
+    const duel = runRef.current.duelState;
+    if (
+      gameState !== 'PLAYING' ||
+      isResolvingTurn ||
+      duel.phase === 'TURNO_RIVAL'
+    ) {
       return;
     }
 
-    if (phase === 'PREPARACION') {
-      const pending = getPendingAttackers(engineRef.current);
+    if (duel.phase === 'PREPARACION') {
+      const pending = getPendingAttackers(duel);
       if (pending.length > 0) {
         setSelectedCardUid(null);
         setMovingFromLane(null);
-        setPhase('COMBATE');
         setSelectedAttackerLane(pending[0].laneIndex);
+        updateDuelState({ ...duel, phase: 'COMBATE' });
         soundEngine.playCardHover();
         setLastFeedback(
           `Fase de Combate: selecciona un patógeno rival para atacar con ${pending[0].name}.`,
         );
         return;
       }
-      // No allied units on field -> go straight to end-turn sequence
       executeEndTurnSequence();
       return;
     }
 
-    // In COMBATE phase: strictly block ending the turn if any unit hasn't attacked
-    const guard = canEndTurn(engineRef.current);
+    const guard = canEndTurn(duel);
     if (!guard.allowed) {
       soundEngine.playInvalidAction();
       setSelectedAttackerLane(guard.pendingLanes[0]);
@@ -635,47 +723,107 @@ export default function App() {
     }
 
     executeEndTurnSequence();
-  }, [gameState, isResolvingTurn, phase, executeEndTurnSequence]);
+  }, [gameState, isResolvingTurn, updateDuelState, executeEndTurnSequence]);
 
-  const handlePickReward = useCallback(
-    (reward: DuelCard) => {
-      const updated = [...masterDeck, instantiateCard(reward)];
-      setMasterDeck(updated);
-      startDuelRound(rivalIndex + 1, updated, false);
+  const handlePause = useCallback(() => {
+    if (gameState !== 'PLAYING') return;
+    cancelPlayback();
+    setGameState('PAUSED');
+  }, [gameState, cancelPlayback]);
+
+  const handleResume = useCallback(() => {
+    if (gameState !== 'PAUSED') return;
+    setGameState('PLAYING');
+    if (pausedStepRef.current) {
+      const { steps, cursor, rival } = pausedStepRef.current;
+      runPlaybackFrom(steps, cursor, rival);
+    }
+  }, [gameState, runPlaybackFrom]);
+
+  const proceedToNextGuard = useCallback(
+    (chosenReward: DuelCard | null) => {
+      cancelPlayback();
+      pausedStepRef.current = null;
+      const nextRun = advanceToNextGuard(runRef.current, chosenReward);
+      syncRun(nextRun);
+      setRecoveredLp(0);
+      setSelectedCardUid(null);
+      setMovingFromLane(null);
+      setSelectedAttackerLane(null);
+      setIsResolvingTurn(false);
+      setEventBatch([]);
+      setLogs([]);
+      setLastFeedback(
+        `${
+          nextRun.mode === 'endless'
+            ? `Guardia ${nextRun.guardLevel}`
+            : `Duelo ${nextRun.guardLevel}/${RIVAL_DUELISTS.length}`
+        } · ${nextRun.rival.name} en ${
+          ORGAN_PROFILES[nextRun.rival.organId].shortName
+        }.`,
+      );
+      saveRunSnapshot(nextRun, false, 0);
+      setSavedRun(loadRunSnapshot());
+      soundEngine.playStartShift();
+      setGameState('PLAYING');
     },
-    [masterDeck, startDuelRound, rivalIndex],
+    [cancelPlayback, syncRun],
   );
 
-  const handleSkipReward = useCallback(() => {
-    startDuelRound(rivalIndex + 1, masterDeck, false);
-  }, [startDuelRound, rivalIndex, masterDeck]);
+  const handleReturnToMenu = useCallback(() => {
+    cancelPlayback();
+    pausedStepRef.current = null;
+    setIsResolvingTurn(false);
+    setDeckModalOpen(false);
+    setInspectedCard(null);
+    setSavedRun(loadRunSnapshot());
+    setGameState('TITLE_MENU');
+  }, [cancelPlayback]);
 
   const handleToggleMute = useCallback(() => {
-    setMuted((prev) => {
-      const next = !prev;
-      soundEngine.setMuted(next);
-      return next;
-    });
-  }, []);
+    updatePrefs((p) => ({ ...p, muted: !p.muted }));
+  }, [updatePrefs]);
+
+  const handleToggleTactical2D = useCallback(() => {
+    updatePrefs((p) => ({ ...p, tactical2D: !p.tactical2D }));
+  }, [updatePrefs]);
+
+  const handleToggleReducedMotion = useCallback(() => {
+    updatePrefs((p) => ({ ...p, reducedMotion: !p.reducedMotion }));
+  }, [updatePrefs]);
+
+  const handleCycleSpeedMode = useCallback(() => {
+    const order: SpeedMode[] = ['normal', 'fast', 'reduced'];
+    updatePrefs((p) => ({
+      ...p,
+      speedMode: order[(order.indexOf(p.speedMode) + 1) % order.length],
+    }));
+  }, [updatePrefs]);
 
   const cycleCameraPreset = useCallback(() => {
-    const order: CameraPreset[] = ['overview', 'heart', 'instruments'];
-    setCameraPreset((prev) => order[(order.indexOf(prev) + 1) % order.length]);
+    const order: CameraPreset[] = ['overview', 'organ', 'instruments'];
+    setCameraPreset((prev) => {
+      const normalized = prev === 'heart' ? 'organ' : prev;
+      return order[(order.indexOf(normalized) + 1) % order.length];
+    });
   }, []);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return;
+      if (inspectedCard || deckModalOpen) return;
 
-      if (inspectedCard) {
-        if (e.key === 'Escape') setInspectedCard(null);
-        return;
-      }
+      const target = e.target;
+      const isInteractiveTarget =
+        target instanceof HTMLButtonElement ||
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLTextAreaElement;
 
       if (gameState === 'TITLE_MENU') {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if ((e.key === 'Enter' || e.key === ' ') && !isInteractiveTarget) {
           e.preventDefault();
-          startNewCampaign();
+          startMode('endless');
         }
         return;
       }
@@ -686,8 +834,8 @@ export default function App() {
           setMovingFromLane(null);
           return;
         }
-        if (gameState === 'PLAYING') setGameState('PAUSED');
-        else if (gameState === 'PAUSED') setGameState('PLAYING');
+        if (gameState === 'PLAYING') handlePause();
+        else if (gameState === 'PAUSED') handleResume();
         return;
       }
 
@@ -703,7 +851,11 @@ export default function App() {
         return;
       }
 
-      if (e.key === ' ' || e.key === 'e' || e.key === 'E') {
+      if (
+        (e.key === ' ' && !isInteractiveTarget) ||
+        e.key === 'e' ||
+        e.key === 'E'
+      ) {
         e.preventDefault();
         handlePhaseAction();
         return;
@@ -711,7 +863,7 @@ export default function App() {
 
       const num = Number(e.key);
       if (num >= 1 && num <= 6) {
-        const card = engineRef.current.hand[num - 1];
+        const card = runRef.current.duelState.hand[num - 1];
         if (card) handleCardClick(card.uid);
       }
     };
@@ -720,10 +872,13 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [
     inspectedCard,
+    deckModalOpen,
     gameState,
-    startNewCampaign,
+    startMode,
     selectedCardUid,
     movingFromLane,
+    handlePause,
+    handleResume,
     handleToggleMute,
     cycleCameraPreset,
     handlePhaseAction,
@@ -732,9 +887,12 @@ export default function App() {
 
   const liveTelemetry: DuelTelemetry = useMemo(() => {
     const lpRatio = engineState.playerLp / engineState.playerMaxLp;
-    const bpm = Math.round(74 + (1 - lpRatio) * 68);
-    const spo2 = Math.max(85, Math.round(99 - (1 - lpRatio) * 11));
-    const isPrep = phase === 'PREPARACION';
+    const bpm = Math.round(organProfile.bpmBase + (1 - lpRatio) * 62);
+    const spo2 = Math.max(
+      84,
+      Math.round(organProfile.spo2Base - (1 - lpRatio) * 11),
+    );
+    const isPrep = engineState.phase === 'PREPARACION';
 
     return {
       playerLp: engineState.playerLp,
@@ -742,9 +900,12 @@ export default function App() {
       rivalLp: engineState.rivalLp,
       rivalMaxLp: engineState.rivalMaxLp,
       rivalName: currentRival.name,
-      phase,
+      organId: currentRival.organId,
+      organAccentHex: organProfile.accentHex,
+      phase: engineState.phase,
       playerSlots: engineState.playerSlots,
       enemySlots: engineState.enemySlots,
+      armedTrapsCount: engineState.armedTraps.length,
       selectedAttackerLane,
       selectingSummonOrMove:
         isPrep && (selectedCard?.kind === 'Unidad' || movingFromLane !== null),
@@ -757,8 +918,9 @@ export default function App() {
     };
   }, [
     engineState,
+    organProfile,
     currentRival.name,
-    phase,
+    currentRival.organId,
     selectedAttackerLane,
     selectedCard,
     movingFromLane,
@@ -766,40 +928,62 @@ export default function App() {
   ]);
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-[#081018]">
-      <MedicalTableCanvas
-        telemetry={liveTelemetry}
-        cameraPreset={cameraPreset}
-        activeCombatEvent={activeCombatEvent}
-        playedCardMeta={playedCardMeta}
-        slotAnchorRefs={slotAnchorRefs}
-        onClickPlayerSlot={handleSelectPlayerLane}
-        onClickEnemySlot={handleSelectEnemyLane}
-        onInspectHeart={() => {
-          soundEngine.playCardHover();
-          setCameraPreset((prev) => (prev === 'heart' ? 'overview' : 'heart'));
-          setLastFeedback(
-            `Telemetría cardiaca · FC ${liveTelemetry.bpm} lpm · SpO2 ${liveTelemetry.spo2}%.`,
-          );
-        }}
-        onClickDeck={() => {
-          soundEngine.playCardHover();
-          setLastFeedback(
-            `Mazo: ${engineState.drawPile.length} cartas · Descarte: ${engineState.discardPile.length}.`,
-          );
-        }}
-      />
+    <main className="relative w-screen h-[100dvh] overflow-hidden bg-[#081018]">
+      {!prefs.tactical2D && (
+        <MedicalTableCanvas
+          telemetry={liveTelemetry}
+          cameraPreset={cameraPreset}
+          eventBatch={eventBatch}
+          playedCardMeta={playedCardMeta}
+          reducedMotion={prefs.reducedMotion || prefs.speedMode === 'reduced'}
+          slotAnchorRefs={slotAnchorRefs}
+          onClickPlayerSlot={handleSelectPlayerLane}
+          onClickEnemySlot={handleSelectEnemyLane}
+          onInspectOrgan={() => {
+            soundEngine.playCardHover();
+            setCameraPreset((prev) =>
+              prev === 'organ' || prev === 'heart' ? 'overview' : 'organ',
+            );
+            setLastFeedback(
+              `${organProfile.name} · ${organProfile.synergyTitle} · FC ${liveTelemetry.bpm} lpm · SpO2 ${liveTelemetry.spo2}%.`,
+            );
+          }}
+          onClickDeck={() => {
+            soundEngine.playCardHover();
+            setDeckModalOpen(true);
+          }}
+          onWebGLUnavailable={() => {
+            updatePrefs((p) => ({ ...p, tactical2D: true }));
+            setLastFeedback(
+              'WebGL no disponible: activado el tablero táctico 2D accesible.',
+            );
+          }}
+        />
+      )}
 
       {gameState === 'TITLE_MENU' && (
-        <TitleScreen onStart={startNewCampaign} />
+        <TitleScreen
+          savedRun={savedRun}
+          bestGuardLevel={bestGuardLevel}
+          prefs={prefs}
+          onStartMode={startMode}
+          onResumeSaved={handleResumeSavedRun}
+          onToggleMute={handleToggleMute}
+          onToggleTactical2D={handleToggleTactical2D}
+          onToggleReducedMotion={handleToggleReducedMotion}
+        />
       )}
 
       {gameState !== 'TITLE_MENU' && (
         <GameHUD
+          runMode={runState.mode}
+          guardLevel={runState.guardLevel}
+          bestGuardLevel={bestGuardLevel}
+          totalRivals={RIVAL_DUELISTS.length}
+          organProfile={organProfile}
           engineState={engineState}
           rival={currentRival}
-          totalRivals={RIVAL_DUELISTS.length}
-          phase={phase}
+          phase={engineState.phase}
           selectedCard={selectedCard}
           movingFromLane={movingFromLane}
           selectedAttackerLane={selectedAttackerLane}
@@ -809,11 +993,14 @@ export default function App() {
           logs={logs}
           tutorialStep={tutorialStep}
           cameraPreset={cameraPreset}
-          muted={muted}
+          muted={prefs.muted}
+          tactical2D={prefs.tactical2D}
+          speedMode={prefs.speedMode}
           slotAnchorRefs={slotAnchorRefs}
           onCardClick={handleCardClick}
           onInspectCard={(card) => setInspectedCard(card)}
           onInspectUnit={handleInspectUnit}
+          onOpenDeck={() => setDeckModalOpen(true)}
           onCancelSelection={() => {
             setSelectedCardUid(null);
             setMovingFromLane(null);
@@ -826,24 +1013,41 @@ export default function App() {
           onPhaseAction={handlePhaseAction}
           onDismissTutorial={() => setTutorialStep(null)}
           onChangeCamera={setCameraPreset}
+          onToggleTactical2D={handleToggleTactical2D}
+          onCycleSpeedMode={handleCycleSpeedMode}
           onToggleMute={handleToggleMute}
-          onPause={() => setGameState('PAUSED')}
+          onPause={handlePause}
         />
       )}
 
       <EndModals
         gameState={gameState}
+        runMode={runState.mode}
+        guardLevel={runState.guardLevel}
+        bestGuardLevel={bestGuardLevel}
+        recoveredLp={recoveredLp}
+        organProfile={organProfile}
         rival={currentRival}
         totalRivals={RIVAL_DUELISTS.length}
-        rewardChoices={rewardChoices}
-        duelsWon={duelsWon}
-        cardsPlayedCount={cardsPlayedCount}
-        turnsElapsed={turnsElapsed}
-        onResume={() => setGameState('PLAYING')}
-        onPickReward={handlePickReward}
-        onSkipReward={handleSkipReward}
+        rewardChoices={runState.rewardChoices}
+        duelsWon={runState.duelsWon}
+        cardsPlayedCount={runState.cardsPlayedCount}
+        turnsElapsed={runState.turnsElapsed}
+        onResume={handleResume}
+        onOpenDeck={() => setDeckModalOpen(true)}
+        onPickReward={(card) => proceedToNextGuard(card)}
+        onSkipReward={() => proceedToNextGuard(null)}
         onInspectCard={(card) => setInspectedCard(card)}
-        onRestart={startNewCampaign}
+        onRestart={() => startMode(runState.mode)}
+        onReturnToMenu={handleReturnToMenu}
+      />
+
+      <DeckModal
+        open={deckModalOpen}
+        masterDeck={runState.masterDeck}
+        duelState={engineState}
+        onInspectCard={(card) => setInspectedCard(card)}
+        onClose={() => setDeckModalOpen(false)}
       />
 
       <CardInspectorModal
