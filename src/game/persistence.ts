@@ -97,15 +97,19 @@ const textFields = (value: JsonObject, keys: string[]) =>
   keys.every((key) => typeof value[key] === 'string');
 const numberFields = (value: JsonObject, keys: string[]) =>
   keys.every((key) => integer(value[key]));
-const enemyIds = new Set(Object.values(ENEMY_PATHOGEN_CARDS).map(({ id }) => id));
+const enemyCards = new Map(Object.values(ENEMY_PATHOGEN_CARDS).map((card) => [card.id, card]));
 
 function isCard(value: unknown, instance: boolean, enemy = false): value is JsonObject {
   if (!object(value) || typeof value.id !== 'string') return false;
-  const known = enemy ? enemyIds.has(value.id) : Object.hasOwn(ALL_PLAYER_CARDS_MAP, value.id);
-  return known && (!instance || (typeof value.uid === 'string' && value.uid.length > 0))
+  const template = enemy ? enemyCards.get(value.id) : Object.hasOwn(ALL_PLAYER_CARDS_MAP, value.id)
+    ? ALL_PLAYER_CARDS_MAP[value.id] : undefined;
+  return !!template && (!instance || (typeof value.uid === 'string' && value.uid.length > 0))
+    && value.kind === template.kind && value.medicalClass === template.medicalClass
+    && value.archetype === template.archetype && value.ability === template.ability
+    && value.targetMode === template.targetMode && value.effectTag === template.effectTag
+    && value.trapTrigger === template.trapTrigger && value.trapEffectId === template.trapEffectId
     && textFields(value, [
-      'code', 'name', 'kind', 'medicalClass', 'archetype', 'ability', 'abilityLabel',
-      'targetMode', 'effectTag', 'shortRule', 'medicalBasis', 'gameSimplification', 'synergies', 'counterEffects',
+      'code', 'name', 'abilityLabel', 'shortRule', 'medicalBasis', 'gameSimplification', 'synergies', 'counterEffects',
     ])
     && numberFields(value, ['cost', 'atk', 'maxHp'])
     && (value.activeSkillCost === undefined || integer(value.activeSkillCost));
@@ -115,7 +119,9 @@ function isBoard(value: unknown, enemy: boolean): boolean {
   return Array.isArray(value) && value.length === 3 && value.every((unit, lane) =>
     unit === null || (object(unit) && isCard(unit.sourceCard, true, enemy)
       && unit.sourceCard.id === unit.cardId && unit.laneIndex === lane && unit.isEnemy === enemy
-      && textFields(unit, ['uid', 'cardId', 'name', 'medicalClass', 'archetype', 'ability', 'abilityLabel', 'shortRule', 'medicalBasis'])
+      && unit.medicalClass === unit.sourceCard.medicalClass && unit.archetype === unit.sourceCard.archetype
+      && unit.ability === unit.sourceCard.ability
+      && textFields(unit, ['uid', 'name', 'abilityLabel', 'shortRule', 'medicalBasis'])
       && numberFields(unit, ['atk', 'baseAtk']) && integer(unit.hp, 1) && integer(unit.maxHp, 1) && unit.hp <= unit.maxHp
       && object(unit.statuses) && Object.values(unit.statuses).every((entry) => typeof entry === 'boolean' || integer(entry))
       && typeof unit.usedActiveSkillThisTurn === 'boolean' && typeof unit.hasAttackedThisTurn === 'boolean'),
@@ -193,6 +199,22 @@ function isInterrupted(snapshot: RunSavePayload): boolean {
   return !snapshot.inRoundSummary && !snapshot.terminal && snapshot.run.duelState.phase === 'TURNO_RIVAL';
 }
 
+function sameRun(a: RunSavePayload, b: RunSavePayload): boolean {
+  return a.run.runId === b.run.runId && a.run.mode === b.run.mode;
+}
+
+function repairLegacyTurnCount(snapshot: RunSavePayload, previous: RunSavePayload | null): RunSavePayload {
+  const { run } = snapshot;
+  if (!snapshot.inRoundSummary && !snapshot.terminal && previous && isInterrupted(previous) && sameRun(snapshot, previous)
+    && run.guardLevel === previous.run.guardLevel
+    && run.duelState.phase === 'PREPARACION' && run.duelState.turn === previous.run.duelState.turn + 1
+    && run.turnsElapsed === previous.run.turnsElapsed) {
+    // V3 briefly persisted the next preparation before incrementing the run counter.
+    return { ...snapshot, run: { ...run, turnsElapsed: run.turnsElapsed + 1 } };
+  }
+  return snapshot;
+}
+
 export function saveRunSnapshot(
   run: RunState,
   inRoundSummary: boolean,
@@ -229,9 +251,9 @@ export function loadRunSnapshot(): RunLoadResult {
     const backupRaw = window.localStorage.getItem(BACKUP_KEY);
     const primary = parse(raw);
     const backup = parse(backupRaw);
-    if (primary && !isInterrupted(primary)) return { status: 'primary', snapshot: primary };
+    if (primary && !isInterrupted(primary)) return { status: 'primary', snapshot: repairLegacyTurnCount(primary, backup) };
     if (backup && !isInterrupted(backup)) {
-      if (!primary || (backup.run.runId === primary.run.runId && backup.run.mode === primary.run.mode
+      if (!primary || (sameRun(backup, primary)
         && backup.savedAt <= primary.savedAt && backup.run.guardLevel <= primary.run.guardLevel
         && (backup.run.guardLevel < primary.run.guardLevel || backup.run.duelState.turn <= primary.run.duelState.turn))) {
         return { status: 'backup', snapshot: backup };
@@ -244,15 +266,16 @@ export function loadRunSnapshot(): RunLoadResult {
 }
 
 export function clearRunSnapshot(): WriteResult {
-  try {
-    window.localStorage.removeItem(BACKUP_KEY);
-  } catch {
-    return { ok: false, reason: 'backup' };
+  const { status } = loadRunSnapshot();
+  if (status === 'blocked') return { ok: false, reason: 'blocked' };
+  const keys = { primary: SAVE_KEY, backup: BACKUP_KEY };
+  const order = status === 'backup' ? ['primary', 'backup'] as const : ['backup', 'primary'] as const;
+  for (const reason of order) {
+    try {
+      window.localStorage.removeItem(keys[reason]);
+    } catch {
+      return { ok: false, reason };
+    }
   }
-  try {
-    window.localStorage.removeItem(SAVE_KEY);
-    return { ok: true };
-  } catch {
-    return { ok: false, reason: 'primary' };
-  }
+  return { ok: true };
 }

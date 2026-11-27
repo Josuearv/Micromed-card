@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { afterEach, beforeEach, test } from 'node:test';
 import { PLAYER_DECK_CARDS } from '../src/data/medicalCards';
 import {
-  resolveActivateSkill, resolveManualAttack, resolveMoveUnit, resolvePlayCard,
+  buildEndTurnSteps, resolveActivateSkill, resolveEndTurn, resolveManualAttack, resolveMoveUnit, resolvePlayCard,
   validateDuelCommand,
 } from '../src/engine/combatEngine';
 import { startNewRun } from '../src/engine/runEngine';
@@ -110,6 +110,17 @@ test('UX-011: invalid primary never displaces a valid backup', () => {
   assert.equal(loadRunSnapshot()?.status, 'backup');
 });
 
+test('UX-001: restores the V3 turn counter when the interrupted previous frame proves the boundary', () => {
+  const resolution = resolveEndTurn(run.duelState, run.rival)!;
+  const duelState = resolution.nextState;
+  const broken = raw({ ...run, duelState, playerLp: duelState.playerLp, rngState: duelState.rngState, idSequence: duelState.idSequence });
+  values.set(primary, broken);
+  values.set(backup, raw({ ...run, duelState: resolution.frames[0].nextState }));
+  assert.equal(loadRunSnapshot().snapshot?.run.turnsElapsed, 1);
+  assert.equal(loadRunSnapshot().snapshot?.run.turnsElapsed, 1);
+  assert.equal(values.get(primary), broken);
+});
+
 test('UX-011: a partial write preserves the last valid checkpoint and reports failure', () => {
   values.set(primary, raw());
   denied.add(backup);
@@ -134,4 +145,40 @@ test('UX-011: removing a run fails visibly and can be retried', () => {
   denied.clear();
   assert.equal(clearRunSnapshot()?.ok, true);
   assert.equal(loadRunSnapshot()?.status, 'empty');
+});
+
+test('UX-011: failed deletion preserves a backup when it is the only valid checkpoint', () => {
+  values.set(primary, '{');
+  values.set(backup, raw());
+  denied.add(primary);
+  assert.deepEqual(clearRunSnapshot(), { ok: false, reason: 'primary' });
+  assert.equal(values.get(backup), raw());
+  denied.clear();
+  assert.ok(clearRunSnapshot().ok);
+  assert.equal(loadRunSnapshot().status, 'empty');
+});
+
+test('UX-001: frames preserve ordered events and deterministic state for both modes', () => {
+  for (const mode of ['endless', 'classic'] as const) {
+    for (let seed = 1; seed <= 40; seed++) {
+      const current = startNewRun(mode, seed);
+      const state = current.duelState;
+      const before = structuredClone(state);
+      const expected = [];
+      let next = state;
+      for (const step of buildEndTurnSteps(current.rival)) {
+        const frame = step.execute(next);
+        expected.push(frame);
+        next = frame.nextState;
+      }
+      const result = resolveEndTurn(state, current.rival);
+      assert.deepEqual(result, { frames: expected, nextState: next });
+      assert.deepEqual(state, before);
+      assert.ok(saveRunSnapshot(current, false).ok, `V3 ${mode} ${seed}`);
+      assert.ok(saveRunSnapshot({
+        ...current, duelState: next, turnsElapsed: 1, idSequence: next.idSequence, rngState: next.rngState, playerLp: next.playerLp,
+      }, false).ok);
+    }
+  }
+  assert.equal(resolveEndTurn({ ...run.duelState, phase: 'TURNO_RIVAL' }, run.rival), null);
 });
