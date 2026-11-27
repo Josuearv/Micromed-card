@@ -71,7 +71,7 @@ export default function App() {
     loadBestGuardRecord(),
   );
   const [savedRun, setSavedRun] = useState<RunSavePayload | null>(() =>
-    loadRunSnapshot(),
+    loadRunSnapshot().snapshot ?? null,
   );
 
   const [gameState, setGameState] = useState<GameState>('TITLE_MENU');
@@ -227,7 +227,7 @@ export default function App() {
           setGameState('VICTORY');
         } else {
           saveRunSnapshot(outcome.nextRun, true, outcome.recoveredLp);
-          setSavedRun(loadRunSnapshot());
+          setSavedRun(loadRunSnapshot().snapshot ?? null);
           setGameState('ROUND_SUMMARY');
         }
         return true;
@@ -277,7 +277,7 @@ export default function App() {
         }${fresh.rival.name} en ${ORGAN_PROFILES[fresh.rival.organId].shortName}.`,
       );
       saveRunSnapshot(fresh, false, 0);
-      setSavedRun(loadRunSnapshot());
+      setSavedRun(loadRunSnapshot().snapshot ?? null);
       soundEngine.playStartShift();
       setGameState('PLAYING');
     },
@@ -285,7 +285,7 @@ export default function App() {
   );
 
   const handleResumeSavedRun = useCallback(() => {
-    const snap = loadRunSnapshot();
+    const { snapshot: snap } = loadRunSnapshot();
     if (!snap) return;
     cancelPlayback();
     pausedStepRef.current = null;
@@ -763,7 +763,7 @@ export default function App() {
         }.`,
       );
       saveRunSnapshot(nextRun, false, 0);
-      setSavedRun(loadRunSnapshot());
+      setSavedRun(loadRunSnapshot().snapshot ?? null);
       soundEngine.playStartShift();
       setGameState('PLAYING');
     },
@@ -776,7 +776,7 @@ export default function App() {
     setIsResolvingTurn(false);
     setDeckModalOpen(false);
     setInspectedCard(null);
-    setSavedRun(loadRunSnapshot());
+    setSavedRun(loadRunSnapshot().snapshot ?? null);
     setGameState('TITLE_MENU');
   }, [cancelPlayback]);
 
